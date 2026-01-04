@@ -1,0 +1,22 @@
+# --- Project Specific ---
+# Ignore your private configuration file
+config.php
+
+# --- PHP/Composer ---
+# Ignore the dependencies (they are re-installed via composer install)
+/vendor/
+# Ignore composer's cache and logs
+.phpunit.result.cache
+composer.phar
+
+# --- MacOS System Files ---
+# Mac creates these invisible files in folders; they don't belong on GitHub
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# --- Environment/IDE ---
+# If you use VS Code, you can ignore the local workspace settings
+.vscode/
+# PHP local server logs
+*.log
