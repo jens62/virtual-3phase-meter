@@ -31,7 +31,7 @@ A photorealistic, web-based Progressive Web App (PWA) that visualizes real-time 
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/jens62/virtual-3phase-meter.git](https://github.com/jens62/virtual-3phase-meter.git)
+    git clone https://github.com/jens62/virtual-3phase-meter.git
     cd virtual-3phase-meter
     ```
 
