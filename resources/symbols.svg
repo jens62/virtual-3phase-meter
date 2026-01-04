@@ -1,0 +1,883 @@
+<svg
+	width="210mm"
+	height="297mm"
+	viewBox="0 0 210 297"
+	xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink">
+
+	<defs>
+		<pattern id="checkered-bg" patternUnits="userSpaceOnUse" width="10" height="10">
+			<rect x="0" y="0" width="5" height="5" fill="#f4f4f4" />
+			<rect x="5" y="5" width="5" height="5" fill="#f4f4f4" />
+			<rect x="0" y="5" width="5" height="5" fill="#ffffff" />
+			<rect x="5" y="0" width="5" height="5" fill="#ffffff" />
+		</pattern>
+
+		<symbol id="ce-mark" viewBox="0 0 280 200">
+			<path fill="currentColor"
+				d="M110,199.5A100,100 0 0 1 100,200A100,100 0 0 1 100,0A100,100 0 0 1 110,0.5L110,30.5A70,70 0 0 0 100,30A70,70 0 0 0 100,170A70,70 0 0 0 110,169.5Z" />
+			<path fill="currentColor"
+				d="M280,199.5A100,100 0 0 1 270,200A100,100 0 0 1 270,0A100,100 0 0 1 280,0.5L280,30.5A70,70 0 0 0 270,30A70,70 0 0 0 201.6,85L260,85L260,115L201.6,115A70,70 0 0 0 270,170A70,70 0 0 0 280,169.5Z" />
+		</symbol>
+
+		<symbol id="weee_2-icon" viewBox="0 0 146.862 209.074">
+			<rect x="11.75" y="179.33" width="121.86" height="29.73" fill="currentColor" />
+			<path fill="currentColor"
+				d="M65.56 52.47h25.67v8.07H65.56z m-8.11 76.86v5.9h-7.63v-5.94c-.83-.17-1.47-.88-1.55-1.76l-8.17-96.63h-5.71v-3.84h4.84c.79-3.88 4.62-6.7 8.4-8.32v-2.79h7.17v.75c3.78-.81 7.58-1.38 11.46-1.56v-1.26h19.85v1.73c3.74.13 7.54.67 11.01 1.92 3.19 1.14 6.08 2.87 8.35 5.39 1.01-1.39 2.66-2.3 4.52-2.3 3.09 0 5.6 2.51 5.6 5.6 0 3.09-2.51 5.6-5.6 5.6-.91 0-1.78-.22-2.55-.61l-.61 6.8h8.43v14.13h-9.7l-5.32 59.32c5.45 1.18 9.54 6.03 9.54 11.84 0 6.69-5.42 12.12-12.12 12.12-4.5 0-8.43-2.45-10.52-6.09h-29.71z m40.23-10.16c2.29 0 4.14 1.85 4.14 4.14 0 2.29-1.85 4.14-4.14 4.14-2.29 0-4.14-1.85-4.14-4.14 0-2.29 1.85-4.14 4.14-4.14z m-11.92 6.32c-.12-.7-.19-1.43-.19-2.17 0-6.27 4.76-11.43 10.87-12.05l5.3-59.11h-.41v-14.13h1.68l.63-7.12h-59.7l8 94.6h33.8z m11.92-8.62c3.55 0 6.44 2.88 6.44 6.44 0 3.55-2.88 6.44-6.44 6.44-3.55 0-6.44-2.88-6.44-6.44 0-3.55 2.88-6.44 6.44-6.44z m8.88-75.71l-.7 7.84h6.27v-7.84h-5.57z m-51.76-20.54v6.43h49.05c-1.92-2.89-4.76-4.76-8-5.93-2.99-1.07-6.35-1.55-9.72-1.68v3.15h-19.85v-3.63c-3.88.19-7.68.81-11.46 1.66z m-7.17 6.43v-4.08c-1.92 1-3.73 2.38-4.43 4.08z m21.78-10.05h13.56v2.44h-13.56z" />
+			<polygon fill="currentColor"
+				points="146.86,0 71.67,76.29 0,0.97 0,6.53 68.98,79.02 1.79,147.2 4.57,149.84 71.62,81.8 135.86,149.32 138.64,146.67 74.31,79.07 146.86,5.46" />
+		</symbol>
+
+		<symbol id="rohs-icon" viewBox="0 0 100 100">
+			<rect x="10" y="10" width="80" height="80" fill="none" stroke="currentColor"
+				stroke-width="2" />
+			<text x="50" y="55" font-family="Arial, sans-serif" font-size="55" text-anchor="middle"
+				fill="currentColor">✓</text>
+			<text x="50" y="74" font-family="Arial, sans-serif" font-weight="bold" font-size="16"
+				text-anchor="middle" fill="currentColor">RoHS</text>
+			<text x="50" y="84" font-family="Arial, sans-serif" font-size="7" text-anchor="middle"
+				fill="currentColor">2011/65/EU</text>
+		</symbol>
+
+		<symbol id="book-instruction-v4" viewBox="-50 0 100 85">
+			<path id="page-curve" fill="none" stroke="currentColor" stroke-width="4"
+				stroke-linejoin="round"
+				d="M 0,7.3 C 4.9,5.5 7.4,5.1 11.6,5.3 16.1,5.5 19.6,6.6 26.1,10.0 31.6,12.8 33.3,13.3 37.8,13.3 L 40.6,13.3 V 73.3 L 37.8,73.3 C 32.2,73.3 29.1,72.2 22.8,68.1 18.1,65.0 15.8,64.3 9.7,64.3 C 4.2,64.3 2.6,64.7 0,67.1 V 7.3 Z" />
+			<use xlink:href="#page-curve" x="0" y="0" transform="scale(-1, 1)" />
+			<text x="23" y="53" font-family="Georgia, serif" font-weight="bold" font-size="42"
+				text-anchor="middle" fill="currentColor">i</text>
+		</symbol>
+
+
+		<symbol id="bezug-einspeisung-icon" viewBox="0 40 205 255">
+			<defs>
+				<path
+					id="arrow-head"
+					d="M 0,-19.857 L 85.483,0 L 0,19.857 Z"
+					fill="none"
+					stroke-linejoin="round" />
+			</defs>
+
+			<g font-family="Arial, sans-serif" font-size="30" font-weight="bold"
+				text-anchor="middle"
+				fill="currentColor">
+
+				<g fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round">
+
+					<g transform="translate(0, 60)">
+						<line x1="10" y1="48" x2="10" y2="88" />
+						<line x1="10" y1="68" x2="96.14" y2="68" />
+						<use href="#arrow-head" x="96.14" y="68" />
+						<text x="80" y="125" stroke="none" fill="currentColor">1.8.0</text>
+					</g>
+
+					<g transform="translate(0, 165)">
+						<line x1="10" y1="48" x2="10" y2="88" />
+						<line x1="142.73" y1="68" x2="182.28" y2="68" />
+						<line x1="10" y1="68" x2="57.25" y2="68" />
+						<use href="#arrow-head" transform="translate(142.73, 68) scale(-1, 1)" />
+						<text x="80" y="125" stroke="none" fill="currentColor">2.8.0</text>
+					</g>
+
+				</g>
+			</g>
+		</symbol>
+
+		<symbol id="messwertaufnehmer-3kanal" viewBox="10 10 80 80">
+			<g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+				stroke-linejoin="round">
+				<line x1="50" y1="50" x2="50" y2="26" />
+				<circle cx="50" cy="20" r="5" />
+				<line x1="50" y1="50" x2="71.5" y2="62.4" />
+				<circle cx="75.98" cy="65" r="5" />
+				<line x1="50" y1="50" x2="28.5" y2="62.4" />
+				<circle cx="24.02" cy="65" r="5" />
+			</g>
+		</symbol>
+
+		<symbol id="icon-zwei-richtungs-zaehler" viewBox="-1 -1 22 12">
+			<circle cx="2" cy="5" r="1" fill="none" stroke="currentColor" stroke-width="0.4" />
+			<g stroke="currentColor" stroke-width="0.4" fill="none" stroke-linecap="square"
+				stroke-linejoin="round">
+				<line x1="0" y1="0" x2="10" y2="0" />
+				<line x1="10" y1="10" x2="0" y2="10" />
+				<line x1="0" y1="10" x2="0" y2="0" />
+				<line x1="10" y1="0" x2="10" y2="4" />
+				<line x1="10" y1="6" x2="10" y2="10" />
+				<g fill="currentColor">
+					<line x1="5" y1="4" x2="13.5" y2="4" />
+					<path d="M 13.5,3 L 15.5,4 L 13.5,5 Z" stroke="none" />
+				</g>
+				<g fill="currentColor">
+					<line x1="15" y1="6" x2="6.5" y2="6" />
+					<path d="M 6.5,5 L 4.5,6 L 6.5,7 Z" stroke="none" />
+				</g>
+			</g>
+		</symbol>
+
+		<symbol id="protection-class-ii" viewBox="0 0 100 100">
+			<g stroke="currentColor" stroke-width="4" fill="none">
+				<rect x="10" y="10" width="80" height="80" />
+				<rect x="30" y="30" width="40" height="40" />
+			</g>
+		</symbol>
+
+		<symbol id="messpunkt-einzel-l3" viewBox="-10 0 20 30">
+			<style>
+				.single-line { stroke: currentColor; stroke-width: 2; fill: none; vector-effect:
+				non-scaling-stroke; stroke-linecap: round; }
+				.label-text { fill: currentColor; font-family: Arial, sans-serif; font-size: 5px;
+				text-anchor: middle; dominant-baseline: middle; }
+			</style>
+			<line class="single-line" x1="0" y1="0" x2="0" y2="10" />
+			<circle class="single-line" cx="0" cy="12" r="2" />
+			<text x="0" y="18" class="label-text">L3</text>
+		</symbol>
+
+		<symbol id="ir-interface-symbol" viewBox="0 0 200 100">
+			<path fill="currentColor" transform="translate(-20, -100)"
+				d="m 176.44465,188.81447 c -0.50932,-0.10692 -3.88971,-1.64104 -7.51197,-3.40916 -3.62226,-1.76812 -6.61354,-3.21476 -6.64728,-3.21476 -0.0337,0 -2.2493,-1.06704 -4.92345,-2.3712 -4.57462,-2.231 -4.86647,-2.33659 -4.93616,-1.78594 -0.16472,1.30149 -0.35544,1.78568 -0.90506,2.29773 -0.52698,0.49095 -0.91412,0.53548 -4.56086,0.5245 -7.03648,-0.0212 -13.76699,-0.40739 -14.60325,-0.83797 -0.59672,-0.30723 -13.17954,-7.50369 -17.82446,-10.19429 -0.50933,-0.29503 -3.18823,-1.83006 -5.95313,-3.41119 l -5.02708,-2.87477 -38.100008,-0.13229 c -42.039927,-0.14597 -38.756778,-0.003 -40.380851,-1.76231 -1.755804,-1.90236 -1.687897,-1.45717 -1.687897,-11.06566 v -8.74996 l 0.675916,-1.3133 c 0.409233,-0.79514 1.12284,-1.62743 1.808658,-2.10947 l 1.132741,-0.79617 38.540299,-0.13229 38.540302,-0.1323 1.5875,-0.83312 c 3.73942,-1.96246 26.55765,-12.89217 27.57949,-13.2103 0.81377,-0.25336 3.42121,-0.36179 9.51045,-0.3955 l 8.3893,-0.0465 0.60986,0.709 c 0.50032,0.58166 0.60986,1.01526 0.60986,2.41405 0,0.93777 0.0428,1.70503 0.095,1.70503 0.10601,0 0.57417,-0.21375 12.34039,-5.63443 4.5839,-2.11181 9.01135,-4.14876 9.83877,-4.52656 1.41487,-0.64604 1.75052,-0.68692 5.63979,-0.68692 5.01906,0 5.6752,0.23094 5.68405,2.00063 0.005,1.07965 -0.77278,1.86188 -2.74335,2.75759 -0.89002,0.40456 -2.51119,1.1516 -3.6026,1.6601 -1.0914,0.50849 -3.41312,1.58162 -5.15937,2.38473 -1.74625,0.80311 -4.18703,1.93504 -5.42396,2.5154 -1.23693,0.58036 -3.61818,1.67896 -5.29167,2.44132 -1.67349,0.76236 -3.93567,1.80273 -5.02708,2.31192 -1.09141,0.5092 -2.96664,1.38217 -4.16719,1.93995 l -2.18281,1.01413 v 6.4944 6.49441 l 13.95677,0.004 13.95677,0.004 3.30729,1.14556 c 2.62449,0.90906 3.38666,1.28556 3.69172,1.82366 0.71629,1.2635 0.15631,1.81012 -3.19952,3.12317 l -3.00574,1.17607 -14.35364,0.0728 -14.35365,0.0727 v 6.48458 6.48458 l 5.75469,2.8011 c 6.38007,3.1055 12.05888,5.84864 16.07343,7.76424 9.4991,4.53262 10.93802,5.27448 11.33795,5.84545 0.94803,1.35351 0.2456,2.91086 -1.46747,3.25348 -1.08207,0.21641 -6.45935,0.15041 -7.62152,-0.0935 z" />
+		</symbol>
+
+		<symbol id="hichi-label-authentic-2" viewBox="0 0 100 100">
+			<circle cx="50" cy="50" r="48" fill="#000000" />
+			<g transform="translate(50,50) scale(1.1) translate(-50,-50)">
+				<circle cx="50" cy="50" r="39" fill="#ffffff" />
+				<text x="50" y="28" font-family="Arial" font-size="4" text-anchor="middle"
+					fill="#000000">IR-Lese-Schreibkopf</text>
+				<line x1="21" y1="32" x2="80" y2="32" stroke="#1a4d8a" stroke-width="0.8" />
+				<text x="50" y="42" font-family="Arial" font-weight="bold" font-size="9"
+					text-anchor="middle" fill="#1a4d8a">Hichi IR wifi v2</text>
+				<line x1="21" y1="45" x2="80" y2="45" stroke="#1a4d8a" stroke-width="0.8" />
+				<g font-family="Arial" font-size="3.5" text-anchor="middle" fill="#000000">
+					<text x="50" y="52">TYP: HB0016 Hersteller:</text>
+					<text x="50" y="57">Hicham Belmadani,</text>
+					<text x="50" y="62">Bielsteinerstr. 46 51674 Wiehl</text>
+					<text x="50" y="67">HichamBelmadani@web.de</text>
+				</g>
+				<use href="#ce-mark" x="33" y="70.5" width="10.5" height="7.5" fill="#000000" />
+				<use href="#weee_2-icon" x="48" y="70" width="7" height="10" fill="#000000" />
+				<use href="#rohs-icon" x="59" y="69.5" width="10" height="10" fill="#000000" />
+			</g>
+		</symbol>
+
+		<symbol id="ir-diodes-icon" viewBox="0 -4 12.4 9.5">
+			<rect
+				x="0"
+				y="0"
+				width="12.4"
+				height="5.5"
+				rx="2.75"
+				ry="2.75"
+				fill="#bebebe"
+				stroke="none" />
+
+			<circle cx="2.75" cy="2.75" r="2.75" fill="currentColor" />
+			<circle cx="9.65" cy="2.75" r="2.75" fill="currentColor" />
+		</symbol>
+
+		<symbol id="ir-lesekopf-platzierungs-icon" viewBox="-65 -65 130 130">
+			<defs>
+				<path
+					id="bogen30"
+					d="m 54.77,-14.67 a 56.7,56.7 0 0 1 0,29.34"
+					fill="none"
+					stroke="#80808040"
+					stroke-width="7.56"
+					stroke-linecap="round" />
+			</defs>
+
+			<circle
+				cx="0"
+				cy="0"
+				r="56.7"
+				fill="none"
+				stroke="#eeeeee"
+				stroke-width="1" />
+
+			<use href="#bogen30" transform="rotate(-90)" />
+			<use href="#bogen30" transform="rotate(30)" />
+			<use href="#bogen30" transform="rotate(150)" />
+		</symbol>
+
+		<symbol xmlns="http://www.w3.org/2000/svg" id="matrix-code-icon" viewBox="0 0 256 256">
+			<g fill="currentColor" stroke="none" id="g573">
+				<rect x="0.000000" y="0.000000" width="8.000000" height="8.000000" id="rect39" />
+				<rect x="16.000000" y="0.000000" width="8.000000" height="8.000000" id="rect40" />
+				<rect x="32.000000" y="0.000000" width="8.000000" height="8.000000" id="rect41" />
+				<rect x="48.000000" y="0.000000" width="8.000000" height="8.000000" id="rect42" />
+				<rect x="64.000000" y="0.000000" width="8.000000" height="8.000000" id="rect43" />
+				<rect x="80.000000" y="0.000000" width="8.000000" height="8.000000" id="rect44" />
+				<rect x="96.000000" y="0.000000" width="8.000000" height="8.000000" id="rect45" />
+				<rect x="112.000000" y="0.000000" width="8.000000" height="8.000000" id="rect46" />
+				<rect x="128.000000" y="0.000000" width="8.000000" height="8.000000" id="rect47" />
+				<rect x="144.000000" y="0.000000" width="8.000000" height="8.000000" id="rect48" />
+				<rect x="160.000000" y="0.000000" width="8.000000" height="8.000000" id="rect49" />
+				<rect x="176.000000" y="0.000000" width="8.000000" height="8.000000" id="rect50" />
+				<rect x="192.000000" y="0.000000" width="8.000000" height="8.000000" id="rect51" />
+				<rect x="208.000000" y="0.000000" width="8.000000" height="8.000000" id="rect52" />
+				<rect x="224.000000" y="0.000000" width="8.000000" height="8.000000" id="rect53" />
+				<rect x="240.000000" y="0.000000" width="8.000000" height="8.000000" id="rect54" />
+				<rect x="0.000000" y="8.000000" width="8.000000" height="8.000000" id="rect55" />
+				<rect x="24.000000" y="8.000000" width="16.000000" height="8.000000" id="rect56" />
+				<rect x="64.000000" y="8.000000" width="16.000000" height="8.000000" id="rect57" />
+				<rect x="96.000000" y="8.000000" width="8.000000" height="8.000000" id="rect58" />
+				<rect x="120.000000" y="8.000000" width="16.000000" height="8.000000" id="rect59" />
+				<rect x="152.000000" y="8.000000" width="8.000000" height="8.000000" id="rect60" />
+				<rect x="176.000000" y="8.000000" width="16.000000" height="8.000000" id="rect61" />
+				<rect x="200.000000" y="8.000000" width="16.000000" height="8.000000" id="rect62" />
+				<rect x="240.000000" y="8.000000" width="16.000000" height="8.000000" id="rect63" />
+				<rect x="0.000000" y="16.000000" width="24.000000" height="8.000000" id="rect64" />
+				<rect x="56.000000" y="16.000000" width="16.000000" height="8.000000" id="rect65" />
+				<rect x="96.000000" y="16.000000" width="8.000000" height="8.000000" id="rect66" />
+				<rect x="128.000000" y="16.000000" width="16.000000" height="8.000000" id="rect67" />
+				<rect x="160.000000" y="16.000000" width="16.000000" height="8.000000" id="rect68" />
+				<rect x="224.000000" y="16.000000" width="8.000000" height="8.000000" id="rect69" />
+				<rect x="240.000000" y="16.000000" width="8.000000" height="8.000000" id="rect70" />
+				<rect x="0.000000" y="24.000000" width="8.000000" height="8.000000" id="rect71" />
+				<rect x="16.000000" y="24.000000" width="8.000000" height="8.000000" id="rect72" />
+				<rect x="48.000000" y="24.000000" width="8.000000" height="8.000000" id="rect73" />
+				<rect x="64.000000" y="24.000000" width="8.000000" height="8.000000" id="rect74" />
+				<rect x="80.000000" y="24.000000" width="16.000000" height="8.000000" id="rect75" />
+				<rect x="112.000000" y="24.000000" width="32.000000" height="8.000000" id="rect76" />
+				<rect x="152.000000" y="24.000000" width="8.000000" height="8.000000" id="rect77" />
+				<rect x="168.000000" y="24.000000" width="8.000000" height="8.000000" id="rect78" />
+				<rect x="192.000000" y="24.000000" width="16.000000" height="8.000000" id="rect79" />
+				<rect x="216.000000" y="24.000000" width="8.000000" height="8.000000" id="rect80" />
+				<rect x="240.000000" y="24.000000" width="16.000000" height="8.000000" id="rect81" />
+				<rect x="0.000000" y="32.000000" width="8.000000" height="8.000000" id="rect82" />
+				<rect x="32.000000" y="32.000000" width="16.000000" height="8.000000" id="rect83" />
+				<rect x="64.000000" y="32.000000" width="24.000000" height="8.000000" id="rect84" />
+				<rect x="128.000000" y="32.000000" width="8.000000" height="8.000000" id="rect85" />
+				<rect x="176.000000" y="32.000000" width="16.000000" height="8.000000" id="rect86" />
+				<rect x="224.000000" y="32.000000" width="8.000000" height="8.000000" id="rect87" />
+				<rect x="0.000000" y="40.000000" width="16.000000" height="8.000000" id="rect88" />
+				<rect x="32.000000" y="40.000000" width="8.000000" height="8.000000" id="rect89" />
+				<rect x="48.000000" y="40.000000" width="8.000000" height="8.000000" id="rect90" />
+				<rect x="64.000000" y="40.000000" width="16.000000" height="8.000000" id="rect91" />
+				<rect x="88.000000" y="40.000000" width="8.000000" height="8.000000" id="rect92" />
+				<rect x="104.000000" y="40.000000" width="8.000000" height="8.000000" id="rect93" />
+				<rect x="120.000000" y="40.000000" width="16.000000" height="8.000000" id="rect94" />
+				<rect x="144.000000" y="40.000000" width="8.000000" height="8.000000" id="rect95" />
+				<rect x="176.000000" y="40.000000" width="8.000000" height="8.000000" id="rect96" />
+				<rect x="216.000000" y="40.000000" width="16.000000" height="8.000000" id="rect97" />
+				<rect x="240.000000" y="40.000000" width="16.000000" height="8.000000" id="rect98" />
+				<rect x="0.000000" y="48.000000" width="16.000000" height="8.000000" id="rect99" />
+				<rect x="24.000000" y="48.000000" width="16.000000" height="8.000000" id="rect100" />
+				<rect x="80.000000" y="48.000000" width="8.000000" height="8.000000" id="rect101" />
+				<rect x="96.000000" y="48.000000" width="8.000000" height="8.000000" id="rect102" />
+				<rect x="128.000000" y="48.000000" width="8.000000" height="8.000000" id="rect103" />
+				<rect x="168.000000" y="48.000000" width="16.000000" height="8.000000" id="rect104" />
+				<rect x="200.000000" y="48.000000" width="8.000000" height="8.000000" id="rect105" />
+				<rect x="216.000000" y="48.000000" width="8.000000" height="8.000000" id="rect106" />
+				<rect x="232.000000" y="48.000000" width="8.000000" height="8.000000" id="rect107" />
+				<rect x="0.000000" y="56.000000" width="8.000000" height="8.000000" id="rect108" />
+				<rect x="32.000000" y="56.000000" width="8.000000" height="8.000000" id="rect109" />
+				<rect x="48.000000" y="56.000000" width="16.000000" height="8.000000" id="rect110" />
+				<rect x="80.000000" y="56.000000" width="8.000000" height="8.000000" id="rect111" />
+				<rect x="96.000000" y="56.000000" width="8.000000" height="8.000000" id="rect112" />
+				<rect x="112.000000" y="56.000000" width="32.000000" height="8.000000" id="rect113" />
+				<rect x="160.000000" y="56.000000" width="8.000000" height="8.000000" id="rect114" />
+				<rect x="192.000000" y="56.000000" width="16.000000" height="8.000000" id="rect115" />
+				<rect x="240.000000" y="56.000000" width="16.000000" height="8.000000" id="rect116" />
+				<rect x="0.000000" y="64.000000" width="16.000000" height="8.000000" id="rect117" />
+				<rect x="64.000000" y="64.000000" width="16.000000" height="8.000000" id="rect118" />
+				<rect x="128.000000" y="64.000000" width="8.000000" height="8.000000" id="rect119" />
+				<rect x="144.000000" y="64.000000" width="16.000000" height="8.000000" id="rect120" />
+				<rect x="184.000000" y="64.000000" width="24.000000" height="8.000000" id="rect121" />
+				<rect x="224.000000" y="64.000000" width="8.000000" height="8.000000" id="rect122" />
+				<rect x="240.000000" y="64.000000" width="8.000000" height="8.000000" id="rect123" />
+				<rect x="0.000000" y="72.000000" width="8.000000" height="8.000000" id="rect124" />
+				<rect x="24.000000" y="72.000000" width="16.000000" height="8.000000" id="rect125" />
+				<rect x="64.000000" y="72.000000" width="8.000000" height="8.000000" id="rect126" />
+				<rect x="96.000000" y="72.000000" width="8.000000" height="8.000000" id="rect127" />
+				<rect x="120.000000" y="72.000000" width="16.000000" height="8.000000" id="rect128" />
+				<rect x="144.000000" y="72.000000" width="16.000000" height="8.000000" id="rect129" />
+				<rect x="168.000000" y="72.000000" width="16.000000" height="8.000000" id="rect130" />
+				<rect x="200.000000" y="72.000000" width="8.000000" height="8.000000" id="rect131" />
+				<rect x="216.000000" y="72.000000" width="40.000000" height="8.000000" id="rect132" />
+				<rect x="0.000000" y="80.000000" width="24.000000" height="8.000000" id="rect133" />
+				<rect x="56.000000" y="80.000000" width="32.000000" height="8.000000" id="rect134" />
+				<rect x="104.000000" y="80.000000" width="8.000000" height="8.000000" id="rect135" />
+				<rect x="128.000000" y="80.000000" width="24.000000" height="8.000000" id="rect136" />
+				<rect x="176.000000" y="80.000000" width="40.000000" height="8.000000" id="rect137" />
+				<rect x="232.000000" y="80.000000" width="8.000000" height="8.000000" id="rect138" />
+				<rect x="0.000000" y="88.000000" width="8.000000" height="8.000000" id="rect139" />
+				<rect x="16.000000" y="88.000000" width="8.000000" height="8.000000" id="rect140" />
+				<rect x="48.000000" y="88.000000" width="16.000000" height="8.000000" id="rect141" />
+				<rect x="72.000000" y="88.000000" width="16.000000" height="8.000000" id="rect142" />
+				<rect x="120.000000" y="88.000000" width="24.000000" height="8.000000" id="rect143" />
+				<rect x="152.000000" y="88.000000" width="16.000000" height="8.000000" id="rect144" />
+				<rect x="176.000000" y="88.000000" width="16.000000" height="8.000000" id="rect145" />
+				<rect x="232.000000" y="88.000000" width="8.000000" height="8.000000" id="rect146" />
+				<rect x="248.000000" y="88.000000" width="8.000000" height="8.000000" id="rect147" />
+				<rect x="0.000000" y="96.000000" width="8.000000" height="8.000000" id="rect148" />
+				<rect x="32.000000" y="96.000000" width="16.000000" height="8.000000" id="rect149" />
+				<rect x="56.000000" y="96.000000" width="8.000000" height="8.000000" id="rect150" />
+				<rect x="72.000000" y="96.000000" width="8.000000" height="8.000000" id="rect151" />
+				<rect x="88.000000" y="96.000000" width="8.000000" height="8.000000" id="rect152" />
+				<rect x="104.000000" y="96.000000" width="8.000000" height="8.000000" id="rect153" />
+				<rect x="128.000000" y="96.000000" width="8.000000" height="8.000000" id="rect154" />
+				<rect x="208.000000" y="96.000000" width="24.000000" height="8.000000" id="rect155" />
+				<rect x="0.000000" y="104.000000" width="8.000000" height="8.000000" id="rect156" />
+				<rect x="32.000000" y="104.000000" width="16.000000" height="8.000000" id="rect157" />
+				<rect x="56.000000" y="104.000000" width="8.000000" height="8.000000" id="rect158" />
+				<rect x="104.000000" y="104.000000" width="8.000000" height="8.000000" id="rect159" />
+				<rect x="120.000000" y="104.000000" width="24.000000" height="8.000000" id="rect160" />
+				<rect x="160.000000" y="104.000000" width="16.000000" height="8.000000" id="rect161" />
+				<rect x="184.000000" y="104.000000" width="32.000000" height="8.000000" id="rect162" />
+				<rect x="248.000000" y="104.000000" width="8.000000" height="8.000000" id="rect163" />
+				<rect x="0.000000" y="112.000000" width="16.000000" height="8.000000" id="rect164" />
+				<rect x="24.000000" y="112.000000" width="24.000000" height="8.000000" id="rect165" />
+				<rect x="56.000000" y="112.000000" width="64.000000" height="8.000000" id="rect166" />
+				<rect x="128.000000" y="112.000000" width="8.000000" height="8.000000" id="rect167" />
+				<rect x="168.000000" y="112.000000" width="32.000000" height="8.000000" id="rect168" />
+				<rect x="208.000000" y="112.000000" width="40.000000" height="8.000000" id="rect169" />
+				<rect x="0.000000" y="120.000000" width="256.000000" height="8.000000" id="rect170" />
+				<rect x="0.000000" y="128.000000" width="8.000000" height="8.000000" id="rect171" />
+				<rect x="16.000000" y="128.000000" width="8.000000" height="8.000000" id="rect172" />
+				<rect x="32.000000" y="128.000000" width="8.000000" height="8.000000" id="rect173" />
+				<rect x="48.000000" y="128.000000" width="8.000000" height="8.000000" id="rect174" />
+				<rect x="64.000000" y="128.000000" width="8.000000" height="8.000000" id="rect175" />
+				<rect x="80.000000" y="128.000000" width="8.000000" height="8.000000" id="rect176" />
+				<rect x="96.000000" y="128.000000" width="8.000000" height="8.000000" id="rect177" />
+				<rect x="112.000000" y="128.000000" width="8.000000" height="8.000000" id="rect178" />
+				<rect x="128.000000" y="128.000000" width="8.000000" height="8.000000" id="rect179" />
+				<rect x="144.000000" y="128.000000" width="8.000000" height="8.000000" id="rect180" />
+				<rect x="160.000000" y="128.000000" width="8.000000" height="8.000000" id="rect181" />
+				<rect x="176.000000" y="128.000000" width="8.000000" height="8.000000" id="rect182" />
+				<rect x="192.000000" y="128.000000" width="8.000000" height="8.000000" id="rect183" />
+				<rect x="208.000000" y="128.000000" width="8.000000" height="8.000000" id="rect184" />
+				<rect x="224.000000" y="128.000000" width="8.000000" height="8.000000" id="rect185" />
+				<rect x="240.000000" y="128.000000" width="8.000000" height="8.000000" id="rect186" />
+				<rect x="0.000000" y="136.000000" width="8.000000" height="8.000000" id="rect187" />
+				<rect x="24.000000" y="136.000000" width="8.000000" height="8.000000" id="rect188" />
+				<rect x="40.000000" y="136.000000" width="24.000000" height="8.000000" id="rect189" />
+				<rect x="72.000000" y="136.000000" width="8.000000" height="8.000000" id="rect190" />
+				<rect x="104.000000" y="136.000000" width="32.000000" height="8.000000" id="rect191" />
+				<rect x="144.000000" y="136.000000" width="16.000000" height="8.000000" id="rect192" />
+				<rect x="168.000000" y="136.000000" width="32.000000" height="8.000000" id="rect193" />
+				<rect x="216.000000" y="136.000000" width="16.000000" height="8.000000" id="rect194" />
+				<rect x="240.000000" y="136.000000" width="16.000000" height="8.000000" id="rect195" />
+				<rect x="0.000000" y="144.000000" width="16.000000" height="8.000000" id="rect196" />
+				<rect x="48.000000" y="144.000000" width="16.000000" height="8.000000" id="rect197" />
+				<rect x="80.000000" y="144.000000" width="16.000000" height="8.000000" id="rect198" />
+				<rect x="104.000000" y="144.000000" width="8.000000" height="8.000000" id="rect199" />
+				<rect x="128.000000" y="144.000000" width="24.000000" height="8.000000" id="rect200" />
+				<rect x="160.000000" y="144.000000" width="8.000000" height="8.000000" id="rect201" />
+				<rect x="200.000000" y="144.000000" width="16.000000" height="8.000000" id="rect202" />
+				<rect x="0.000000" y="152.000000" width="16.000000" height="8.000000" id="rect203" />
+				<rect x="32.000000" y="152.000000" width="16.000000" height="8.000000" id="rect204" />
+				<rect x="64.000000" y="152.000000" width="8.000000" height="8.000000" id="rect205" />
+				<rect x="88.000000" y="152.000000" width="16.000000" height="8.000000" id="rect206" />
+				<rect x="120.000000" y="152.000000" width="32.000000" height="8.000000" id="rect207" />
+				<rect x="160.000000" y="152.000000" width="8.000000" height="8.000000" id="rect208" />
+				<rect x="176.000000" y="152.000000" width="16.000000" height="8.000000" id="rect209" />
+				<rect x="200.000000" y="152.000000" width="8.000000" height="8.000000" id="rect210" />
+				<rect x="240.000000" y="152.000000" width="16.000000" height="8.000000" id="rect211" />
+				<rect x="0.000000" y="160.000000" width="8.000000" height="8.000000" id="rect212" />
+				<rect x="24.000000" y="160.000000" width="16.000000" height="8.000000" id="rect213" />
+				<rect x="48.000000" y="160.000000" width="8.000000" height="8.000000" id="rect214" />
+				<rect x="64.000000" y="160.000000" width="40.000000" height="8.000000" id="rect215" />
+				<rect x="128.000000" y="160.000000" width="16.000000" height="8.000000" id="rect216" />
+				<rect x="160.000000" y="160.000000" width="24.000000" height="8.000000" id="rect217" />
+				<rect x="200.000000" y="160.000000" width="16.000000" height="8.000000" id="rect218" />
+				<rect x="232.000000" y="160.000000" width="8.000000" height="8.000000" id="rect219" />
+				<rect x="0.000000" y="168.000000" width="8.000000" height="8.000000" id="rect220" />
+				<rect x="16.000000" y="168.000000" width="24.000000" height="8.000000" id="rect221" />
+				<rect x="48.000000" y="168.000000" width="16.000000" height="8.000000" id="rect222" />
+				<rect x="104.000000" y="168.000000" width="48.000000" height="8.000000" id="rect223" />
+				<rect x="160.000000" y="168.000000" width="16.000000" height="8.000000" id="rect224" />
+				<rect x="184.000000" y="168.000000" width="32.000000" height="8.000000" id="rect225" />
+				<rect x="248.000000" y="168.000000" width="8.000000" height="8.000000" id="rect226" />
+				<rect x="0.000000" y="176.000000" width="8.000000" height="8.000000" id="rect227" />
+				<rect x="32.000000" y="176.000000" width="8.000000" height="8.000000" id="rect228" />
+				<rect x="72.000000" y="176.000000" width="32.000000" height="8.000000" id="rect229" />
+				<rect x="112.000000" y="176.000000" width="8.000000" height="8.000000" id="rect230" />
+				<rect x="128.000000" y="176.000000" width="8.000000" height="8.000000" id="rect231" />
+				<rect x="160.000000" y="176.000000" width="16.000000" height="8.000000" id="rect232" />
+				<rect x="192.000000" y="176.000000" width="8.000000" height="8.000000" id="rect233" />
+				<rect x="208.000000" y="176.000000" width="8.000000" height="8.000000" id="rect234" />
+				<rect x="0.000000" y="184.000000" width="16.000000" height="8.000000" id="rect235" />
+				<rect x="32.000000" y="184.000000" width="8.000000" height="8.000000" id="rect236" />
+				<rect x="48.000000" y="184.000000" width="16.000000" height="8.000000" id="rect237" />
+				<rect x="72.000000" y="184.000000" width="24.000000" height="8.000000" id="rect238" />
+				<rect x="112.000000" y="184.000000" width="24.000000" height="8.000000" id="rect239" />
+				<rect x="176.000000" y="184.000000" width="8.000000" height="8.000000" id="rect240" />
+				<rect x="232.000000" y="184.000000" width="8.000000" height="8.000000" id="rect241" />
+				<rect x="248.000000" y="184.000000" width="8.000000" height="8.000000" id="rect242" />
+				<rect x="0.000000" y="192.000000" width="8.000000" height="8.000000" id="rect243" />
+				<rect x="16.000000" y="192.000000" width="16.000000" height="8.000000" id="rect244" />
+				<rect x="56.000000" y="192.000000" width="8.000000" height="8.000000" id="rect245" />
+				<rect x="96.000000" y="192.000000" width="8.000000" height="8.000000" id="rect246" />
+				<rect x="112.000000" y="192.000000" width="8.000000" height="8.000000" id="rect247" />
+				<rect x="128.000000" y="192.000000" width="56.000000" height="8.000000" id="rect248" />
+				<rect x="192.000000" y="192.000000" width="8.000000" height="8.000000" id="rect249" />
+				<rect x="208.000000" y="192.000000" width="8.000000" height="8.000000" id="rect250" />
+				<rect x="224.000000" y="192.000000" width="24.000000" height="8.000000" id="rect251" />
+				<rect x="0.000000" y="200.000000" width="8.000000" height="8.000000" id="rect252" />
+				<rect x="16.000000" y="200.000000" width="8.000000" height="8.000000" id="rect253" />
+				<rect x="32.000000" y="200.000000" width="24.000000" height="8.000000" id="rect254" />
+				<rect x="72.000000" y="200.000000" width="16.000000" height="8.000000" id="rect255" />
+				<rect x="96.000000" y="200.000000" width="16.000000" height="8.000000" id="rect256" />
+				<rect x="120.000000" y="200.000000" width="32.000000" height="8.000000" id="rect257" />
+				<rect x="160.000000" y="200.000000" width="8.000000" height="8.000000" id="rect258" />
+				<rect x="184.000000" y="200.000000" width="8.000000" height="8.000000" id="rect259" />
+				<rect x="208.000000" y="200.000000" width="8.000000" height="8.000000" id="rect260" />
+				<rect x="240.000000" y="200.000000" width="16.000000" height="8.000000" id="rect261" />
+				<rect x="0.000000" y="208.000000" width="24.000000" height="8.000000" id="rect262" />
+				<rect x="48.000000" y="208.000000" width="8.000000" height="8.000000" id="rect263" />
+				<rect x="80.000000" y="208.000000" width="8.000000" height="8.000000" id="rect264" />
+				<rect x="128.000000" y="208.000000" width="16.000000" height="8.000000" id="rect265" />
+				<rect x="152.000000" y="208.000000" width="40.000000" height="8.000000" id="rect266" />
+				<rect x="208.000000" y="208.000000" width="8.000000" height="8.000000" id="rect267" />
+				<rect x="224.000000" y="208.000000" width="8.000000" height="8.000000" id="rect268" />
+				<rect x="0.000000" y="216.000000" width="8.000000" height="8.000000" id="rect269" />
+				<rect x="32.000000" y="216.000000" width="8.000000" height="8.000000" id="rect270" />
+				<rect x="48.000000" y="216.000000" width="16.000000" height="8.000000" id="rect271" />
+				<rect x="72.000000" y="216.000000" width="8.000000" height="8.000000" id="rect272" />
+				<rect x="88.000000" y="216.000000" width="8.000000" height="8.000000" id="rect273" />
+				<rect x="120.000000" y="216.000000" width="16.000000" height="8.000000" id="rect274" />
+				<rect x="144.000000" y="216.000000" width="24.000000" height="8.000000" id="rect275" />
+				<rect x="184.000000" y="216.000000" width="8.000000" height="8.000000" id="rect276" />
+				<rect x="200.000000" y="216.000000" width="8.000000" height="8.000000" id="rect277" />
+				<rect x="240.000000" y="216.000000" width="16.000000" height="8.000000" id="rect278" />
+				<rect x="0.000000" y="224.000000" width="8.000000" height="8.000000" id="rect279" />
+				<rect x="24.000000" y="224.000000" width="8.000000" height="8.000000" id="rect280" />
+				<rect x="40.000000" y="224.000000" width="8.000000" height="8.000000" id="rect281" />
+				<rect x="56.000000" y="224.000000" width="8.000000" height="8.000000" id="rect282" />
+				<rect x="88.000000" y="224.000000" width="8.000000" height="8.000000" id="rect283" />
+				<rect x="112.000000" y="224.000000" width="8.000000" height="8.000000" id="rect284" />
+				<rect x="128.000000" y="224.000000" width="16.000000" height="8.000000" id="rect285" />
+				<rect x="168.000000" y="224.000000" width="32.000000" height="8.000000" id="rect286" />
+				<rect x="0.000000" y="232.000000" width="8.000000" height="8.000000" id="rect287" />
+				<rect x="16.000000" y="232.000000" width="16.000000" height="8.000000" id="rect288" />
+				<rect x="40.000000" y="232.000000" width="8.000000" height="8.000000" id="rect289" />
+				<rect x="96.000000" y="232.000000" width="8.000000" height="8.000000" id="rect290" />
+				<rect x="112.000000" y="232.000000" width="32.000000" height="8.000000" id="rect291" />
+				<rect x="152.000000" y="232.000000" width="24.000000" height="8.000000" id="rect292" />
+				<rect x="192.000000" y="232.000000" width="16.000000" height="8.000000" id="rect293" />
+				<rect x="216.000000" y="232.000000" width="8.000000" height="8.000000" id="rect294" />
+				<rect x="248.000000" y="232.000000" width="8.000000" height="8.000000" id="rect295" />
+				<rect x="0.000000" y="240.000000" width="8.000000" height="8.000000" id="rect296" />
+				<rect x="40.000000" y="240.000000" width="16.000000" height="8.000000" id="rect297" />
+				<rect x="72.000000" y="240.000000" width="8.000000" height="8.000000" id="rect298" />
+				<rect x="104.000000" y="240.000000" width="8.000000" height="8.000000" id="rect299" />
+				<rect x="128.000000" y="240.000000" width="8.000000" height="8.000000" id="rect300" />
+				<rect x="160.000000" y="240.000000" width="8.000000" height="8.000000" id="rect301" />
+				<rect x="184.000000" y="240.000000" width="8.000000" height="8.000000" id="rect302" />
+				<rect x="200.000000" y="240.000000" width="8.000000" height="8.000000" id="rect303" />
+				<rect x="216.000000" y="240.000000" width="24.000000" height="8.000000" id="rect304" />
+				<rect x="0.000000" y="248.000000" width="256.000000" height="8.000000" id="rect305" />
+				<rect x="0.000000" y="0.000000" width="8.000000" height="256.000000" id="rect306" />
+				<rect x="8.000000" y="16.000000" width="8.000000" height="8.000000" id="rect307" />
+				<rect x="8.000000" y="40.000000" width="8.000000" height="16.000000" id="rect308" />
+				<rect x="8.000000" y="64.000000" width="8.000000" height="8.000000" id="rect309" />
+				<rect x="8.000000" y="80.000000" width="8.000000" height="8.000000" id="rect310" />
+				<rect x="8.000000" y="112.000000" width="8.000000" height="16.000000" id="rect311" />
+				<rect x="8.000000" y="144.000000" width="8.000000" height="16.000000" id="rect312" />
+				<rect x="8.000000" y="184.000000" width="8.000000" height="8.000000" id="rect313" />
+				<rect x="8.000000" y="208.000000" width="8.000000" height="8.000000" id="rect314" />
+				<rect x="8.000000" y="248.000000" width="8.000000" height="8.000000" id="rect315" />
+				<rect x="16.000000" y="0.000000" width="8.000000" height="8.000000" id="rect316" />
+				<rect x="16.000000" y="16.000000" width="8.000000" height="16.000000" id="rect317" />
+				<rect x="16.000000" y="80.000000" width="8.000000" height="16.000000" id="rect318" />
+				<rect x="16.000000" y="120.000000" width="8.000000" height="16.000000" id="rect319" />
+				<rect x="16.000000" y="168.000000" width="8.000000" height="8.000000" id="rect320" />
+				<rect x="16.000000" y="192.000000" width="8.000000" height="24.000000" id="rect321" />
+				<rect x="16.000000" y="232.000000" width="8.000000" height="8.000000" id="rect322" />
+				<rect x="16.000000" y="248.000000" width="8.000000" height="8.000000" id="rect323" />
+				<rect x="24.000000" y="8.000000" width="8.000000" height="8.000000" id="rect324" />
+				<rect x="24.000000" y="48.000000" width="8.000000" height="8.000000" id="rect325" />
+				<rect x="24.000000" y="72.000000" width="8.000000" height="8.000000" id="rect326" />
+				<rect x="24.000000" y="112.000000" width="8.000000" height="16.000000" id="rect327" />
+				<rect x="24.000000" y="136.000000" width="8.000000" height="8.000000" id="rect328" />
+				<rect x="24.000000" y="160.000000" width="8.000000" height="16.000000" id="rect329" />
+				<rect x="24.000000" y="192.000000" width="8.000000" height="8.000000" id="rect330" />
+				<rect x="24.000000" y="224.000000" width="8.000000" height="16.000000" id="rect331" />
+				<rect x="24.000000" y="248.000000" width="8.000000" height="8.000000" id="rect332" />
+				<rect x="32.000000" y="0.000000" width="8.000000" height="16.000000" id="rect333" />
+				<rect x="32.000000" y="32.000000" width="8.000000" height="32.000000" id="rect334" />
+				<rect x="32.000000" y="72.000000" width="8.000000" height="8.000000" id="rect335" />
+				<rect x="32.000000" y="96.000000" width="8.000000" height="40.000000" id="rect336" />
+				<rect x="32.000000" y="152.000000" width="8.000000" height="40.000000" id="rect337" />
+				<rect x="32.000000" y="200.000000" width="8.000000" height="8.000000" id="rect338" />
+				<rect x="32.000000" y="216.000000" width="8.000000" height="8.000000" id="rect339" />
+				<rect x="32.000000" y="248.000000" width="8.000000" height="8.000000" id="rect340" />
+				<rect x="40.000000" y="32.000000" width="8.000000" height="8.000000" id="rect341" />
+				<rect x="40.000000" y="96.000000" width="8.000000" height="32.000000" id="rect342" />
+				<rect x="40.000000" y="136.000000" width="8.000000" height="8.000000" id="rect343" />
+				<rect x="40.000000" y="152.000000" width="8.000000" height="8.000000" id="rect344" />
+				<rect x="40.000000" y="200.000000" width="8.000000" height="8.000000" id="rect345" />
+				<rect x="40.000000" y="224.000000" width="8.000000" height="32.000000" id="rect346" />
+				<rect x="48.000000" y="0.000000" width="8.000000" height="8.000000" id="rect347" />
+				<rect x="48.000000" y="24.000000" width="8.000000" height="8.000000" id="rect348" />
+				<rect x="48.000000" y="40.000000" width="8.000000" height="8.000000" id="rect349" />
+				<rect x="48.000000" y="56.000000" width="8.000000" height="8.000000" id="rect350" />
+				<rect x="48.000000" y="88.000000" width="8.000000" height="8.000000" id="rect351" />
+				<rect x="48.000000" y="120.000000" width="8.000000" height="32.000000" id="rect352" />
+				<rect x="48.000000" y="160.000000" width="8.000000" height="16.000000" id="rect353" />
+				<rect x="48.000000" y="184.000000" width="8.000000" height="8.000000" id="rect354" />
+				<rect x="48.000000" y="200.000000" width="8.000000" height="24.000000" id="rect355" />
+				<rect x="48.000000" y="240.000000" width="8.000000" height="16.000000" id="rect356" />
+				<rect x="56.000000" y="16.000000" width="8.000000" height="8.000000" id="rect357" />
+				<rect x="56.000000" y="56.000000" width="8.000000" height="8.000000" id="rect358" />
+				<rect x="56.000000" y="80.000000" width="8.000000" height="48.000000" id="rect359" />
+				<rect x="56.000000" y="136.000000" width="8.000000" height="16.000000" id="rect360" />
+				<rect x="56.000000" y="168.000000" width="8.000000" height="8.000000" id="rect361" />
+				<rect x="56.000000" y="184.000000" width="8.000000" height="16.000000" id="rect362" />
+				<rect x="56.000000" y="216.000000" width="8.000000" height="16.000000" id="rect363" />
+				<rect x="56.000000" y="248.000000" width="8.000000" height="8.000000" id="rect364" />
+				<rect x="64.000000" y="0.000000" width="8.000000" height="48.000000" id="rect365" />
+				<rect x="64.000000" y="64.000000" width="8.000000" height="24.000000" id="rect366" />
+				<rect x="64.000000" y="112.000000" width="8.000000" height="24.000000" id="rect367" />
+				<rect x="64.000000" y="152.000000" width="8.000000" height="16.000000" id="rect368" />
+				<rect x="64.000000" y="248.000000" width="8.000000" height="8.000000" id="rect369" />
+				<rect x="72.000000" y="8.000000" width="8.000000" height="8.000000" id="rect370" />
+				<rect x="72.000000" y="32.000000" width="8.000000" height="16.000000" id="rect371" />
+				<rect x="72.000000" y="64.000000" width="8.000000" height="8.000000" id="rect372" />
+				<rect x="72.000000" y="80.000000" width="8.000000" height="24.000000" id="rect373" />
+				<rect x="72.000000" y="112.000000" width="8.000000" height="16.000000" id="rect374" />
+				<rect x="72.000000" y="136.000000" width="8.000000" height="8.000000" id="rect375" />
+				<rect x="72.000000" y="160.000000" width="8.000000" height="8.000000" id="rect376" />
+				<rect x="72.000000" y="176.000000" width="8.000000" height="16.000000" id="rect377" />
+				<rect x="72.000000" y="200.000000" width="8.000000" height="8.000000" id="rect378" />
+				<rect x="72.000000" y="216.000000" width="8.000000" height="8.000000" id="rect379" />
+				<rect x="72.000000" y="240.000000" width="8.000000" height="16.000000" id="rect380" />
+				<rect x="80.000000" y="0.000000" width="8.000000" height="8.000000" id="rect381" />
+				<rect x="80.000000" y="24.000000" width="8.000000" height="16.000000" id="rect382" />
+				<rect x="80.000000" y="48.000000" width="8.000000" height="16.000000" id="rect383" />
+				<rect x="80.000000" y="80.000000" width="8.000000" height="16.000000" id="rect384" />
+				<rect x="80.000000" y="112.000000" width="8.000000" height="24.000000" id="rect385" />
+				<rect x="80.000000" y="144.000000" width="8.000000" height="8.000000" id="rect386" />
+				<rect x="80.000000" y="160.000000" width="8.000000" height="8.000000" id="rect387" />
+				<rect x="80.000000" y="176.000000" width="8.000000" height="16.000000" id="rect388" />
+				<rect x="80.000000" y="200.000000" width="8.000000" height="16.000000" id="rect389" />
+				<rect x="80.000000" y="248.000000" width="8.000000" height="8.000000" id="rect390" />
+				<rect x="88.000000" y="24.000000" width="8.000000" height="8.000000" id="rect391" />
+				<rect x="88.000000" y="40.000000" width="8.000000" height="8.000000" id="rect392" />
+				<rect x="88.000000" y="96.000000" width="8.000000" height="8.000000" id="rect393" />
+				<rect x="88.000000" y="112.000000" width="8.000000" height="16.000000" id="rect394" />
+				<rect x="88.000000" y="144.000000" width="8.000000" height="24.000000" id="rect395" />
+				<rect x="88.000000" y="176.000000" width="8.000000" height="16.000000" id="rect396" />
+				<rect x="88.000000" y="216.000000" width="8.000000" height="16.000000" id="rect397" />
+				<rect x="88.000000" y="248.000000" width="8.000000" height="8.000000" id="rect398" />
+				<rect x="96.000000" y="0.000000" width="8.000000" height="24.000000" id="rect399" />
+				<rect x="96.000000" y="48.000000" width="8.000000" height="16.000000" id="rect400" />
+				<rect x="96.000000" y="72.000000" width="8.000000" height="8.000000" id="rect401" />
+				<rect x="96.000000" y="112.000000" width="8.000000" height="24.000000" id="rect402" />
+				<rect x="96.000000" y="152.000000" width="8.000000" height="16.000000" id="rect403" />
+				<rect x="96.000000" y="176.000000" width="8.000000" height="8.000000" id="rect404" />
+				<rect x="96.000000" y="192.000000" width="8.000000" height="16.000000" id="rect405" />
+				<rect x="96.000000" y="232.000000" width="8.000000" height="8.000000" id="rect406" />
+				<rect x="96.000000" y="248.000000" width="8.000000" height="8.000000" id="rect407" />
+				<rect x="104.000000" y="40.000000" width="8.000000" height="8.000000" id="rect408" />
+				<rect x="104.000000" y="80.000000" width="8.000000" height="8.000000" id="rect409" />
+				<rect x="104.000000" y="96.000000" width="8.000000" height="32.000000" id="rect410" />
+				<rect x="104.000000" y="136.000000" width="8.000000" height="16.000000" id="rect411" />
+				<rect x="104.000000" y="168.000000" width="8.000000" height="8.000000" id="rect412" />
+				<rect x="104.000000" y="200.000000" width="8.000000" height="8.000000" id="rect413" />
+				<rect x="104.000000" y="240.000000" width="8.000000" height="16.000000" id="rect414" />
+				<rect x="112.000000" y="0.000000" width="8.000000" height="8.000000" id="rect415" />
+				<rect x="112.000000" y="24.000000" width="8.000000" height="8.000000" id="rect416" />
+				<rect x="112.000000" y="56.000000" width="8.000000" height="8.000000" id="rect417" />
+				<rect x="112.000000" y="112.000000" width="8.000000" height="32.000000" id="rect418" />
+				<rect x="112.000000" y="168.000000" width="8.000000" height="32.000000" id="rect419" />
+				<rect x="112.000000" y="224.000000" width="8.000000" height="16.000000" id="rect420" />
+				<rect x="112.000000" y="248.000000" width="8.000000" height="8.000000" id="rect421" />
+				<rect x="120.000000" y="8.000000" width="8.000000" height="8.000000" id="rect422" />
+				<rect x="120.000000" y="24.000000" width="8.000000" height="8.000000" id="rect423" />
+				<rect x="120.000000" y="40.000000" width="8.000000" height="8.000000" id="rect424" />
+				<rect x="120.000000" y="56.000000" width="8.000000" height="8.000000" id="rect425" />
+				<rect x="120.000000" y="72.000000" width="8.000000" height="8.000000" id="rect426" />
+				<rect x="120.000000" y="88.000000" width="8.000000" height="8.000000" id="rect427" />
+				<rect x="120.000000" y="104.000000" width="8.000000" height="8.000000" id="rect428" />
+				<rect x="120.000000" y="120.000000" width="8.000000" height="8.000000" id="rect429" />
+				<rect x="120.000000" y="136.000000" width="8.000000" height="8.000000" id="rect430" />
+				<rect x="120.000000" y="152.000000" width="8.000000" height="8.000000" id="rect431" />
+				<rect x="120.000000" y="168.000000" width="8.000000" height="8.000000" id="rect432" />
+				<rect x="120.000000" y="184.000000" width="8.000000" height="8.000000" id="rect433" />
+				<rect x="120.000000" y="200.000000" width="8.000000" height="8.000000" id="rect434" />
+				<rect x="120.000000" y="216.000000" width="8.000000" height="8.000000" id="rect435" />
+				<rect x="120.000000" y="232.000000" width="8.000000" height="8.000000" id="rect436" />
+				<rect x="120.000000" y="248.000000" width="8.000000" height="8.000000" id="rect437" />
+				<rect x="128.000000" y="0.000000" width="8.000000" height="256.000000" id="rect438" />
+				<rect x="136.000000" y="16.000000" width="8.000000" height="16.000000" id="rect439" />
+				<rect x="136.000000" y="56.000000" width="8.000000" height="8.000000" id="rect440" />
+				<rect x="136.000000" y="80.000000" width="8.000000" height="16.000000" id="rect441" />
+				<rect x="136.000000" y="104.000000" width="8.000000" height="8.000000" id="rect442" />
+				<rect x="136.000000" y="120.000000" width="8.000000" height="8.000000" id="rect443" />
+				<rect x="136.000000" y="144.000000" width="8.000000" height="32.000000" id="rect444" />
+				<rect x="136.000000" y="192.000000" width="8.000000" height="24.000000" id="rect445" />
+				<rect x="136.000000" y="224.000000" width="8.000000" height="16.000000" id="rect446" />
+				<rect x="136.000000" y="248.000000" width="8.000000" height="8.000000" id="rect447" />
+				<rect x="144.000000" y="0.000000" width="8.000000" height="8.000000" id="rect448" />
+				<rect x="144.000000" y="40.000000" width="8.000000" height="8.000000" id="rect449" />
+				<rect x="144.000000" y="64.000000" width="8.000000" height="24.000000" id="rect450" />
+				<rect x="144.000000" y="120.000000" width="8.000000" height="40.000000" id="rect451" />
+				<rect x="144.000000" y="168.000000" width="8.000000" height="8.000000" id="rect452" />
+				<rect x="144.000000" y="192.000000" width="8.000000" height="16.000000" id="rect453" />
+				<rect x="144.000000" y="216.000000" width="8.000000" height="8.000000" id="rect454" />
+				<rect x="144.000000" y="248.000000" width="8.000000" height="8.000000" id="rect455" />
+				<rect x="152.000000" y="8.000000" width="8.000000" height="8.000000" id="rect456" />
+				<rect x="152.000000" y="24.000000" width="8.000000" height="8.000000" id="rect457" />
+				<rect x="152.000000" y="64.000000" width="8.000000" height="16.000000" id="rect458" />
+				<rect x="152.000000" y="88.000000" width="8.000000" height="8.000000" id="rect459" />
+				<rect x="152.000000" y="120.000000" width="8.000000" height="8.000000" id="rect460" />
+				<rect x="152.000000" y="136.000000" width="8.000000" height="8.000000" id="rect461" />
+				<rect x="152.000000" y="192.000000" width="8.000000" height="8.000000" id="rect462" />
+				<rect x="152.000000" y="208.000000" width="8.000000" height="16.000000" id="rect463" />
+				<rect x="152.000000" y="232.000000" width="8.000000" height="8.000000" id="rect464" />
+				<rect x="152.000000" y="248.000000" width="8.000000" height="8.000000" id="rect465" />
+				<rect x="160.000000" y="0.000000" width="8.000000" height="8.000000" id="rect466" />
+				<rect x="160.000000" y="16.000000" width="8.000000" height="8.000000" id="rect467" />
+				<rect x="160.000000" y="56.000000" width="8.000000" height="8.000000" id="rect468" />
+				<rect x="160.000000" y="88.000000" width="8.000000" height="8.000000" id="rect469" />
+				<rect x="160.000000" y="104.000000" width="8.000000" height="8.000000" id="rect470" />
+				<rect x="160.000000" y="120.000000" width="8.000000" height="16.000000" id="rect471" />
+				<rect x="160.000000" y="144.000000" width="8.000000" height="40.000000" id="rect472" />
+				<rect x="160.000000" y="192.000000" width="8.000000" height="32.000000" id="rect473" />
+				<rect x="160.000000" y="232.000000" width="8.000000" height="24.000000" id="rect474" />
+				<rect x="168.000000" y="16.000000" width="8.000000" height="16.000000" id="rect475" />
+				<rect x="168.000000" y="48.000000" width="8.000000" height="8.000000" id="rect476" />
+				<rect x="168.000000" y="72.000000" width="8.000000" height="8.000000" id="rect477" />
+				<rect x="168.000000" y="104.000000" width="8.000000" height="24.000000" id="rect478" />
+				<rect x="168.000000" y="136.000000" width="8.000000" height="8.000000" id="rect479" />
+				<rect x="168.000000" y="160.000000" width="8.000000" height="24.000000" id="rect480" />
+				<rect x="168.000000" y="192.000000" width="8.000000" height="8.000000" id="rect481" />
+				<rect x="168.000000" y="208.000000" width="8.000000" height="8.000000" id="rect482" />
+				<rect x="168.000000" y="224.000000" width="8.000000" height="16.000000" id="rect483" />
+				<rect x="168.000000" y="248.000000" width="8.000000" height="8.000000" id="rect484" />
+				<rect x="176.000000" y="0.000000" width="8.000000" height="16.000000" id="rect485" />
+				<rect x="176.000000" y="32.000000" width="8.000000" height="24.000000" id="rect486" />
+				<rect x="176.000000" y="72.000000" width="8.000000" height="24.000000" id="rect487" />
+				<rect x="176.000000" y="112.000000" width="8.000000" height="32.000000" id="rect488" />
+				<rect x="176.000000" y="152.000000" width="8.000000" height="16.000000" id="rect489" />
+				<rect x="176.000000" y="184.000000" width="8.000000" height="16.000000" id="rect490" />
+				<rect x="176.000000" y="208.000000" width="8.000000" height="8.000000" id="rect491" />
+				<rect x="176.000000" y="224.000000" width="8.000000" height="8.000000" id="rect492" />
+				<rect x="176.000000" y="248.000000" width="8.000000" height="8.000000" id="rect493" />
+				<rect x="184.000000" y="8.000000" width="8.000000" height="8.000000" id="rect494" />
+				<rect x="184.000000" y="32.000000" width="8.000000" height="8.000000" id="rect495" />
+				<rect x="184.000000" y="64.000000" width="8.000000" height="8.000000" id="rect496" />
+				<rect x="184.000000" y="80.000000" width="8.000000" height="16.000000" id="rect497" />
+				<rect x="184.000000" y="104.000000" width="8.000000" height="24.000000" id="rect498" />
+				<rect x="184.000000" y="136.000000" width="8.000000" height="8.000000" id="rect499" />
+				<rect x="184.000000" y="152.000000" width="8.000000" height="8.000000" id="rect500" />
+				<rect x="184.000000" y="168.000000" width="8.000000" height="8.000000" id="rect501" />
+				<rect x="184.000000" y="200.000000" width="8.000000" height="32.000000" id="rect502" />
+				<rect x="184.000000" y="240.000000" width="8.000000" height="16.000000" id="rect503" />
+				<rect x="192.000000" y="0.000000" width="8.000000" height="8.000000" id="rect504" />
+				<rect x="192.000000" y="24.000000" width="8.000000" height="8.000000" id="rect505" />
+				<rect x="192.000000" y="56.000000" width="8.000000" height="16.000000" id="rect506" />
+				<rect x="192.000000" y="80.000000" width="8.000000" height="8.000000" id="rect507" />
+				<rect x="192.000000" y="104.000000" width="8.000000" height="40.000000" id="rect508" />
+				<rect x="192.000000" y="168.000000" width="8.000000" height="16.000000" id="rect509" />
+				<rect x="192.000000" y="192.000000" width="8.000000" height="8.000000" id="rect510" />
+				<rect x="192.000000" y="224.000000" width="8.000000" height="16.000000" id="rect511" />
+				<rect x="192.000000" y="248.000000" width="8.000000" height="8.000000" id="rect512" />
+				<rect x="200.000000" y="8.000000" width="8.000000" height="8.000000" id="rect513" />
+				<rect x="200.000000" y="24.000000" width="8.000000" height="8.000000" id="rect514" />
+				<rect x="200.000000" y="48.000000" width="8.000000" height="40.000000" id="rect515" />
+				<rect x="200.000000" y="104.000000" width="8.000000" height="8.000000" id="rect516" />
+				<rect x="200.000000" y="120.000000" width="8.000000" height="8.000000" id="rect517" />
+				<rect x="200.000000" y="144.000000" width="8.000000" height="32.000000" id="rect518" />
+				<rect x="200.000000" y="216.000000" width="8.000000" height="8.000000" id="rect519" />
+				<rect x="200.000000" y="232.000000" width="8.000000" height="24.000000" id="rect520" />
+				<rect x="208.000000" y="0.000000" width="8.000000" height="16.000000" id="rect521" />
+				<rect x="208.000000" y="80.000000" width="8.000000" height="8.000000" id="rect522" />
+				<rect x="208.000000" y="96.000000" width="8.000000" height="40.000000" id="rect523" />
+				<rect x="208.000000" y="144.000000" width="8.000000" height="8.000000" id="rect524" />
+				<rect x="208.000000" y="160.000000" width="8.000000" height="24.000000" id="rect525" />
+				<rect x="208.000000" y="192.000000" width="8.000000" height="24.000000" id="rect526" />
+				<rect x="208.000000" y="248.000000" width="8.000000" height="8.000000" id="rect527" />
+				<rect x="216.000000" y="24.000000" width="8.000000" height="8.000000" id="rect528" />
+				<rect x="216.000000" y="40.000000" width="8.000000" height="16.000000" id="rect529" />
+				<rect x="216.000000" y="72.000000" width="8.000000" height="8.000000" id="rect530" />
+				<rect x="216.000000" y="96.000000" width="8.000000" height="8.000000" id="rect531" />
+				<rect x="216.000000" y="112.000000" width="8.000000" height="16.000000" id="rect532" />
+				<rect x="216.000000" y="136.000000" width="8.000000" height="8.000000" id="rect533" />
+				<rect x="216.000000" y="232.000000" width="8.000000" height="24.000000" id="rect534" />
+				<rect x="224.000000" y="0.000000" width="8.000000" height="8.000000" id="rect535" />
+				<rect x="224.000000" y="16.000000" width="8.000000" height="8.000000" id="rect536" />
+				<rect x="224.000000" y="32.000000" width="8.000000" height="16.000000" id="rect537" />
+				<rect x="224.000000" y="64.000000" width="8.000000" height="16.000000" id="rect538" />
+				<rect x="224.000000" y="96.000000" width="8.000000" height="8.000000" id="rect539" />
+				<rect x="224.000000" y="112.000000" width="8.000000" height="32.000000" id="rect540" />
+				<rect x="224.000000" y="192.000000" width="8.000000" height="8.000000" id="rect541" />
+				<rect x="224.000000" y="208.000000" width="8.000000" height="8.000000" id="rect542" />
+				<rect x="224.000000" y="240.000000" width="8.000000" height="16.000000" id="rect543" />
+				<rect x="232.000000" y="48.000000" width="8.000000" height="8.000000" id="rect544" />
+				<rect x="232.000000" y="72.000000" width="8.000000" height="24.000000" id="rect545" />
+				<rect x="232.000000" y="112.000000" width="8.000000" height="16.000000" id="rect546" />
+				<rect x="232.000000" y="160.000000" width="8.000000" height="8.000000" id="rect547" />
+				<rect x="232.000000" y="184.000000" width="8.000000" height="16.000000" id="rect548" />
+				<rect x="232.000000" y="240.000000" width="8.000000" height="16.000000" id="rect549" />
+				<rect x="240.000000" y="0.000000" width="8.000000" height="32.000000" id="rect550" />
+				<rect x="240.000000" y="40.000000" width="8.000000" height="8.000000" id="rect551" />
+				<rect x="240.000000" y="56.000000" width="8.000000" height="24.000000" id="rect552" />
+				<rect x="240.000000" y="112.000000" width="8.000000" height="32.000000" id="rect553" />
+				<rect x="240.000000" y="152.000000" width="8.000000" height="8.000000" id="rect554" />
+				<rect x="240.000000" y="192.000000" width="8.000000" height="16.000000" id="rect555" />
+				<rect x="240.000000" y="216.000000" width="8.000000" height="8.000000" id="rect556" />
+				<rect x="240.000000" y="248.000000" width="8.000000" height="8.000000" id="rect557" />
+				<rect x="248.000000" y="8.000000" width="8.000000" height="8.000000" id="rect558" />
+				<rect x="248.000000" y="24.000000" width="8.000000" height="8.000000" id="rect559" />
+				<rect x="248.000000" y="40.000000" width="8.000000" height="8.000000" id="rect560" />
+				<rect x="248.000000" y="56.000000" width="8.000000" height="8.000000" id="rect561" />
+				<rect x="248.000000" y="72.000000" width="8.000000" height="8.000000" id="rect562" />
+				<rect x="248.000000" y="88.000000" width="8.000000" height="8.000000" id="rect563" />
+				<rect x="248.000000" y="104.000000" width="8.000000" height="8.000000" id="rect564" />
+				<rect x="248.000000" y="120.000000" width="8.000000" height="8.000000" id="rect565" />
+				<rect x="248.000000" y="136.000000" width="8.000000" height="8.000000" id="rect566" />
+				<rect x="248.000000" y="152.000000" width="8.000000" height="8.000000" id="rect567" />
+				<rect x="248.000000" y="168.000000" width="8.000000" height="8.000000" id="rect568" />
+				<rect x="248.000000" y="184.000000" width="8.000000" height="8.000000" id="rect569" />
+				<rect x="248.000000" y="200.000000" width="8.000000" height="8.000000" id="rect570" />
+				<rect x="248.000000" y="216.000000" width="8.000000" height="8.000000" id="rect571" />
+				<rect x="248.000000" y="232.000000" width="8.000000" height="8.000000" id="rect572" />
+				<rect x="248.000000" y="248.000000" width="8.000000" height="8.000000" id="rect573" />
+			</g>
+		</symbol>
+
+		<symbol id="linear-barcode-icon" viewBox="0 0 145 20">
+			<g fill="currentColor">
+				<rect x="0" y="0" width="2" height="20" />
+				<rect x="3" y="0" width="1" height="20" />
+				<rect x="6" y="0" width="1" height="20" />
+				<rect x="11" y="0" width="1" height="20" />
+				<rect x="14" y="0" width="3" height="20" />
+				<rect x="19" y="0" width="2" height="20" />
+				<rect x="22" y="0" width="1" height="20" />
+				<rect x="26" y="0" width="2" height="20" />
+				<rect x="29" y="0" width="1" height="20" />
+				<rect x="33" y="0" width="1" height="20" />
+				<rect x="37" y="0" width="1" height="20" />
+				<rect x="39" y="0" width="2" height="20" />
+				<rect x="44" y="0" width="3" height="20" />
+				<rect x="48" y="0" width="2" height="20" />
+				<rect x="53" y="0" width="1" height="20" />
+				<rect x="55" y="0" width="1" height="20" />
+				<rect x="57" y="0" width="3" height="20" />
+				<rect x="61" y="0" width="4" height="20" />
+				<rect x="66" y="0" width="2" height="20" />
+				<rect x="70" y="0" width="2" height="20" />
+				<rect x="73" y="0" width="2" height="20" />
+				<rect x="77" y="0" width="2" height="20" />
+				<rect x="80" y="0" width="2" height="20" />
+				<rect x="84" y="0" width="2" height="20" />
+				<rect x="88" y="0" width="2" height="20" />
+				<rect x="91" y="0" width="2" height="20" />
+				<rect x="95" y="0" width="2" height="20" />
+				<rect x="99" y="0" width="1" height="20" />
+				<rect x="102" y="0" width="2" height="20" />
+				<rect x="106" y="0" width="1" height="20" />
+				<rect x="110" y="0" width="2" height="20" />
+				<rect x="114" y="0" width="1" height="20" />
+				<rect x="116" y="0" width="3" height="20" />
+				<rect x="121" y="0" width="1" height="20" />
+				<rect x="125" y="0" width="2" height="20" />
+				<rect x="130" y="0" width="1" height="20" />
+				<rect x="132" y="0" width="2" height="20" />
+				<rect x="137" y="0" width="3" height="20" />
+				<rect x="141" y="0" width="1" height="20" />
+				<rect x="143" y="0" width="2" height="20" />
+			</g>
+		</symbol>
+
+		<symbol id="ebz-logo-icon" viewBox="128 92 40 25">
+			<path
+				style="fill:#0065b3;stroke:#0065b3;stroke-opacity:1;fill-rule:nonzero"
+				d="m 130.98836,114.4372 c -3.77487,-0.78665 -5.03775,-5.16515 -2.4633,-8.54044 2.05955,-2.70021 7.37789,-3.98205 9.52246,-2.29513 0.71697,0.56397 0.92952,1.04212 0.92952,2.09106 0,2.14607 -1.66647,3.13939 -6.26181,3.73243 -2.10802,0.27205 -2.33474,0.75586 -0.98617,2.10444 1.09437,1.09437 1.7866,1.08784 3.90171,-0.0368 1.66396,-0.88474 1.71093,-0.88945 2.36356,-0.23682 0.65263,0.65263 0.63921,0.68402 -0.67502,1.5797 -1.93257,1.31707 -4.53584,1.97562 -6.33095,1.60153 z m 4.10381,-7.45246 c 1.54671,-0.73222 1.25756,-2.32997 -0.42439,-2.34498 -0.78213,-0.007 -3.09907,2.02374 -3.09907,2.71623 0,0.42279 0.27135,0.48187 1.32291,0.28805 0.72761,-0.13411 1.71785,-0.43079 2.20055,-0.6593 z m 4.13356,6.38548 c 0.11079,-0.57958 0.51266,-0.9485 1.27934,-1.17447 1.11167,-0.32765 1.12425,-0.35804 2.29627,-5.54804 0.64815,-2.87023 1.0897,-5.44992 0.98121,-5.73264 -0.10849,-0.28273 -0.51974,-0.51405 -0.91389,-0.51405 -0.74836,0 -0.86126,-0.27093 -0.50249,-1.205868 0.31127,-0.81115 10.59019,-0.82106 12.29547,-0.0119 1.14151,0.54168 1.9555,1.754568 1.95296,2.910018 -0.002,1.04795 -1.28655,2.75717 -2.4264,3.22931 -1.05994,0.43904 -1.49271,1.07561 -0.73124,1.07561 0.20285,0 0.75847,0.38966 1.23472,0.86591 1.69228,1.69228 0.76653,4.75442 -1.82647,6.0415 -1.15621,0.5739 -2.314,0.69505 -7.58279,0.79345 l -6.21822,0.11613 z m 10.82586,-1.72721 c 1.23779,-0.56398 2.02294,-2.29119 1.53166,-3.36944 -0.45308,-0.99441 -1.29896,-1.25136 -3.63294,-1.10355 l -1.73968,0.11017 -0.40793,1.76389 c -0.7018,3.03458 -0.71917,2.99861 1.44801,2.99861 1.05803,0 2.31842,-0.17986 2.80088,-0.39968 z m 1.75426,-7.38704 c 0.53426,-0.42024 0.92952,-1.08459 0.92952,-1.5623 0,-1.36191 -0.89685,-1.93987 -3.01021,-1.93987 h -1.90149 l -0.38737,1.49931 c -0.21305,0.82461 -0.468,1.77711 -0.56654,2.11666 -0.2829,0.97481 3.66794,0.88373 4.93609,-0.1138 z m 4.96815,8.96881 c 0.13198,-0.52586 2.61262,-3.41863 5.6722,-6.61459 l 5.43764,-5.68 -1.28455,-0.11309 c -1.94404,-0.17114 -4.23577,0.85875 -5.3579,2.40781 -0.93587,1.29192 -1.37796,1.38143 -2.45736,0.49752 -0.0687,-0.0563 0.48063,-1.22349 1.22077,-2.59381 l 1.34571,-2.491488 h 6.13762 6.13761 l -0.23413,0.93286 c -0.13169,0.524678 -2.61764,3.418938 -5.68144,6.614588 l -5.44731,5.68172 1.49806,0.1151 c 2.36834,0.18196 3.92208,-0.47029 5.62065,-2.3595 1.34729,-1.49851 1.62744,-1.66042 2.33032,-1.34678 0.43941,0.19607 0.75476,0.45025 0.70079,0.56484 -0.054,0.1146 -0.73315,1.35728 -1.50926,2.76152 l -1.41111,2.55316 -6.47644,0.002 -6.47644,0.002 z" />
+		</symbol>
+
+		<symbol id="placeholder-11" viewBox="0 0 100 100">
+			<polygon points="30,30 70,30 50,70" fill="#7f8c8d" />
+		</symbol>
+	</defs>
+
+	<rect width="100%" height="100%" fill="url(#checkered-bg)" />
+
+	<g font-family="Arial" font-size="5" text-anchor="middle">
+		<g transform="translate(35, 30)">
+			<use href="#ce-mark" x="-20" y="-15" width="40" height="30" />
+			<text y="22">ce-mark</text>
+		</g>
+		<g transform="translate(105, 30)">
+			<use href="#weee_2-icon" x="-11" y="-15" width="22" height="30" />
+			<text y="22">weee_2-icon</text>
+		</g>
+		<g transform="translate(175, 30)">
+			<use href="#rohs-icon" x="-17.5" y="-17.5" width="35" height="35" />
+			<text y="22">rohs-icon</text>
+		</g>
+
+		<g transform="translate(35, 85)">
+			<use href="#book-instruction-v4" x="-17.5" y="-15" width="35" height="30" />
+			<text y="22">book-instruction-v4</text>
+		</g>
+		<g transform="translate(105, 85)">
+			<use href="#hichi-label-authentic-2" x="-15" y="-15" width="30" height="30" />
+			<text y="22">hichi-label-authentic-2</text>
+		</g>
+		<g transform="translate(175, 85)">
+			<g transform="scale(0.75)" style="transform-origin: center; transform-box: fill-box;">
+				<use href="#bezug-einspeisung-icon" x="-20" y="-24" width="40" height="37" />
+			</g>
+			<text y="22">bezug-einspeisung-icon</text>
+		</g>
+
+		<g transform="translate(35, 140)">
+			<use href="#messwertaufnehmer-3kanal" x="-15" y="-15" width="30" height="30" />
+			<text y="22">messwertaufnehmer-3kanal</text>
+		</g>
+		<g transform="translate(105, 140)">
+			<use href="#icon-zwei-richtungs-zaehler" x="-20" y="-10.5" width="40" height="21" />
+			<text y="22">icon-zwei-richtungs-zaehler</text>
+		</g>
+		<g transform="translate(175, 140)">
+			<use href="#protection-class-ii" x="-15" y="-15" width="30" height="30" />
+			<text y="22">protection-class-ii</text>
+		</g>
+
+		<g transform="translate(35, 195)">
+			<use href="#messpunkt-einzel-l3" x="-10" y="-15" width="20" height="30" />
+			<text y="22">messpunkt-einzel-l3</text>
+		</g>
+
+		<g transform="translate(105, 195)">
+			<use href="#ir-interface-symbol" x="-20" y="-15" width="40" height="20" />
+			<text y="22">ir-interface-symbol</text>
+		</g>
+
+		<g transform="translate(35, 195) translate(140, 0)">
+			<use href="#ir-diodes-icon" x="-17.5" y="-27" width="35" height="35" />
+			<text y="22">ir-diodes-icon</text>
+		</g>
+
+		<g transform="translate(35, 250)">
+			<g>
+				<use href="#ir-lesekopf-platzierungs-icon" x="-17.5" y="-17.5" width="35"
+					height="35" />
+				<text y="22">ir-lesekopf-platzierungs-icon</text>
+			</g>
+
+
+			<g transform="translate(70, 0) scale(0.8)">
+				<use href="#matrix-code-icon" x="-17.5" y="-17.5" width="35" height="35" />
+				<text y="28">matrix-code-icon</text>
+			</g>
+
+			<g transform="translate(140, 0)">
+				<g transform="scale(0.5)">
+					<use href="#linear-barcode-icon" x="-25" y="-12.5" width="50" height="25" />
+				</g>
+				<text y="22">linear-barcode-icon</text>
+			</g>
+
+
+		</g>
+
+
+	</g>
+</svg>
