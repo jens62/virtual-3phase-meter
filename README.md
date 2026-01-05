@@ -87,6 +87,14 @@ After following the installation steps, use this workflow to get your meter onli
 * If the data flows correctly, further adjustment of the GUI by modifying `svg_template.xml` is **optional** and only necessary if you wish to change the visual aesthetic.
 
 
+### 💡 Understanding the "Shadow" Effect
+
+On the `settings.php` page, you will see an option for **Shadow**. This mimics the behavior of real LCD screens where inactive segments are still faintly visible as a background "8888".
+
+* **How it works:** The dashboard layers two text elements. The "Shadow" is the bottom layer, showing all segments in a faint color to create a photorealistic depth effect.
+* **Recommended Value:** A value of **0.1** (10% opacity) is usually ideal for a subtle, realistic look.
+* **Disable:** Set this to **0** if you prefer a perfectly clean background with no visible inactive segments.
+
 ---
 ## 🎨 How to Customize the GUI
 You can change the meter's appearance without touching the PHP code:
