@@ -29,25 +29,35 @@ A photorealistic, web-based Progressive Web App (PWA) that visualizes real-time 
 
 ### Installation & Setup
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/jens62/virtual-3phase-meter.git
-    cd virtual-3phase-meter
-    ```
+1. **Clone the repository:**
+```bash
+git clone https://github.com/jens62/virtual-3phase-meter.git
 
-2.  **Install Dependencies:**
-    This project requires the `tecnickcom/tc-lib-barcode` library. Install it using:
-    ```bash
-    composer install
-    ```
+```
 
-3.  **Configuration:**
-    * Rename `config.sample.php` to `config.php`.
-    * Open `config.php` and update it with your meter's specific parameters (e.g., Meter ID, IR-head data paths).
 
-4.  **Deployment:**
-    Upload the entire project folder to your web server. 
-    **Note:** Ensure the `vendor/` directory (created by Composer) is included in your upload.
+2. **Install Dependencies:**
+This project uses Composer to manage libraries, including `tecnickcom/tc-lib-barcode` for barcode generation and `monolog/monolog` for structured logging. Install them using:
+```bash
+cd virtual-3phase-meter
+composer install
+
+```
+
+
+3. **Set Permissions:**
+The application needs to write to the project directory to save your configuration (`config.php`) and maintain debug logs. On Linux servers, you can grant the web server user (typically `www-data`) the necessary permissions:
+```bash
+sudo setfacl -R -m u:www-data:rwx /path/to/virtual-3phase-meter
+
+```
+
+
+4. **Configuration:**
+There is no manual configuration file to rename. Simply navigate to `settings.php` in your web browser to initialize the `config.php` file and set up your meter's parameters.
+5. **Deployment:**
+Upload the project folder to your web server.
+**Note:** Ensure the `vendor/` directory (created by Composer) is included in your upload, as it contains all required PHP libraries.
 
 ---
 
