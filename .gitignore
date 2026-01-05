@@ -19,4 +19,4 @@ composer.phar
 # If you use VS Code, you can ignore the local workspace settings
 .vscode/
 # PHP local server logs
-*.log
+*.log*.log
