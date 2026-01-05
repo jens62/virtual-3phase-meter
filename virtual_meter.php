@@ -144,8 +144,6 @@ if (isset($_GET['ajax'])) {
 
         // Pass PHP Config into JavaScript
         const configMetrics = <?php echo json_encode($config['metrics']); ?>;
-        const precKwh = <?php echo $config['precision_kwh']; ?>;
-        const precWatt = <?php echo $config['precision_watt']; ?>;
         const staticMeterId = <?php echo json_encode($config['meter_id_string'] ?? '-'); ?>;
         const staticBarcodeGroup = `<?php echo $config['datamatrix_group']; ?>`;
         // Bridge PHP config to JS
