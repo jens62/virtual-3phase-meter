@@ -60,7 +60,34 @@ Upload the project folder to your web server.
 **Note:** Ensure the `vendor/` directory (created by Composer) is included in your upload, as it contains all required PHP libraries.
 
 ---
+### ⚙️ Initial Configuration Workflow
 
+After following the installation steps, use this workflow to get your meter online:
+
+1. **Open Settings:** Navigate to `settings.php` in your web browser.
+2. **Basic Connectivity:**
+* Enter your **Host IP** (Tasmota device IP).
+* Enter your **DataMatrix Content**. You can obtain this by scanning the QR-like code on your physical meter (e.g., using "Code Scan" on iPhone). Enter the non-hex part (e.g., `V1\r\nAA...`).
+* Hit **Save & Apply**. This initializes your `config.php`.
+
+
+3. **Define Display Metrics:**
+* Scroll to the **Display Order & Precision** section.
+* Click **Add New Line** to select which SML values (e.g., Total Consumption, Current Power) you want to visualize on the LCD.
+* Set the **Label**, **Unit**, and **Precision** (decimals) for each row.
+* Hit **Save** again to update your dashboard layout.
+
+
+4. **Verify Data Flow:**
+* Click **"Return to Dashboard"** at the bottom of the page to verify that data is flowing as expected.
+* **Troubleshooting:** If data is not appearing, return to settings, set the **Log Level** to **Debug**, and check the `debug.log` file for detailed error messages.
+
+
+5. **Optional UI Customization:**
+* If the data flows correctly, further adjustment of the GUI by modifying `svg_template.xml` is **optional** and only necessary if you wish to change the visual aesthetic.
+
+
+---
 ## 🎨 How to Customize the GUI
 You can change the meter's appearance without touching the PHP code:
 1.  Open `svg_template.xml` in **Inkscape**.
@@ -68,10 +95,13 @@ You can change the meter's appearance without touching the PHP code:
 3.  **Crucial:** Ensure the `id` tags of the text elements (e.g., `id="power_val"`, `id="meter_id"`) remain consistent so the PHP script can inject the data.
 4.  Save the file. Your PWA will automatically reflect the new design.
 
-## 📂 Project Structure
-* `virtual_meter.php`: The core PWA application and logic.
-* `config.php`: Your private configuration (Ignored by Git).
-* `svg_template.xml`: The visual interface file.
+### 📂 Project Structure
+
+* `virtual_meter.php`: The core dashboard and logic for the PWA display.
+* `settings.php`: The web-based configuration interface to manage device settings and display metrics.
+* `tasmota_utils.php`: Internal utility library for Tasmota discovery, DIN 43863-5 meter ID decoding, and Monolog integration.
+* `config.php`: Your private system configuration (created automatically by `settings.php`; ignored by Git).
+* `svg_template.xml`: The visual interface file containing the SVG meter design.
 * `manifest.json`: Web app manifest for PWA installation.
 * `assets/fonts/`: Contains the `digital-7 (mono).ttf` font for the display.
 
