@@ -1,70 +1,70 @@
 <?php
 /**
  * Smart Meter PWA Dashboard - Dynamic Version
- * Reads configuration from config.php and layout from svg_template.xml
+ * Version: 1.7 - Dynamic Meter ID Integration
  */
 
+require_once('tasmota_utils.php'); // Include your discovery and logging logic
 $config = include('config.php');
-$tasmotaUrl = "{$config['protocol']}://{$config['host']}{$config['endpoint']}";
-
-// Function for Hex Decoding (Meter ID)
-function decodeMeterNumber($hex) {
-    if (empty($hex) || strlen($hex) < 20) return "Invalid Hex";
-    $sparte = hexdec(substr($hex, 2, 2));
-    $hersteller = hex2bin(substr($hex, 4, 6));
-    $block = str_pad(hexdec(substr($hex, 10, 2)), 2, "0", STR_PAD_LEFT);
-    $fabNumHex = substr($hex, 12);
-    $fabNumDec = (string)hexdec($fabNumHex);
-    $fabNumPadded = str_pad($fabNumDec, 8, "0", STR_PAD_LEFT);
-    return $sparte . " " . $hersteller . " " . $block . " " . substr($fabNumPadded, 0, 4) . " " . substr($fabNumPadded, 4, 4);
-}
-
-function encodeMeterNumber($humanReadable) {
-    // 1. String zerlegen (erwartet Format: "1 EBZ 01 0000 0619")
-    $parts = explode(" ", $humanReadable);
-    if (count($parts) < 5) return "Invalid Input Format";
-
-    $sparte = $parts[0];
-    $hersteller = $parts[1];
-    $block = $parts[2];
-    // Die Fabrikationsnummer besteht aus den letzten beiden Teilen
-    $fabNumStr = $parts[3] . $parts[4];
-
-    // 2. Transformation der einzelnen Komponenten
-    // Sparte zu Hex (2 Stellen, wir setzen 01 davor wie im Original-Decoder substr(2,2))
-    $prefix = "01"; // Das ist der statische Teil AA im Beispiel (substr 0,2)
-    $sparteHex = str_pad(dechex((int)$sparte), 2, "0", STR_PAD_LEFT);
-
-    // Hersteller zu Hex (3 Zeichen ASCII -> 6 Stellen Hex)
-    $herstellerHex = bin2hex($hersteller);
-
-    // Block zu Hex (2 Stellen)
-    $blockHex = str_pad(dechex((int)$block), 2, "0", STR_PAD_LEFT);
-
-    // Fabrikationsnummer zu Hex (8 Stellen Dezimal -> Hex)
-    $fabNumHex = dechex((int)$fabNumStr);
-    // Hier ist Vorsicht geboten: Die Länge des Rests hängt von der ursprünglichen Hex-Länge ab.
-    // Meistens sind es 8 oder 10 Stellen im Ziel-Hex.
-    $fabNumHex = str_pad($fabNumHex, 10, "0", STR_PAD_LEFT);
-
-    // 3. Zusammenfügen
-    return strtoupper($prefix . $sparteHex . $herstellerHex . $blockHex . $fabNumHex);
-}
+$tasmotaUrl = "{$config['protocol']}://{$config['host']}/cm?cmnd=Status%208";
 
 // Handle AJAX updates
 if (isset($_GET['ajax'])) {
+    $log = getLogger(); // Enhanced logger from tasmota_utils.php
+    $log->debug("AJAX update triggered");
+
     $ch = curl_init($tasmotaUrl);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 3);
     $response = curl_exec($ch);
-    curl_close($ch);
-    $data = json_decode($response, true);
-    if ($data) {
-        $rawMeter = $data['StatusSNS']['SML']['96_1_0'] ?? null;
-        if ($rawMeter) $data['DecodedMeter'] = decodeMeterNumber($rawMeter);
+    $curlError = curl_error($ch);
+    // curl_close($ch); // Optional in PHP 8.0+, but safe to keep
+
+    if ($response === false) {
+        $log->error("CURL Fetch Failed", ['error' => $curlError, 'url' => $tasmotaUrl]);
+        header('HTTP/1.1 500 Internal Server Error');
+        echo json_encode(['error' => 'Connection to Tasmota failed']);
+        exit;
     }
+
+    $data = json_decode($response, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        $log->error("JSON Decode Failed", ['error' => json_last_error_msg()]);
+    }
+
+    // Prepare a clean response for the frontend
+    $ajaxOutput = [
+        'FlatSNS' => [],
+        'DecodedMeter' => '-'
+    ];
+
+    if ($data && isset($data['StatusSNS'])) {
+        // 1. Flatten the data using the utility function
+        // This removes the need for JS to search through SML/MT681/etc nesting
+        $flatData = getLeafData($data['StatusSNS']);
+        $ajaxOutput['FlatSNS'] = $flatData;
+        
+        // 2. Map the Meter ID using the key discovered in settings.php
+        $idKey = $config['meter_id_key'] ?? null;
+        
+        if ($idKey && isset($flatData[$idKey])) {
+            $ajaxOutput['DecodedMeter'] = decodeMeterNumber($flatData[$idKey]);
+            $log->debug("Meter ID mapped and decoded", ['key' => $idKey, 'value' => $ajaxOutput['DecodedMeter']]);
+        } else {
+            $log->warning("Configured Meter ID key not found in live data", [
+                'configured_key' => $idKey,
+                'available_keys_count' => count($flatData)
+            ]);
+        }
+
+        // Optional: Log a preview of the flattened keys for debugging
+        $log->debug("Flattened data ready for JS", ['keys' => array_keys($flatData)]);
+    } else {
+        $log->warning("Tasmota response missing StatusSNS", ['raw_payload' => substr($response, 0, 200)]);
+    }
+
     header('Content-Type: application/json');
-    echo json_encode($data);
+    echo json_encode($ajaxOutput);
     exit;
 }
 ?>
@@ -146,153 +146,158 @@ if (isset($_GET['ajax'])) {
         const configMetrics = <?php echo json_encode($config['metrics']); ?>;
         const precKwh = <?php echo $config['precision_kwh']; ?>;
         const precWatt = <?php echo $config['precision_watt']; ?>;
+        const staticMeterId = <?php echo json_encode($config['meter_id_string'] ?? '-'); ?>;
         const staticBarcodeGroup = `<?php echo $config['datamatrix_group']; ?>`;
+        // Bridge PHP config to JS
+        const logLevel = <?php echo json_encode($config['log_level'] ?? 'Info'); ?>;
 
         // 2. Einmalige Injektion beim Start
         document.addEventListener('DOMContentLoaded', () => {
             const target = document.getElementById('matrixcode-target');
             if (target && staticBarcodeGroup) {
                 target.innerHTML = staticBarcodeGroup;
-                console.log("Barcode initial geladen.");
+                logDebug("Barcode initial geladen.");
             }
         });
 
         /**
-         * 1. Initialize Dynamic Rows in the SVG
+         * Global Debug Logger - supports unlimited arguments
          */
-        /**
-         * Dynamic initDisplay
-         * Calibrated for eBZ DD3 LCD window boundaries (x:115-385, y:60-180)
-         */
-        /**
-         * Dynamic initDisplay - Optimized for Large Line Spacing
-         * Calibrated for eBZ DD3 LCD Window: x[115-385], y[60-180]
-         */
+        function logDebug(...args) {
+            if (logLevel === 'Debug') {
+                // We prepend a tag to make it easy to find in the console
+                console.log(`[DEBUG]`, ...args);
+            }
+        }        
+
         function initDisplay() {
             const rowContainer = document.getElementById('dynamic-rows');
-            const lcdBg = document.getElementById('rect12'); // Measuring the inner green area
+            const lcdBg = document.getElementById('rect12'); 
             if (!rowContainer || !lcdBg) return;
             
             rowContainer.innerHTML = ''; 
-            const box = lcdBg.getBBox(); // Local coordinates within g20
+            const box = lcdBg.getBBox(); 
             const totalLines = configMetrics.length;
             
+            logDebug(`--- initDisplay Debug ---`);
+            logDebug(`LCD Box: Width=${box.width.toFixed(2)}, Height=${box.height.toFixed(2)}`);
+            logDebug(`Lines: ${totalLines}`);
+
             const slotHeight = box.height / totalLines;
-            const paddingLeft = 10; // Left margin inside rect12
-            const paddingRight = 35; // Space for units on the right
+            const paddingLeft = 10; 
+            const paddingRight = 35;
 
             configMetrics.forEach((m, index) => {
                 let fontSize = m.large ? (slotHeight * 0.82) : (slotHeight * 0.55);
+                
+                // FIX for the "Too Large" width:
+                // We add a constraint: if there are few lines, the font height 
+                // shouldn't exceed a reasonable fraction of the total width.
+                const widthConstraint = box.width * 0.15; // Max font size based on width
+                fontSize = Math.min(fontSize, widthConstraint);
+                
+                // Absolute caps
                 fontSize = Math.min(fontSize, m.large ? 42 : 24); 
 
-                // Baseline calculation relative to the top of rect12 (box.y)
+                logDebug(`Line ${index}: slotH=${slotHeight.toFixed(1)}, fontSize=${fontSize.toFixed(1)}, label=${m.label}`);
+
                 const y = box.y + (slotHeight * index) + (slotHeight * 0.5) + (fontSize * 0.3);
-                
                 const labelSize = fontSize * 0.35;
                 const unitSize = fontSize * 0.45;
                 let label = m.label || m.prefix.split('__')[0].replace(/_/g, '.');
 
                 const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
-                
-                // NO MATRIX HERE: The rowContainer already inherits it from g20
                 group.innerHTML = `
                     <text x="${box.x + paddingLeft}" y="${y}" class="lcd-label" font-size="${labelSize}" fill="#2a3a2a">${label}</text>
-                    
                     <text id="shd-${index}" x="${box.x + box.width - paddingRight}" y="${y}" class="lcd-shadow" font-size="${fontSize}" text-anchor="end"></text>
                     <text id="val-${index}" x="${box.x + box.width - paddingRight}" y="${y}" class="lcd-text" font-size="${fontSize}" text-anchor="end">--</text>
-                    
                     <text x="${box.x + box.width - (paddingRight - 5)}" y="${y}" font-family="Arial" font-size="${unitSize}" fill="#1a1a1a">${m.unit}</text>
                 `;
                 rowContainer.appendChild(group);
             });
         }
+
         function generateShadowMask(inputStr) {
             return inputStr.replace(/[0-9]/g, '8');
         }
+
+        function initStaticElements() {
+            const meterId = staticMeterId;
+            
+            // 1. Set the static Text ID
+            const idElement = document.getElementById('svg-meter-id');
+            if (idElement) {
+                idElement.textContent = meterId;
+            }
+
+            // 2. Generate the static Barcode
+            if (meterId && meterId !== "-") {
+                const target = document.getElementById('barcode-target');
+                const meterIdClean = meterId.replace(/\s/g, '');
+                
+                if (target) {
+                    const tempSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                    JsBarcode(tempSvg, meterIdClean, {
+                        format: "CODE128",
+                        width: 1, 
+                        height: 20, 
+                        displayValue: false,
+                        background: "transparent", 
+                        margin: 0,
+                        flat: true
+                    });
+
+                    target.innerHTML = ''; 
+                    while (tempSvg.firstChild) {
+                        target.appendChild(tempSvg.firstChild);
+                    }
+
+                    // Dynamic Centering
+                    const barcodeWidth = target.getBBox().width;
+                    const centerPoint = 120; 
+                    const xShift = centerPoint - (barcodeWidth / 2);
+                    target.setAttribute("transform", `translate(${xShift}, 0)`);
+                }
+            }
+        }        
 
         async function updateDashboard() {
             try {
                 const res = await fetch(window.location.pathname + '?ajax=1');
                 const data = await res.json();
-                const sml = data.StatusSNS?.SML || {};
+                
+                // Use the pre-flattened data from PHP
+                const sns = data.FlatSNS || {};
 
-                // Update dynamic values
                 configMetrics.forEach((m, index) => {
-                    const key = Object.keys(sml).find(k => k.startsWith(m.prefix));
-                    if(key) {
-                        // Use precision based on unit
-                        const prec = (m.unit.toLowerCase() === 'kwh') ? precKwh : precWatt;
-                        const v = Number(sml[key]).toLocaleString('de-DE', {
+                    const actualKey = Object.keys(sns).find(k => k.startsWith(m.prefix));
+                    
+                    if (actualKey) {
+                        const val = sns[actualKey];
+                        
+                        // NEW: Use the specific precision from the metric config
+                        // Fallback to 0 if not defined
+                        const prec = parseInt(m.precision) || 0; 
+                        
+                        const v = Number(val).toLocaleString('de-DE', {
                             minimumFractionDigits: prec, 
                             maximumFractionDigits: prec 
                         });
                         
-                        document.getElementById('val-' + index).textContent = v;
-                        document.getElementById('shd-' + index).textContent = generateShadowMask(v);
+                        logDebug(`Updating Row ${index} (${m.prefix}) with precision ${prec}: ${val} -> ${v}`);
+                        
+                        const valEl = document.getElementById('val-' + index);
+                        const shdEl = document.getElementById('shd-' + index);
+                        if (valEl) valEl.textContent = v;
+                        if (shdEl) shdEl.textContent = generateShadowMask(v);
                     }
                 });
-
-                // Update Meter ID & Barcode
-                const meterId = data.DecodedMeter || "-";
-                // 1. Dynamic Meter ID Handling
-                const idElement = document.getElementById('svg-meter-id');
-                if (idElement) {
-                    idElement.textContent = data.DecodedMeter || "-";
-                    // If the ID is too long for its position, we shrink the font dynamically
-                    const maxLength = 20; 
-                    // if (idElement.textContent.length > maxLength) {
-                    //     idElement.setAttribute('font-size', '10px');
-                    // } else {
-                    //     idElement.setAttribute('font-size', '14px');
-                    // }
-                }
-                                
-                if (data.DecodedMeter) {
-                    const target = document.getElementById('barcode-target');
-                    const meterIdClean = meterId.replace(/\s/g, '');
-                    
-                    if (target) {
-                        // 1. Barcode in einem temporären/versteckten SVG-Element generieren
-                        const tempSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                        JsBarcode(tempSvg, meterIdClean, {
-                            format: "CODE128",
-                            width: 1, 
-                            height: 20, // Deine Zielhöhe
-                            displayValue: false,
-                            background: "transparent", 
-                            margin: 0,
-                            flat: true
-                        });
-
-                        // 2. Das Ziel-Element (die Gruppe in deinem Haupt-SVG) finden
-                        const targetGroup = document.getElementById("barcode-target");
-                        targetGroup.innerHTML = ''; // Vorherigen Inhalt löschen
-
-                        // 3. Den Inhalt vom Temp-SVG in die Gruppe verschieben
-                        // Wir nehmen die Kinder des generierten SVGs (meist eine Gruppe oder Rects)
-                        while (tempSvg.firstChild) {
-                            targetGroup.appendChild(tempSvg.firstChild);
-                        }
-
-                        // 4. DYNAMISCHE ZENTRIERUNG
-                        // Wir messen, wie breit der Barcode tatsächlich geworden ist
-                        const barcodeWidth = targetGroup.getBBox().width;
-                        const centerPoint = 120; // Deine Ziel-Mitte im identification-section
-                        const xShift = centerPoint - (barcodeWidth / 2);
-
-                        // 5. Die Gruppe verschieben
-                        targetGroup.setAttribute("transform", `translate(${xShift}, 0)`);
-                    } else {
-                        console.log("barcode-target not found.")
-                    }
-
-                }
                                 
                 document.getElementById('status-text').textContent = "LIVE";
                 document.getElementById('status-text').style.fill = "#2a7a2a";
                 document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
             } catch (e) {
-                console.log(e);
+                console.error("Update failed:", e);
                 document.getElementById('status-text').textContent = "OFFLINE";
                 document.getElementById('status-text').style.fill = "#a33";
             }
@@ -300,6 +305,7 @@ if (isset($_GET['ajax'])) {
 
         // Run Setup
         initDisplay();
+        initStaticElements();
         updateDashboard();
         // Konvertiert Sekunden aus der Config in Millisekunden für JS
         setInterval(updateDashboard, <?php echo ($config['refresh_rate'] ?? 5) * 1000; ?>);
