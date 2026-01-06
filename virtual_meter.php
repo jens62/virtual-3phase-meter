@@ -126,11 +126,27 @@ if (isset($_GET['ajax'])) {
 
     <div class="meter-wrapper">
         <?php 
-            // Load the SVG template
-            if (file_exists('svg_template.xml')) {
-                echo file_get_contents('svg_template.xml'); 
-            } else {
-                echo "Error: svg_template.xml not found.";
+            // Define the base directory for templates
+            $templateDir = 'svg-meter-templates/';
+            
+            // Get the filename from config, fallback to a default if empty
+            $templateFile = !empty($config['meter_template']) ? $config['meter_template'] : 'svg_template.xml';
+            
+            $fullPath = $templateDir . $templateFile;
+
+            // Check if the file exists in the templates folder
+            if (file_exists($fullPath)) {
+                echo file_get_contents($fullPath); 
+            } 
+            // Fallback for the original root file if it exists
+            elseif (file_exists($templateFile)) {
+                echo file_get_contents($templateFile);
+            }
+            else {
+                echo "<div style='color: white; background: #a33; padding: 10px;'>
+                        Error: Template configuration invalid.<br>
+                        File not found: " . htmlspecialchars($fullPath) . "
+                    </div>";
             }
         ?>
     </div>

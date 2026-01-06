@@ -1,7 +1,6 @@
 <?php
 /**
  * Meter Settings GUI
- * Version: 1.6 - Anti-Flicker & Layout Stability
  */
 
 require_once('vendor/autoload.php');
@@ -105,6 +104,24 @@ if (!isset($config['datamatrix_group'])) $config['datamatrix_group'] = "";
 
 ini_set('serialize_precision', -1);
 
+// --- Template Discovery Logic ---
+$templateDir = __DIR__ . '/svg-meter-templates';
+$templates = [];
+if (is_dir($templateDir)) {
+    // Filter for .svg files and remove . and ..
+    $templates = array_values(preg_grep('/\.svg$/i', scandir($templateDir)));
+}
+
+// Default selection logic if not already in config
+if (!isset($config['meter_template'])) {
+    if (count($templates) === 1) {
+        $config['meter_template'] = $templates[0];
+    } else {
+        $config['meter_template'] = "";
+    }
+}
+// --- End Template Discovery ---
+
 // 1. Discovery: Tasmota URL & Leaf Key Extraction
 $tasmotaUrl = "{$config['protocol']}://{$config['host']}/cm?cmnd=Status%208";
 
@@ -127,6 +144,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $config['log_level'] = $_POST['log_level'];
     $config['refresh_rate'] = (int)$_POST['refresh_rate'];
     $config['shadow_opacity'] = (float)$_POST['shadow_opacity'];
+
+    // Save the selected template
+    $config['meter_template'] = $_POST['meter_template'] ?? '';
 
     // DataMatrix Verarbeitung
     $raw_content = $_POST['datamatrix_raw'] ?? '';
@@ -237,204 +257,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>Meter Config v1.6</title>
+    <title>Meter Config</title>
+    <link rel="stylesheet" href="css/settings.css?v=<?php echo filemtime('css/settings.css'); ?>">
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <style>
-        :root { 
-            --bg: #121212; 
-            --card: #1e1e1e; 
-            --accent: #2e7d32; 
-            --text: #e0e0e0; 
-            --border: #333; 
-            --input-bg: #121212;
-        }
 
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background: var(--bg); 
-            color: var(--text); 
-            padding: 20px; 
-            margin: 0; 
-            line-height: 1.5;
-        }
-
-        .container { max-width: 900px; margin: auto; padding-bottom: 50px; }
-        
-        .header { text-align: center; margin-bottom: 30px; height: 60px; line-height: 60px; }
-        
-        .card { 
-            background: var(--card); 
-            padding: 20px; 
-            border-radius: 12px; 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5); 
-            margin-bottom: 20px; 
-            border: 1px solid var(--border); 
-            overflow: hidden; 
-        }
-
-        /* System Grid at the top */
-        .grid-main { 
-            display: grid; 
-            grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr; 
-            gap: 15px; 
-            margin-bottom: 20px; 
-        }
-        
-        #metric-container { min-height: 100px; contain: layout; }
-        
-        /* The core row layout - 7 columns */
-        .metric-item { 
-            display: grid; 
-            /* Handle(30), SML Key(1.2), Label(1.2), Unit(60), Dec(50), Large(45), Remove(40) */
-            grid-template-columns: 30px 1.2fr 1.2fr 60px 50px 45px 40px; 
-            gap: 10px; 
-            background: #252525; 
-            padding: 12px 15px; 
-            margin-bottom: 10px; 
-            border-radius: 8px; 
-            align-items: end;
-            border: 1px solid var(--border);
-            height: 92px; 
-            box-sizing: border-box;
-            transition: border-color 0.2s;
-        }
-
-        .metric-item:hover { border-color: #444; }
-        
-        .drag-handle { 
-            cursor: grab; 
-            color: #666; 
-            font-size: 24px; 
-            text-align: center; 
-            line-height: 40px; 
-            user-select: none; 
-            padding-bottom: 5px;
-        }
-
-        label { 
-            display: block; 
-            font-size: 10px; 
-            color: #888; 
-            text-transform: uppercase; 
-            margin-bottom: 5px; 
-            font-weight: bold; 
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        input, select, textarea { 
-            background: var(--input-bg); 
-            color: #fff; 
-            border: 1px solid #444; 
-            padding: 10px; 
-            border-radius: 6px; 
-            width: 100%; 
-            box-sizing: border-box; 
-            font-size: 14px;
-        }
-
-        /* Prevent iOS zoom on focus (requires font-size 16px on small screens) */
-        @media (max-width: 600px) {
-            input, select { font-size: 16px; }
-        }
-
-        textarea { font-family: monospace; height: 80px; resize: vertical; }
-
-        .btn { padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .btn-add { background: #333; color: #fff; width: 100%; margin-bottom: 20px; border: 1px dashed #555; }
-        .btn-save { background: var(--accent); color: white; width: 100%; font-size: 16px; margin-top: 10px; }
-        
-        .btn-remove { 
-            background: #b71c1c; 
-            color: white; 
-            height: 40px; 
-            width: 100%; 
-            border: none; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-        .btn-remove:hover { background: #d32f2f; }
-
-        .status-msg { 
-            background: rgba(46, 125, 50, 0.2); 
-            border: 1px solid var(--accent); 
-            color: #81c784; 
-            padding: 12px; 
-            border-radius: 6px; 
-            text-align: center; 
-            margin-bottom: 20px; 
-        }
-
-        .back-link { display: block; text-align: center; margin-top: 25px; color: #666; text-decoration: none; }
-
-        /* iPhone / Mobile Optimized Horizontal Swiping for Rows */
-        @media (max-width: 650px) {
-            .metric-item {
-                /* Remove fixed height and switch to a 2-row internal grid */
-                height: auto; 
-                grid-template-columns: 30px 1fr 1fr; /* Handle | Key | Label */
-                grid-template-rows: auto auto;
-                gap: 12px 8px;
-                padding: 15px;
-            }
-
-            /* Row 1: Handle, Key, Label */
-            .metric-item div:nth-child(1) { grid-row: 1 / 2; } /* Handle */
-            .metric-item div:nth-child(2) { grid-row: 1 / 2; } /* Key */
-            .metric-item div:nth-child(3) { grid-row: 1 / 2; } /* Label */
-
-            /* Row 2: Unit, Dec, Large, Remove */
-            /* We place these in a sub-grid or just span them */
-            .metric-item div:nth-child(4), /* Unit */
-            .metric-item div:nth-child(5), /* Dec */
-            .metric-item div:nth-child(6), /* Large */
-            .metric-item button.btn-remove { 
-                grid-row: 2 / 3; 
-            }
-
-            /* Layout adjustments for the bottom row elements */
-            .metric-item div:nth-child(4) { grid-column: 1 / 3; } /* Unit spans left */
-            .metric-item div:nth-child(5) { grid-column: 3 / 4; } /* Dec */
-            
-            /* Better alternative: Use Flex for the bottom row */
-            .metric-item {
-                display: block; /* Break the grid for mobile */
-                height: auto;
-            }
-
-            .metric-item > div {
-                margin-bottom: 10px;
-            }
-
-            /* Group the small inputs together on one line */
-            .metric-item {
-                display: flex;
-                flex-direction: column;
-            }
-
-            /* First line: Handle + Key + Label */
-            .row-top { 
-                display: flex; 
-                gap: 10px; 
-                width: 100%; 
-                align-items: center; 
-            }
-            
-            /* Second line: Unit + Dec + Large + Remove */
-            .row-bottom { 
-                display: flex; 
-                gap: 10px; 
-                width: 100%; 
-                justify-content: space-between; 
-                align-items: flex-end;
-            }
-        }
-    </style>
 </head>
 <body>
 
@@ -453,6 +279,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div><label>Protocol</label><select name="protocol"><option value="http" <?php echo $config['protocol']=='http'?'selected':''; ?>>HTTP</option><option value="https" <?php echo $config['protocol']=='https'?'selected':''; ?>>HTTPS</option></select></div>
                 <div><label>Refresh (s)</label><input type="number" name="refresh_rate" value="<?php echo $config['refresh_rate']; ?>"></div>
                 <div><label>Shadow</label><input type="number" name="shadow_opacity" step="0.01" value="<?php echo $config['shadow_opacity']; ?>"></div>
+
+                <div style="grid-column: span 2;">
+                    <label>Meter SVG Template</label>
+                    <?php if (count($templates) === 1): ?>
+                        <input type="text" value="<?php echo htmlspecialchars($templates[0]); ?>" disabled>
+                        <input type="hidden" name="meter_template" value="<?php echo htmlspecialchars($templates[0]); ?>">
+                        <small style="color: #666;">(Only one template found in directory)</small>
+                    <?php elseif (count($templates) > 1): ?>
+                        <select name="meter_template">
+                            <option value="">-- Select Template --</option>
+                            <?php foreach ($templates as $tpl): ?>
+                                <option value="<?php echo htmlspecialchars($tpl); ?>" <?php echo ($config['meter_template'] == $tpl) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($tpl); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    <?php else: ?>
+                        <div style="color: #ff5252; font-size: 0.9em;">No .svg files found in /svg-meter-templates/</div>
+                        <input type="hidden" name="meter_template" value="">
+                    <?php endif; ?>
+                </div>                
                 
                 <div>
                     <label>Log Level</label>

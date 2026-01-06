@@ -1,0 +1,215 @@
+/**
+ * Meter Settings GUI - Stylesheet
+ */
+
+:root { 
+    --bg: #121212; 
+    --card: #1e1e1e; 
+    --accent: #2e7d32; 
+    --text: #e0e0e0; 
+    --border: #333; 
+    --input-bg: #121212;
+}
+
+body { 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+    background: var(--bg); 
+    color: var(--text); 
+    padding: 20px; 
+    margin: 0; 
+    line-height: 1.5;
+}
+
+/* Layout Containers */
+.container { 
+    max-width: 900px; 
+    margin: auto; 
+    padding-bottom: 50px; 
+}
+
+.header { 
+    text-align: center; 
+    margin-bottom: 30px; 
+    height: 60px; 
+    line-height: 60px; 
+}
+
+.card { 
+    background: var(--card); 
+    padding: 20px; 
+    border-radius: 12px; 
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5); 
+    margin-bottom: 20px; 
+    border: 1px solid var(--border); 
+    overflow: hidden; 
+}
+
+/* System Grid (Top Section) */
+.grid-main { 
+    display: grid; 
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr; 
+    gap: 15px; 
+    margin-bottom: 20px; 
+}
+
+#metric-container { 
+    min-height: 100px; 
+    contain: layout; 
+}
+
+/* Metric Row Layout */
+.metric-item { 
+    display: grid; 
+    /* Columns: Handle, SML Key, Label, Unit, Dec, Large, Remove */
+    grid-template-columns: 30px 1.2fr 1.2fr 60px 50px 45px 40px; 
+    gap: 10px; 
+    background: #252525; 
+    padding: 12px 15px; 
+    margin-bottom: 10px; 
+    border-radius: 8px; 
+    align-items: end;
+    border: 1px solid var(--border);
+    height: 92px; 
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.metric-item:hover { 
+    border-color: #444; 
+}
+
+.drag-handle { 
+    cursor: grab; 
+    color: #666; 
+    font-size: 24px; 
+    text-align: center; 
+    line-height: 40px; 
+    user-select: none; 
+    padding-bottom: 5px;
+}
+
+/* Form Elements */
+label { 
+    display: block; 
+    font-size: 10px; 
+    color: #888; 
+    text-transform: uppercase; 
+    margin-bottom: 5px; 
+    font-weight: bold; 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+input, select, textarea { 
+    background: var(--input-bg); 
+    color: #fff; 
+    border: 1px solid #444; 
+    padding: 10px; 
+    border-radius: 6px; 
+    width: 100%; 
+    box-sizing: border-box; 
+    font-size: 14px;
+}
+
+textarea { 
+    font-family: monospace; 
+    height: 80px; 
+    resize: vertical; 
+}
+
+/* Buttons */
+.btn { 
+    padding: 12px; 
+    border: none; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    font-weight: bold; 
+}
+
+.btn-add { 
+    background: #333; 
+    color: #fff; 
+    width: 100%; 
+    margin-bottom: 20px; 
+    border: 1px dashed #555; 
+}
+
+.btn-save { 
+    background: var(--accent); 
+    color: white; 
+    width: 100%; 
+    font-size: 16px; 
+    margin-top: 10px; 
+}
+
+.btn-remove { 
+    background: #b71c1c; 
+    color: white; 
+    height: 40px; 
+    width: 100%; 
+    border: none; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.btn-remove:hover { 
+    background: #d32f2f; 
+}
+
+/* Feedback & Links */
+.status-msg { 
+    background: rgba(46, 125, 50, 0.2); 
+    border: 1px solid var(--accent); 
+    color: #81c784; 
+    padding: 12px; 
+    border-radius: 6px; 
+    text-align: center; 
+    margin-bottom: 20px; 
+}
+
+.back-link { 
+    display: block; 
+    text-align: center; 
+    margin-top: 25px; 
+    color: #666; 
+    text-decoration: none; 
+}
+
+/* Mobile Responsiveness (max-width: 650px) */
+@media (max-width: 650px) {
+    /* Prevent iOS zoom on focus */
+    input, select { 
+        font-size: 16px; 
+    }
+
+    .metric-item {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        padding: 15px;
+    }
+
+    .metric-item > div {
+        margin-bottom: 10px;
+    }
+
+    .row-top { 
+        display: flex; 
+        gap: 10px; 
+        width: 100%; 
+        align-items: center; 
+    }
+    
+    .row-bottom { 
+        display: flex; 
+        gap: 10px; 
+        width: 100%; 
+        justify-content: space-between; 
+        align-items: flex-end;
+    }
+}
