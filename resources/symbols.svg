@@ -17,77 +17,77 @@
 
 	<g font-family="Arial" font-size="5" text-anchor="middle">
 		<g transform="translate(35, 30)">
-			<use href="assets/svg-symbols/definitions.svg#ce-mark" x="-20" y="-15" width="40" height="30" />
+			<use href="../assets/svg-symbols/definitions.svg#ce-mark" x="-20" y="-15" width="40" height="30" />
 			<text y="22">ce-mark</text>
 		</g>
 		<g transform="translate(105, 30)">
-			<use href="assets/svg-symbols/definitions.svg#weee_2-icon" x="-11" y="-15" width="22" height="30" />
+			<use href="../assets/svg-symbols/definitions.svg#weee_2-icon" x="-11" y="-15" width="22" height="30" />
 			<text y="22">weee_2-icon</text>
 		</g>
 		<g transform="translate(175, 30)">
-			<use href="assets/svg-symbols/definitions.svg#rohs-icon" x="-17.5" y="-17.5" width="35" height="35" />
+			<use href="../assets/svg-symbols/definitions.svg#rohs-icon" x="-17.5" y="-17.5" width="35" height="35" />
 			<text y="22">rohs-icon</text>
 		</g>
 
 		<g transform="translate(35, 85)">
-			<use href="assets/svg-symbols/definitions.svg#book-instruction-v4" x="-17.5" y="-15" width="35" height="30" />
+			<use href="../assets/svg-symbols/definitions.svg#book-instruction-v4" x="-17.5" y="-15" width="35" height="30" />
 			<text y="22">book-instruction-v4</text>
 		</g>
 		<g transform="translate(105, 85)">
-			<use href="assets/svg-symbols/definitions.svg#hichi-label-authentic-2" x="-15" y="-15" width="30" height="30" />
+			<use href="../assets/svg-symbols/definitions.svg#hichi-label-authentic-2" x="-15" y="-15" width="30" height="30" />
 			<text y="22">hichi-label-authentic-2</text>
 		</g>
 		<g transform="translate(175, 85)">
 			<g transform="scale(0.75)" style="transform-origin: center; transform-box: fill-box;">
-				<use href="assets/svg-symbols/definitions.svg#bezug-einspeisung-icon" x="-20" y="-24" width="40" height="37" />
+				<use href="../assets/svg-symbols/definitions.svg#bezug-einspeisung-icon" x="-20" y="-24" width="40" height="37" />
 			</g>
 			<text y="22">bezug-einspeisung-icon</text>
 		</g>
 
 		<g transform="translate(35, 140)">
-			<use href="assets/svg-symbols/definitions.svg#messwertaufnehmer-3kanal" x="-15" y="-15" width="30" height="30" />
+			<use href="../assets/svg-symbols/definitions.svg#messwertaufnehmer-3kanal" x="-15" y="-15" width="30" height="30" />
 			<text y="22">messwertaufnehmer-3kanal</text>
 		</g>
 		<g transform="translate(105, 140)">
-			<use href="assets/svg-symbols/definitions.svg#icon-zwei-richtungs-zaehler" x="-20" y="-10.5" width="40" height="21" />
+			<use href="../assets/svg-symbols/definitions.svg#icon-zwei-richtungs-zaehler" x="-20" y="-10.5" width="40" height="21" />
 			<text y="22">icon-zwei-richtungs-zaehler</text>
 		</g>
 		<g transform="translate(175, 140)">
-			<use href="assets/svg-symbols/definitions.svg#protection-class-ii" x="-15" y="-15" width="30" height="30" />
+			<use href="../assets/svg-symbols/definitions.svg#protection-class-ii" x="-15" y="-15" width="30" height="30" />
 			<text y="22">protection-class-ii</text>
 		</g>
 
 		<g transform="translate(35, 195)">
-			<use href="assets/svg-symbols/definitions.svg#messpunkt-einzel-l3" x="-10" y="-15" width="20" height="30" />
+			<use href="../assets/svg-symbols/definitions.svg#messpunkt-einzel-l3" x="-10" y="-15" width="20" height="30" />
 			<text y="22">messpunkt-einzel-l3</text>
 		</g>
 
 		<g transform="translate(105, 195)">
-			<use href="assets/svg-symbols/definitions.svg#ir-interface-symbol" x="-20" y="-15" width="40" height="20" />
+			<use href="../assets/svg-symbols/definitions.svg#ir-interface-symbol" x="-20" y="-15" width="40" height="20" />
 			<text y="22">ir-interface-symbol</text>
 		</g>
 
 		<g transform="translate(35, 195) translate(140, 0)">
-			<use href="assets/svg-symbols/definitions.svg#ir-diodes-icon" x="-17.5" y="-27" width="35" height="35" />
+			<use href="../assets/svg-symbols/definitions.svg#ir-diodes-icon" x="-17.5" y="-27" width="35" height="35" />
 			<text y="22">ir-diodes-icon</text>
 		</g>
 
 		<g transform="translate(35, 250)">
 			<g>
-				<use href="assets/svg-symbols/definitions.svg#ir-lesekopf-platzierungs-icon" x="-17.5" y="-17.5" width="35"
+				<use href="../assets/svg-symbols/definitions.svg#ir-lesekopf-platzierungs-icon" x="-17.5" y="-17.5" width="35"
 					height="35" />
 				<text y="22">ir-lesekopf-platzierungs-icon</text>
 			</g>
 
 
 			<g transform="translate(70, 0) scale(0.8)">
-				<use href="assets/svg-symbols/definitions.svg#matrix-code-icon" x="-17.5" y="-17.5" width="35" height="35" />
+				<use href="../assets/svg-symbols/definitions.svg#matrix-code-icon" x="-17.5" y="-17.5" width="35" height="35" />
 				<text y="28">matrix-code-icon</text>
 			</g>
 
 			<g transform="translate(140, 0)">
 				<g transform="scale(0.5)">
-					<use href="assets/svg-symbols/definitions.svg#linear-barcode-icon" x="-25" y="-12.5" width="50" height="25" />
+					<use href="../assets/svg-symbols/definitions.svg#linear-barcode-icon" x="-25" y="-12.5" width="50" height="25" />
 				</g>
 				<text y="22">linear-barcode-icon</text>
 			</g>
@@ -95,20 +95,20 @@
 
 		<g transform="translate(35, 305)">
 			<g>
-				<use href="assets/svg-symbols/definitions.svg#ebz-logo-icon" x="-17.5" y="-17.5" width="35"
+				<use href="../assets/svg-symbols/definitions.svg#ebz-logo-icon" x="-17.5" y="-17.5" width="35"
 					height="35" />
 				<text y="22">ebz-logo-icon</text>
 			</g>
 
 
 			<g transform="translate(70, 0) scale(0.8)">
-				<use href="assets/svg-symbols/definitions.svg#matrix-code-icon" x="-17.5" y="-17.5" width="35" height="35" />
+				<use href="../assets/svg-symbols/definitions.svg#matrix-code-icon" x="-17.5" y="-17.5" width="35" height="35" />
 				<text y="28">matrix-code-icon</text>
 			</g>
 
 			<g transform="translate(140, 0)">
 				<g transform="scale(0.5)">
-					<use href="assets/svg-symbols/definitions.svg#linear-barcode-icon" x="-25" y="-12.5" width="50" height="25" />
+					<use href="../assets/svg-symbols/definitions.svg#linear-barcode-icon" x="-25" y="-12.5" width="50" height="25" />
 				</g>
 				<text y="22">linear-barcode-icon</text>
 			</g>
