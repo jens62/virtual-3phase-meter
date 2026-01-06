@@ -153,7 +153,7 @@
          font-weight="normal"
          id="text19">1948</text>
       <use
-         href="assets/svg-symbols/definitions.svg#ce-mark"
+         href="/virtual-3phase-meter/assets/svg-symbols/definitions.svg#ce-mark"
          width="280"
          height="200"
          id="use1-7"
@@ -171,7 +171,7 @@
        id="text113">OVC III (4kV) UC1</text>
   </g>
   <use
-     href="assets/svg-symbols/definitions.svg#icon-zwei-richtungs-zaehler"
+     href="/virtual-3phase-meter/assets/svg-symbols/definitions.svg#icon-zwei-richtungs-zaehler"
      width="22"
      height="12"
      id="use1-4"
@@ -248,7 +248,7 @@
     <g
        id="barcode-target">
       <use
-         href="assets/svg-symbols/definitions.svg#linear-barcode-icon"
+         href="/virtual-3phase-meter/assets/svg-symbols/definitions.svg#linear-barcode-icon"
          x="0"
          y="0"
          width="240"
@@ -271,14 +271,14 @@
      font-family="Arial, sans-serif"
      text-anchor="middle">
     <use
-       href="assets/svg-symbols/definitions.svg#protection-class-ii"
+       href="/virtual-3phase-meter/assets/svg-symbols/definitions.svg#protection-class-ii"
        width="22.4"
        height="22.4"
        x="-11.2"
        y="-43"
        id="use1-30" />
     <use
-       href="assets/svg-symbols/definitions.svg#messwertaufnehmer-3kanal"
+       href="/virtual-3phase-meter/assets/svg-symbols/definitions.svg#messwertaufnehmer-3kanal"
        width="30"
        height="30"
        x="-15"
@@ -303,24 +303,24 @@
      height="256"
      transform="matrix(0.14325514,0,0,0.14325514,353.24985,21.990026)">
     <use
-       href="assets/svg-symbols/definitions.svg#matrix-code-icon"
+       href="/virtual-3phase-meter/assets/svg-symbols/definitions.svg#matrix-code-icon"
        id="matrixcode-target-symbol-use-1"
        color="#000000" />
   </g>
   <use
-     href="assets/svg-symbols/definitions.svg#book-instruction-v4"
+     href="/virtual-3phase-meter/assets/svg-symbols/definitions.svg#book-instruction-v4"
      width="100"
      height="85"
      id="use1-1"
      transform="matrix(0.27308018,0,0,0.27308018,98.326497,271.06925)" />
   <use
-     href="assets/svg-symbols/definitions.svg#ir-interface-symbol"
+     href="/virtual-3phase-meter/assets/svg-symbols/definitions.svg#ir-interface-symbol"
      width="200"
      height="100"
      id="use1-0"
      transform="translate(400.53676, 70.409206) scale(0.12020003)" />
   <use
-     href="assets/svg-symbols/definitions.svg#ebz-logo-icon"
+     href="/virtual-3phase-meter/assets/svg-symbols/definitions.svg#ebz-logo-icon"
      width="40"
      height="25"
      id="use1-64"
@@ -329,14 +329,14 @@
      id="g1"
      transform="translate(175, 240)">
     <use
-       href="assets/svg-symbols/definitions.svg#bezug-einspeisung-icon"
+       href="/virtual-3phase-meter/assets/svg-symbols/definitions.svg#bezug-einspeisung-icon"
        width="32.4"
        height="40.4"
        x="-16.2"
        y="-20.2"
        id="use1-2" />
     <use
-       href="assets/svg-symbols/definitions.svg#messpunkt-einzel-l3"
+       href="/virtual-3phase-meter/assets/svg-symbols/definitions.svg#messpunkt-einzel-l3"
        width="20"
        height="30"
        x="-14"
@@ -370,14 +370,14 @@
      id="ir-interface-group"
      transform="translate(437,77)">
     <use
-       href="assets/svg-symbols/definitions.svg#ir-lesekopf-platzierungs-icon"
+       href="/virtual-3phase-meter/assets/svg-symbols/definitions.svg#ir-lesekopf-platzierungs-icon"
        width="89"
        height="89"
        x="-44.5"
        y="-44.5"
        id="use1-3" />
     <use
-       href="assets/svg-symbols/definitions.svg#ir-diodes-icon"
+       href="/virtual-3phase-meter/assets/svg-symbols/definitions.svg#ir-diodes-icon"
        width="23.6"
        height="18"
        x="-11.8"
@@ -394,7 +394,7 @@
           id="hichi-bg-circle" />
 
        <use
-          href="assets/svg-symbols/definitions.svg#hichi-label-authentic-2"
+          href="/virtual-3phase-meter/assets/svg-symbols/definitions.svg#hichi-label-authentic-2"
           width="74"
           height="74"
           x="-37"
@@ -414,7 +414,7 @@
   </g>
   
   <!--use
-     href="assets/svg-symbols/definitions.svg#hichi-label-authentic-2"
+     href="/virtual-3phase-meter/assets/svg-symbols/definitions.svg#hichi-label-authentic-2"
      width="100"
      height="100"
      id="use1"
