@@ -113,3 +113,6 @@ You can change the meter's appearance without touching the PHP code:
 * `manifest.json`: Web app manifest for PWA installation.
 * `assets/fonts/`: Contains the `digital-7 (mono).ttf` font for the display.
 
+---
+## ⚖️ License
+This project is licensed under the **Apache License 2.0**. See the [LICENSE](LICENSE) file for details.
