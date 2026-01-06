@@ -37,7 +37,8 @@ function getLogger() {
         // Custom format including file and line
         $output = "[%datetime%] %channel%.%level_name%: %message% %context% [%extra.file%:%extra.line%]\n";
         $formatter = new LineFormatter($output, "Y-m-d H:i:s", true, true);
-        
+        $formatter->includeStacktraces(true);
+
         $handler->setFormatter($formatter);
         $handler->pushProcessor(new IntrospectionProcessor());
         $logger->pushHandler($handler);
@@ -63,15 +64,14 @@ function getLeafData(array $array): array {
 /**
  * Main Discovery Function
  */
-function fetchTasmotaDiscovery($protocol, $host) {
+function fetchTasmotaDiscovery($tasmotaUrl) {
     $log = getLogger();
-    $log->debug("Starting discovery", ['host' => $host]);
+    $log->debug("Starting discovery", ['url' => $tasmotaUrl]);
 
-    $tasmotaUrl = "{$protocol}://{$host}/cm?cmnd=Status%208";
     $results = [
-        'available_keys' => [],
-        'meter_id_key' => null,
-        'meter_id_value' => null
+        'success' => false,
+        'data' => null,
+        'error' => null
     ];
 
     $ch = curl_init($tasmotaUrl);
@@ -79,25 +79,48 @@ function fetchTasmotaDiscovery($protocol, $host) {
     curl_setopt($ch, CURLOPT_TIMEOUT, 3);
     $response = curl_exec($ch);
 
-    if ($response) {
-        $data = json_decode($response, true);
-        if (isset($data['StatusSNS'])) {
-            $leafData = getLeafData($data['StatusSNS']);
-            $results['available_keys'] = array_keys($leafData);
+    // 1. Handle CURL Errors
+    if ($response === false) {
+        $errorMsg = curl_error($ch);
+        $errorJson = json_encode(["url" => $tasmotaUrl, "error" => $errorMsg]);
+        $log->error("CURL Error", ['url' => $tasmotaUrl, 'error' => $errorMsg]);
+        $results['error'] = "Error " . $errorJson;
+        return $results;
+    }
+    curl_close($ch);
 
-            foreach ($leafData as $key => $value) {
-                if (is_string($value) && strlen($value) === 20 && ctype_xdigit($value)) {
-                    $results['meter_id_key'] = $key;
-                    $results['meter_id_value'] = $value;
-                    $log->info("Meter ID found", ['key' => $key]);
-                    break;
-                }
-            }
-        }
-    } else {
-        $log->error("CURL Error", ['url' => $tasmotaUrl, 'error' => curl_error($ch)]);
+    // 2. Handle JSON Decoding
+    $data = json_decode($response, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        $results['error'] = "Error: Invalid JSON response from Tasmota.";
+        return $results;
     }
 
+    // 3. Handle Missing StatusSNS
+    if (!isset($data['StatusSNS'])) {
+        $results['error'] = "Error: 'StatusSNS' key not found in response.";
+        return $results;
+    }
+
+    // 4. Process Data (Success Path)
+    $leafData = getLeafData($data['StatusSNS']);
+    $discovery = [
+        'available_keys' => array_keys($leafData),
+        'meter_id_key' => null,
+        'meter_id_value' => null
+    ];
+
+    foreach ($leafData as $key => $value) {
+        if (is_string($value) && strlen($value) === 20 && ctype_xdigit($value)) {
+            $discovery['meter_id_key'] = $key;
+            $discovery['meter_id_value'] = $value;
+            $log->info("Meter ID found", ['key' => $key]);
+            break;
+        }
+    }
+
+    $results['success'] = true;
+    $results['data'] = $discovery;
     return $results;
 }
 

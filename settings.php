@@ -3,8 +3,13 @@
  * Meter Settings GUI
  */
 
+require_once('tasmota_utils.php');
 require_once('vendor/autoload.php');
 use Com\Tecnick\Barcode\Barcode;
+
+$log = getLogger(); 
+$validationErrors = []; 
+$discoveryError = null;
 
 /**
  * Convert an SVG string to a <g> fragment
@@ -122,133 +127,140 @@ if (!isset($config['meter_template'])) {
 }
 // --- End Template Discovery ---
 
-// 1. Discovery: Tasmota URL & Leaf Key Extraction
-$tasmotaUrl = "{$config['protocol']}://{$config['host']}/cm?cmnd=Status%208";
+$prot_stat = !empty($config['protocol']);
+$log->debug("!empty(config[protocol])", ['not_empty' => $prot_stat]);
+$host_stat = !empty($config['host']);
+$log->debug("!empty(config[host])", ['not_empty' => $host_stat]);
 
-// 1. Discovery: Load utility and fetch data
-require_once('tasmota_utils.php');
+if (!empty($config['protocol']) && !empty($config['host'])) {
+    // 1. Discovery: Tasmota URL & Leaf Key Extraction
+    $tasmotaUrl = "{$config['protocol']}://{$config['host']}/cm?cmnd=Status%208";
 
-$discovery = fetchTasmotaDiscovery($config['protocol'], $config['host']);
-$availableKeys = $discovery['available_keys'];
-$meterIdElement = $discovery['meter_id_key']; // Use this to show found ID in UI
+    // 1. Discovery: Load utility and fetch data
+
+    $discovery = fetchTasmotaDiscovery($tasmotaUrl);
+    $availableKeys  = [];
+    $meterIdElement = null;
+
+    if ($discovery['success']) {
+        // Connection is good!
+        $availableKeys  = $discovery['data']['available_keys'];
+        $meterIdElement = $discovery['data']['meter_id_key'];
+    } else {
+        // FATAL: The CURL error or JSON error you requested
+        $discoveryError = $discovery['error'];
+        $log->error($discoveryError);
+    }
+}
+
 // 2. Speicher-Logik
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    require_once('tasmota_utils.php');
-    
-    // INITIALIZE THE LOGGER HERE
-    $log = getLogger(); 
     $log->debug("Save settings triggered");
 
-    $config['host'] = $_POST['host'];
-    $config['protocol'] = $_POST['protocol'];
-    $config['log_level'] = $_POST['log_level'];
-    $config['refresh_rate'] = (int)$_POST['refresh_rate'];
-    $config['shadow_opacity'] = (float)$_POST['shadow_opacity'];
-
-    // Save the selected template
-    $config['meter_template'] = $_POST['meter_template'] ?? '';
-
-    // DataMatrix Verarbeitung
-    $raw_content = $_POST['datamatrix_raw'] ?? '';
-    $config['datamatrix_raw'] = $raw_content;
+    // --- A. VALIDATION PHASE ---
     
-    // Steuerzeichen \r\n interpretieren
-    $datamatrix_content = str_replace(['\r', '\n'], ["\r", "\n"], $raw_content);
-
-    if (!empty($datamatrix_content)) {
-        // Barcode-Generierung (Klassen müssen inkludiert sein)
-        $barcode = new \Com\Tecnick\Barcode\Barcode();
-        $bobj = $barcode->getBarcodeObj('DATAMATRIX', $datamatrix_content, -8, -8, 'black');
-
-        $generated_raw_svg = $bobj->getSvgCode(); // Den Code im Originalzustand holen
-        $config['generated_raw_svg'] = $generated_raw_svg;
-
-        $config['datamatrix_group'] = svgToGroup(
-            svgCode: $generated_raw_svg,
-            groupId: 'datamatrix',
-            x: 0,
-            y: 0,
-            scale: 1.15,
-            returnFragment: true,
-            includeDeclarations: false,
-            includeVersionComment: false
-        );
+    // 1. Validate Refresh Rate
+    $refreshInput = $_POST['refresh_rate'] ?? '';
+    if (!filter_var($refreshInput, FILTER_VALIDATE_INT) || (int)$refreshInput <= 2) {
+        $validationErrors[] = "Refresh Rate must be a whole number greater than 2.";
     }
 
+    // 2. Validate Shadow Opacity
+    $shadowInput = $_POST['shadow_opacity'] ?? '';
+    if (!is_numeric($shadowInput) || (float)$shadowInput < 0 || (float)$shadowInput > 1) {
+        $validationErrors[] = "Shadow Opacity must be a value between 0.0 and 1.0.";
+    }
 
-    // 1. Perform discovery
-    $discovery = fetchTasmotaDiscovery($config['protocol'], $config['host']);
+    // --- B. DECISION PHASE ---
     
-    // 2. Save the raw keys for the dropdowns
-    $config['available_keys'] = $discovery['available_keys'];
-    $config['meter_id_key']   = $discovery['meter_id_key'];
-
-    // 3. DECODE AND SAVE THE STATIC ID
-    // We take the raw hex value from discovery and turn it into the 
-    // human-readable format "1 EBZ 01..." right now.
-    $finalId = null;
-
-    $forceFallback = isset($_GET['test_fallback']);
-
-    if (!empty($discovery['meter_id_value']) && !$forceFallback) {
-        // Option A: Found live via Tasmota
-        $finalId = decodeMeterNumber($discovery['meter_id_value']);
-        $log->info("Meter ID found via Tasmota Discovery", ['id' => $finalId]);
-    } else {
-        $log->notice("DataMatrix fallback triggered " . ($forceFallback ? "(Manual Test)" : ""));
-        // Option B: Fallback to DataMatrix Content
-        $log->notice("Tasmota Discovery found no ID. Checking DataMatrix fallback...");
-        $dmId = extractIdFromDataMatrix($config['datamatrix_raw']);
+    if (!empty($validationErrors)) {
+        // CASE 1: Validation Failed
+        // We Log it and DO NOTHING else. The script falls through to the HTML to show the errors.
+        $log->warning("Settings validation failed", ['errors' => $validationErrors]);
         
-        if ($dmId) {
-            // Use the NEW plain-text formatter instead of hex decodeMeterNumber
-            $finalId = formatPlainMeterId($dmId); 
-            $log->info("Meter ID recovered from DataMatrix text", ['id' => $finalId]);
-        }
-    }
+        // IMPORTANT: We must ensure the form keeps the user's invalid input so they can fix it
+        // We temporarily update $config just for this page load (without saving to file)
+        if (isset($_POST['host'])) $config['host'] = $_POST['host'];
+        $config['refresh_rate'] = $_POST['refresh_rate'];
+        $config['shadow_opacity'] = $_POST['shadow_opacity'];
+        
+    } else {
+        // CASE 2: Validation Passed - Proceed with Logic
+        
+        // Update Config with POST values
+        if (isset($_POST['host']))     $config['host'] = $_POST['host'];    
+        if (isset($_POST['protocol'])) $config['protocol'] = $_POST['protocol'];    
+        $config['log_level'] = $_POST['log_level'];
+        $config['refresh_rate'] = (int)$_POST['refresh_rate'];
+        $config['shadow_opacity'] = (float)$_POST['shadow_opacity'];
+        $config['meter_template'] = $_POST['meter_template'] ?? '';
+        $config['metrics'] = []; // Reset metrics to rebuild them below
 
-    $config['meter_id_string'] = $finalId ?: "-";
-
-    $raw_content = $_POST['datamatrix_raw'] ?? '';
-    $config['datamatrix_raw'] = $raw_content;
-    $datamatrix_content = str_replace(['\r', '\n'], ["\r", "\n"], $raw_content);
-
-    if (!empty($datamatrix_content)) {
-        $barcode = new \Com\Tecnick\Barcode\Barcode();
-        $bobj = $barcode->getBarcodeObj('DATAMATRIX', $datamatrix_content, -8, -8, 'black');
-        $generated_raw_svg = $bobj->getSvgCode();
-        $config['generated_raw_svg'] = $generated_raw_svg;
-        $config['datamatrix_group'] = svgToGroup($generated_raw_svg, 'datamatrix', 0, 0, 1.15);
-    }
-
-    $newMetrics = [];
-    if (isset($_POST['metrics']) && is_array($_POST['metrics'])) {
-        foreach ($_POST['metrics'] as $m) {
-            $newMetrics[] = [
-                'prefix' => $m['prefix'],
-                'label'  => isset($m['label']) ? trim($m['label']) : '',
-                'unit'   => $m['unit'],
-                'precision' => (int)($m['precision'] ?? 0),
-                'large'  => isset($m['large']) ? true : false
-            ];
-        }
-    }
-    $config['metrics'] = $newMetrics;
-
-    $content = "<?php\nreturn " . var_export($config, true) . ";\n";
-    if (file_put_contents($configFile, $content)) {
-        if (function_exists('opcache_invalidate')) opcache_invalidate($configFile, true);
-
-        // Build the redirect URL
-        $redirectUrl = $_SERVER['PHP_SELF'] . "?saved=1";
-
-        // If we are in test mode, carry it over to the next page load
-        if (isset($_GET['test_fallback'])) {
-            $redirectUrl .= "&test_fallback=1";
+        // Rebuild Metrics Array
+        if (isset($_POST['metrics']) && is_array($_POST['metrics'])) {
+            foreach ($_POST['metrics'] as $m) {
+                $config['metrics'][] = [
+                    'prefix' => $m['prefix'],
+                    'label'  => isset($m['label']) ? trim($m['label']) : '',
+                    'unit'   => $m['unit'],
+                    'precision' => (int)($m['precision'] ?? 0),
+                    'large'  => isset($m['large']) ? true : false
+                ];
+            }
         }
 
-        header("Location: " . $redirectUrl);        
-        exit;
+        // Handle DataMatrix & SVG
+        $raw_content = $_POST['datamatrix_raw'] ?? '';
+        $config['datamatrix_raw'] = $raw_content;
+        $datamatrix_content = str_replace(['\r', '\n'], ["\r", "\n"], $raw_content);
+
+        if (!empty($datamatrix_content)) {
+            $barcode = new \Com\Tecnick\Barcode\Barcode();
+            $bobj = $barcode->getBarcodeObj('DATAMATRIX', $datamatrix_content, -8, -8, 'black');
+            $generated_raw_svg = $bobj->getSvgCode();
+            $config['generated_raw_svg'] = $generated_raw_svg;
+            $config['datamatrix_group'] = svgToGroup($generated_raw_svg, 'datamatrix', 0, 0, 1.15);
+        }
+
+        // --- C. DISCOVERY PHASE ---
+        $newUrl = "{$config['protocol']}://{$config['host']}/cm?cmnd=Status%208";
+        $discovery = fetchTasmotaDiscovery($newUrl);
+        $log->debug("Discovery result", ['success' => $discovery['success']]);
+
+        if (!$discovery['success']) {
+            // CASE 3: Tasmota Connection Failed
+            // We set the error and STOP. Do not save.
+            $discoveryError = $discovery['error'];
+            $log->error("Save aborted due to Tasmota error", ['error' => $discoveryError]);
+        } else {
+            // CASE 4: Success - Update IDs and SAVE
+            $config['available_keys'] = $discovery['data']['available_keys'];
+            $config['meter_id_key']   = $discovery['data']['meter_id_key'];
+            
+            // Meter ID Logic
+            $finalId = null;
+            $forceFallback = isset($_GET['test_fallback']);
+            if (!empty($discovery['data']['meter_id_value']) && !$forceFallback) {
+                 $finalId = decodeMeterNumber($discovery['data']['meter_id_value']);
+            } else {
+                 $dmId = extractIdFromDataMatrix($config['datamatrix_raw']);
+                 if ($dmId) $finalId = formatPlainMeterId($dmId);
+            }
+            $config['meter_id_string'] = $finalId ?: "-";
+
+            // --- D. SAVE TO FILE ---
+            $content = "<?php\nreturn " . var_export($config, true) . ";\n";
+            if (file_put_contents($configFile, $content)) {
+                if (function_exists('opcache_invalidate')) opcache_invalidate($configFile, true);
+                
+                // Redirect logic
+                $redirectUrl = $_SERVER['PHP_SELF'] . "?saved=1";
+                if (isset($_GET['test_fallback'])) $redirectUrl .= "&test_fallback=1";
+                
+                header("Location: " . $redirectUrl);        
+                exit; // Stop script here
+            }
+        }
     }
 }
 ?>
@@ -268,6 +280,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="header">
         <h1>Meter Configuration</h1>
     </div>
+    <?php if (!empty($validationErrors)): ?>
+        <div class="card" style="border-left: 5px solid #ffa000; background: #fff8e1; margin-bottom: 20px;">
+            <h3 style="color: #ff8f00; margin-top: 0;">⚠️ Input Validation Failed</h3>
+            <ul style="margin: 0; padding-left: 20px; color: #5d4037;">
+                <?php foreach ($validationErrors as $error): ?>
+                    <li><?= htmlspecialchars($error) ?></li>
+                <?php endforeach; ?>
+            </ul>
+            <p style="font-size: 0.85em; color: #795548; margin-top: 10px;">
+                Please correct the values highlighted above and try saving again.
+            </p>
+        </div>
+    <?php endif; ?>    
+    <?php if (isset($discoveryError)): ?>
+        <div class="card" style="border-left: 5px solid #ff5252; background: #fff5f5; margin-bottom: 20px;">
+            <h3 style="color: #d32f2f; margin-top: 0;">⚠️ Connection Failed</h3>
+            <p>The settings could not be saved because the Tasmota device is unreachable:</p>
+            <code style="display: block; background: #2d2d2d; color: #ff8a80; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 13px; line-height: 1.5; word-break: break-all;">
+                <?= htmlspecialchars($discoveryError) ?>
+            </code>
+            <p style="font-size: 0.85em; color: #666; margin-top: 10px;">
+                Check the IP address, Protocol (http/https), and ensure the device is powered on.
+            </p>
+        </div>
+    <?php endif; ?>
 
 <form method="POST" id="config-form">
         <div class="card">
@@ -275,10 +312,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php if (isset($_GET['saved'])): ?><div class="status-msg">✓ Settings saved.</div><?php endif; ?>
 
             <div class="grid-main">
-                <div style="grid-column: span 2;"><label>Host IP</label><input type="text" name="host" value="<?php echo htmlspecialchars($config['host']); ?>"></div>
+                <div style="grid-column: span 2;"><label>Host IP</label><input type="text" name="host" value="<?php echo htmlspecialchars($config['host'] ?? ''); ?>"></div>
                 <div><label>Protocol</label><select name="protocol"><option value="http" <?php echo $config['protocol']=='http'?'selected':''; ?>>HTTP</option><option value="https" <?php echo $config['protocol']=='https'?'selected':''; ?>>HTTPS</option></select></div>
-                <div><label>Refresh (s)</label><input type="number" name="refresh_rate" value="<?php echo $config['refresh_rate']; ?>"></div>
-                <div><label>Shadow</label><input type="number" name="shadow_opacity" step="0.01" value="<?php echo $config['shadow_opacity']; ?>"></div>
+                <div><label>Refresh (s)</label><input type="number" name="refresh_rate" min="3" step="1" value="<?= htmlspecialchars($config['refresh_rate']) ?>"></div>
+                <div><label>Shadow</label><input type="number" name="shadow_opacity" min="0" max="1" step="0.01" value="<?= htmlspecialchars($config['shadow_opacity']) ?>"></div>
 
                 <div style="grid-column: span 2;">
                     <label>Meter SVG Template</label>
@@ -322,7 +359,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
             <div style="background: white; padding: 10px; border-radius: 8px; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center;">
-                <?php echo $config['generated_raw_svg']; ?>
+                <?php echo $config['generated_raw_svg'] ?? ''; ?>
             </div>
 
             <div style="flex: 1; min-width: 280px;">
@@ -337,7 +374,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </code>
                 </div>
                 <p style="font-size: 11px; color: #666; margin-top: 8px;">
-                    Dieser Tag wird automatisch in die <code>virtual_meter.svg</code> eingebettet.
+                    Dieser Tag wird automatisch in die <code><?php echo $config['meter_template']; ?></code> eingebettet.
                 </p>
             </div>
         </div>
@@ -346,7 +383,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="card">
             <h3>Display Order & Precision</h3>
             <div id="metric-container">
-                <?php foreach ($config['metrics'] as $i => $m): ?>
+                <?php foreach (($config['metrics'] ?? []) as $i => $m): ?>
                 <div class="metric-item">
                     <div class="drag-handle">☰</div>
                     <div>
@@ -389,7 +426,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     Sortable.create(container, { handle: '.drag-handle', animation: 150 });
 
     let metricCount = container.children.length;
-    const keysHtml = `<?php foreach ($availableKeys as $k) echo "<option value='$k'>$k</option>"; ?>`;
+    const keysHtml = `<?php foreach (($availableKeys?? []) as $k) echo "<option value='$k'>$k</option>"; ?>`;
 
     function addMetric() {
         const container = document.getElementById('metric-container');
@@ -403,7 +440,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div>
                 <label>SML Key</label>
                 <select name="metrics[${i}][prefix]">
-                    <?php foreach($availableKeys as $k) echo "<option value='$k'>$k</option>"; ?>
+                    <?php foreach(($availableKeys?? []) as $k) echo "<option value='$k'>$k</option>"; ?>
                 </select>
             </div>
             <div>
