@@ -87,7 +87,6 @@ function fetchTasmotaDiscovery($tasmotaUrl) {
         $results['error'] = "Error " . $errorJson;
         return $results;
     }
-    curl_close($ch);
 
     // 2. Handle JSON Decoding
     $data = json_decode($response, true);
@@ -106,6 +105,7 @@ function fetchTasmotaDiscovery($tasmotaUrl) {
     $leafData = getLeafData($data['StatusSNS']);
     $discovery = [
         'available_keys' => array_keys($leafData),
+        'leaf_data'      => $leafData,
         'meter_id_key' => null,
         'meter_id_value' => null
     ];
@@ -122,6 +122,69 @@ function fetchTasmotaDiscovery($tasmotaUrl) {
     $results['success'] = true;
     $results['data'] = $discovery;
     return $results;
+}
+
+/**
+ * Guesses metric configuration based on Tasmota data.
+ * Rules:
+ * - Skip meter_id_key and 'Time'
+ * - Skip keys where the value is 0 (Enhancement)
+ * - Unit: 'kWh' if value > 5000, else 'W'
+ * - Precision: Based on the decimal places in the value
+ * - Large: True only for the first 'kWh' metric found
+ */
+function guessMetricsFromDiscovery($discoveryData) {
+    $metrics = [];
+    $rawLeafs = $discoveryData['leaf_data'] ?? [];
+    $meterIdKey = $discoveryData['meter_id_key'] ?? '';
+    
+    $firstLargeSet = false;
+
+    foreach ($rawLeafs as $key => $value) {
+        // 1. Skip exclusions (ID and Time)
+        if ($key === $meterIdKey || $key === 'Time') {
+            continue;
+        }
+
+        // 2. NEW ENHANCEMENT: Skip if value is 0
+        // We cast to float to catch "0", "0.0", 0, etc.
+        if ((float)$value === 0.0) {
+            continue;
+        }
+
+        // 3. Determine Precision
+        $precision = 0;
+        if (is_string($value) || is_numeric($value)) {
+            $sVal = (string)$value;
+            $dotPos = strrpos($sVal, '.');
+            if ($dotPos !== false) {
+                $precision = strlen($sVal) - $dotPos - 1;
+            }
+        }
+
+        // 4. Determine Unit and Large Flag
+        $fVal = (float)$value;
+        $unit = 'W';
+        $isLarge = false;
+
+        if ($fVal > 5000) {
+            $unit = 'kWh';
+            if (!$firstLargeSet) {
+                $isLarge = true;
+                $firstLargeSet = true;
+            }
+        }
+
+        $metrics[] = [
+            'prefix' => $key,
+            'label'  => $key, 
+            'unit'   => $unit,
+            'precision' => $precision,
+            'large'  => $isLarge
+        ];
+    }
+
+    return $metrics;
 }
 
 /**

@@ -146,6 +146,12 @@ if (!empty($config['protocol']) && !empty($config['host'])) {
         // Connection is good!
         $availableKeys  = $discovery['data']['available_keys'];
         $meterIdElement = $discovery['data']['meter_id_key'];
+
+        // Auto-Guess Metrics if config is empty
+        if (empty($config['metrics']) || empty($config['metrics'][0]['prefix'])) {
+            $config['metrics'] = guessMetricsFromDiscovery($discovery['data']);
+            $log->info("Metrics auto-guessed from Tasmota data");
+        }        
     } else {
         // FATAL: The CURL error or JSON error you requested
         $discoveryError = $discovery['error'];
@@ -236,6 +242,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // CASE 4: Success - Update IDs and SAVE
             $config['available_keys'] = $discovery['data']['available_keys'];
             $config['meter_id_key']   = $discovery['data']['meter_id_key'];
+
+            // If the user didn't submit any metrics (e.g. freshly cleared form), guess them again
+            // logic: if $_POST['metrics'] was not set, $config['metrics'] is [], so we guess.
+            if (empty($config['metrics'])) {
+                 $config['metrics'] = guessMetricsFromDiscovery($discovery['data']);
+            }            
             
             // Meter ID Logic
             $finalId = null;
