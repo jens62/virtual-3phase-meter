@@ -84,7 +84,7 @@ After following the installation steps, use this workflow to get your meter onli
 
 
 5. **Optional UI Customization:**
-* If the data flows correctly, further adjustment of the GUI by modifying `svg_template.xml` is **optional** and only necessary if you wish to change the visual aesthetic.
+* If the data flows correctly, further adjustment of the GUI is **optional** and only necessary if you wish to change the visual aesthetic (see [How to Customize the GUI](#-how-to-customize-the-gui)).
 
 
 ### 💡 Understanding the "Shadow" Effect
@@ -98,10 +98,23 @@ On the `settings.php` page, you will see an option for **Shadow**. This mimics t
 ---
 ## 🎨 How to Customize the GUI
 You can change the meter's appearance without touching the PHP code:
-1.  Open `svg_template.xml` in **Inkscape**.
-2.  Modify colors, textures, or layouts to match your specific hardware.
-3.  **Crucial:** Ensure the `id` tags of the text elements (e.g., `id="power_val"`, `id="meter_id"`) remain consistent so the PHP script can inject the data.
-4.  Save the file. Your PWA will automatically reflect the new design.
+1.  Copy a file from `svg-meter-templates/*.svg` into the same folder `svg-meter-templates/`.
+2.  Open `settings.php` once again, choose your newly created file from the drop down list and hit return
+3.  Adjust your svg-file to your needs e.g. with VS Code or **Inkscape**.
+4.  Modify colors, textures, or layouts to match your specific hardware.
+5.  **Crucial:** Ensure the `id` tags of the text elements (e.g., `id="svg-meter-id"`, `id="barcode-target"`) remain consistent so the PHP script can inject the data.
+
+| id in *svg | container for |
+| -------- | -------- |
+| `svg-meter-id` | meter id, e. g. 1 EBZ01 0000 0619 |
+| `barcode-target` | the linear barcode of mter id |
+| `matrixcode-target` | matrixcode |
+| `status-text` | status at the to [OFFLINE|LIVE] |
+| `last-update` | time of last update |
+| `dynamic-rows` | the values in the "display" |
+| `rect12` | the rect around the dynamic rows |
+
+4.  Save the file. Your PWA will automatically reflect the new designwhen you reload `virtual_meter.php`.
 
 ### 📂 Project Structure
 
@@ -109,7 +122,7 @@ You can change the meter's appearance without touching the PHP code:
 * `settings.php`: The web-based configuration interface to manage device settings and display metrics.
 * `tasmota_utils.php`: Internal utility library for Tasmota discovery, DIN 43863-5 meter ID decoding, and Monolog integration.
 * `config.php`: Your private system configuration (created automatically by `settings.php`; ignored by Git).
-* `svg_template.xml`: The visual interface file containing the SVG meter design.
+* `svg-meter-templates/*.svg`: The visual interface file(s) containing the SVG meter design.
 * `manifest.json`: Web app manifest for PWA installation.
 * `assets/fonts/`: Contains the `digital-7 (mono).ttf` font for the display.
 
