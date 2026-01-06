@@ -18,5 +18,9 @@ composer.phar
 # --- Environment/IDE ---
 # If you use VS Code, you can ignore the local workspace settings
 .vscode/
+
 # PHP local server logs
 *.log
+
+# chats
+/chats
