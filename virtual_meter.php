@@ -288,17 +288,22 @@ if (isset($_GET['ajax'])) {
                     
                     if (actualKey) {
                         const val = sns[actualKey];
-                        
-                        // NEW: Use the specific precision from the metric config
-                        // Fallback to 0 if not defined
-                        const prec = parseInt(m.precision) || 0; 
-                        
-                        const v = Number(val).toLocaleString('de-DE', {
-                            minimumFractionDigits: prec, 
-                            maximumFractionDigits: prec 
-                        });
-                        
-                        logDebug(`Updating Row ${index} (${m.prefix}) with precision ${prec}: ${val} -> ${v}`);
+                        let v;
+
+                        // Check if the value is a number (including numeric strings)
+                        if (!isNaN(parseFloat(val)) && isFinite(val)) {
+                            // It's a number: apply precision and locale formatting
+                            const prec = parseInt(m.precision) || 0; 
+                            v = Number(val).toLocaleString('de-DE', {
+                                minimumFractionDigits: prec, 
+                                maximumFractionDigits: prec 
+                            });
+                            logDebug(`Updating Row ${index} (Numeric): ${val} -> ${v}`);
+                        } else {
+                            // It's not a number (e.g., "12:34:56"): output as is
+                            v = val;
+                            logDebug(`Updating Row ${index} (String): ${val}`);
+                        }
                         
                         const valEl = document.getElementById('val-' + index);
                         const shdEl = document.getElementById('shd-' + index);
