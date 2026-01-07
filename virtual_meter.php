@@ -1,7 +1,6 @@
 <?php
 /**
  * Smart Meter PWA Dashboard - Dynamic Version
- * Version: 1.7 - Dynamic Meter ID Integration
  */
 
 require_once('tasmota_utils.php'); // Include your discovery and logging logic
@@ -118,11 +117,23 @@ if (isset($_GET['ajax'])) {
         
         /* Hidden link to settings (accessible via double tap or long press if you add JS) */
         #settings-link { position: fixed; top: 10px; right: 10px; width: 30px; height: 30px; opacity: 0.1; z-index: 100; }
+        #settings-link:hover { 
+            opacity: 0.5; 
+            background: rgba(255,255,255,0.1); 
+            border-radius: 50%;
+        }
+
+        /* Debug: highlight everything that SHOULD be interactive */
+        symbol:active, g:active, circle:active {
+            outline: 5px solid red !important;
+            background: rgba(255, 0, 0, 0.2) !important;
+        }
+
     </style>
 </head>
 <body>
 
-    <a href="settings.php" id="settings-link"></a>
+    <a href="settings.php" id="settings-link" title="Double tap for settings"></a>
 
     <div class="meter-wrapper">
         <?php 
@@ -328,6 +339,75 @@ if (isset($_GET['ajax'])) {
         updateDashboard();
         // Konvertiert Sekunden aus der Config in Millisekunden für JS
         setInterval(updateDashboard, <?php echo ($config['refresh_rate'] ?? 5) * 1000; ?>);
+
+        // --- GESTURE LOGIC FOR SETTINGS LINK ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const settingsLink = document.getElementById('settings-link');
+            if (!settingsLink) return;
+
+            let pressTimer;
+            let lastTap = 0;
+
+            // 1. Double Tap Logic
+            settingsLink.addEventListener('click', function(e) {
+                const currentTime = new Date().getTime();
+                const tapLength = currentTime - lastTap;
+                
+                // Always prevent the default immediate jump on a single click
+                e.preventDefault();
+
+                if (tapLength < 300 && tapLength > 0) {
+                    // Success: Double Tap detected
+                    window.location.href = this.href;
+                }
+                lastTap = currentTime;
+            });
+
+            // 2. Long Press Logic
+            const startPress = function(e) {
+                pressTimer = window.setTimeout(function() {
+                    // Success: Long Press (800ms) detected
+                    window.location.href = settingsLink.href;
+                }, 800); 
+            };
+
+            const cancelPress = function(e) {
+                clearTimeout(pressTimer);
+            };
+
+            // Desktop Mouse Events
+            settingsLink.addEventListener('mousedown', startPress);
+            settingsLink.addEventListener('mouseup', cancelPress);
+            settingsLink.addEventListener('mouseleave', cancelPress);
+
+            // Mobile Touch Events
+            settingsLink.addEventListener('touchstart', startPress, {passive: true});
+            settingsLink.addEventListener('touchend', cancelPress);
+            settingsLink.addEventListener('touchcancel', cancelPress);
+
+            // Select all symbols or groups that have a <title>
+            // does not work for symbols, because the are "<use ..."d
+            // To make the "Infobuch" (Information Book) symbol (and others) interactive on your iPad, you should wrap that specific <use> tag inside a group (<g>) and add a transparent "Hitbox" rectangle.
+            const interactiveSymbols = document.querySelectorAll('symbol, g, circle, path');
+
+            interactiveSymbols.forEach(el => {
+                const title = el.querySelector('title');
+                if (title) {
+                    // Force the cursor to pointer so users know it's interactive
+                    el.style.cursor = 'pointer';
+
+                    // On mobile/iPad, a simple click/tap can show the title as an alert
+                    el.addEventListener('click', function(e) {
+                        // Only trigger if it's a touch/mobile device
+                        if (window.matchMedia("(pointer: coarse)").matches) {
+                            alert(title.textContent);
+                        }
+                    });
+                }
+            });
+
+        });
+
     </script>
 </body>
 </html>
