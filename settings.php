@@ -376,31 +376,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
 
-<div class="card" style="border: 2px solid var(--accent); background: rgba(46, 125, 50, 0.05);">
-        <h3 style="color: var(--accent); margin-top: 0;">✓ Barcode erfolgreich generiert</h3>
-        
-        <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
-            <div style="background: white; padding: 10px; border-radius: 8px; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center;">
-                <?php echo $config['generated_raw_svg'] ?? ''; ?>
-            </div>
+        <?php if (isset($_GET['saved']) && !empty($config['generated_raw_svg'])): ?>
+            <div class="card" style="border: 2px solid var(--accent); background: rgba(46, 125, 50, 0.05);">
+                <h3 style="color: var(--accent); margin-top: 0;">✓ Barcode erfolgreich generiert</h3>
+                
+                <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
+                    <div style="background: white; padding: 10px; border-radius: 8px; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center;">
+                        <?php echo $config['generated_raw_svg']; ?>
+                    </div>
 
-            <div style="flex: 1; min-width: 280px;">
-                <label>Gespeicherter Group-Tag (Vorschau):</label>
-                <div style="background: #121212; padding: 10px; border-radius: 6px; border: 1px solid #444; margin-top: 5px;">
-                    <code style="font-family: monospace; font-size: 11px; color: #aaa; white-space: pre-wrap; word-break: break-all;">
-                        <?php 
-                            $text = $config['datamatrix_group'];
-                            $max_len = 150;
-                            echo htmlspecialchars(strlen($text) > $max_len ? substr($text, 0, $max_len) . "..." : $text); 
-                        ?>                                
-                    </code>
+                    <div style="flex: 1; min-width: 280px;">
+                        <label>Gespeicherter Group-Tag (Vorschau):</label>
+                        <div style="background: #121212; padding: 10px; border-radius: 6px; border: 1px solid #444; margin-top: 5px;">
+                            <code style="font-family: monospace; font-size: 11px; color: #aaa; white-space: pre-wrap; word-break: break-all;">
+                                <?php 
+                                    $text = $config['datamatrix_group'] ?? '';
+                                    $max_len = 150;
+                                    echo htmlspecialchars(strlen($text) > $max_len ? substr($text, 0, $max_len) . "..." : $text); 
+                                ?>                                
+                            </code>
+                        </div>
+                        <p style="font-size: 11px; color: #666; margin-top: 8px;">
+                            Dieser Tag wird automatisch in die <code><?php echo htmlspecialchars($config['meter_template'] ?? ''); ?></code> eingebettet.
+                        </p>
+                    </div>
                 </div>
-                <p style="font-size: 11px; color: #666; margin-top: 8px;">
-                    Dieser Tag wird automatisch in die <code><?php echo $config['meter_template']; ?></code> eingebettet.
-                </p>
             </div>
-        </div>
-</div>        
+        <?php endif; ?>      
 
         <div class="card">
             <h3>Display Order & Precision</h3>
