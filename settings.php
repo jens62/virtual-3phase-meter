@@ -324,7 +324,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php if (isset($_GET['saved'])): ?><div class="status-msg">✓ Settings saved.</div><?php endif; ?>
 
             <div class="grid-main">
-                <div style="grid-column: span 2;"><label>Host IP</label><input type="text" name="host" value="<?php echo htmlspecialchars($config['host'] ?? ''); ?>"></div>
+                <div style="grid-column: span 2;"><label>Tasmota IP Address</label>
+                    <input 
+                        type="text" 
+                        name="host" 
+                        placeholder="192.168.1.100"
+                        required
+                        inputmode="decimal"
+                        pattern="^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+                        title="Please enter a valid IPv4 address (e.g., 192.168.1.50)"
+                        value="<?= htmlspecialchars($config['host'] ?? '') ?>">
+                </div>
                 <div><label>Protocol</label><select name="protocol"><option value="http" <?php echo $config['protocol']=='http'?'selected':''; ?>>HTTP</option><option value="https" <?php echo $config['protocol']=='https'?'selected':''; ?>>HTTPS</option></select></div>
                 <div><label>Refresh (s)</label><input type="number" name="refresh_rate" min="3" step="1" value="<?= htmlspecialchars($config['refresh_rate']) ?>"></div>
                 <div><label>Shadow</label><input type="number" name="shadow_opacity" min="0" max="1" step="0.01" value="<?= htmlspecialchars($config['shadow_opacity']) ?>"></div>
