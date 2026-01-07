@@ -58,6 +58,7 @@
         </symbol>
 
         <symbol id="book-instruction-v4" viewBox="-50 0 100 85">
+            <title>Infobuch</title>
             <path id="page-curve" fill="none" stroke="currentColor" stroke-width="4"
                 stroke-linejoin="round"
                 d="M 0,7.3 C 4.9,5.5 7.4,5.1 11.6,5.3 16.1,5.5 19.6,6.6 26.1,10.0 31.6,12.8 33.3,13.3 37.8,13.3 L 40.6,13.3 V 73.3 L 37.8,73.3 C 32.2,73.3 29.1,72.2 22.8,68.1 18.1,65.0 15.8,64.3 9.7,64.3 C 4.2,64.3 2.6,64.7 0,67.1 V 7.3 Z" />
