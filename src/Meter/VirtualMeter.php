@@ -215,20 +215,16 @@ class VirtualMeter
             logDebug(`Lines: ${totalLines}`);
 
             const slotHeight = box.height / totalLines;
-            const paddingLeft = 10; 
+            // Linkes Padding wieder auf Standardwert, damit Labels am linken Rand bleiben
+            let paddingLeft = 10;
             const paddingRight = 35;
 
             configMetrics.forEach((m, index) => {
                 let fontSize = m.large ? (slotHeight * 0.82) : (slotHeight * 0.55);
-                
-                // FIX for the "Too Large" width:
-                // We add a constraint: if there are few lines, the font height 
-                // shouldn't exceed a reasonable fraction of the total width.
-                const widthConstraint = box.width * 0.15; // Max font size based on width
+                // Begrenze die Schriftgröße für große Zeilen stärker
+                const widthConstraint = box.width * 0.15;
                 fontSize = Math.min(fontSize, widthConstraint);
-                
-                // Absolute caps
-                fontSize = Math.min(fontSize, m.large ? 42 : 24); 
+                fontSize = Math.min(fontSize, m.large ? 22 : 20); // noch kleinere Maximalwerte
 
                 logDebug(`Line ${index}: slotH=${slotHeight.toFixed(1)}, fontSize=${fontSize.toFixed(1)}, label=${m.label}`);
 
