@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+   id="backstop"
+   width="172.01013mm"
+   height="120.68011mm"
+   viewBox="32.758621 32.758621 19.77128 27.742555"
+   role="img"
+   aria-describedby="svgDesc_en"
+   xml:lang="en">
+
+   <style>
+      /* Standard: Tooltip versteckt */
+      #backstopGroup .tooltip { display: none; }
+
+      /* Sichtbar, wenn die Gruppe die Klasse hat */
+      #backstopGroup.show-tooltip .tooltip {
+      display: inline !important;
+      pointer-events: none;
+      }
+
+      /* Verhindert die Textmarkierung beim Longpress */
+      #backstopGroup,
+      .tooltip {
+      -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+      -khtml-user-select: none; /* Konqueror HTML */
+      -moz-user-select: none; /* Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+      user-select: none; /* Standard */
+      cursor: default;
+      }
+
+      .tooltip text {
+      /* System-Schriftarten sind am sichersten, da sie keine Ladezeit haben */
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-weight: 400;
+      fill: #ffffff;
+      /* Verhindert, dass der Text beim Messen zappelt */
+      text-rendering: optimizeLegibility;
+      }
+      .tooltip rect {
+      fill: #333333; /* Deine Hintergrundfarbe */
+      fill-opacity: 0.85; /* Wert zwischen 0 (unsichtbar) und 1 (deckend) */
+      stroke: #ffffff; /* Optional: Ein feiner weißer Rand hilft bei Transparenz */
+      stroke-width: 0.1;
+      stroke-opacity: 0.5;
+      }
+</style>
+
+   <desc xml:lang="en" id="svgDesc_en">Backstop, constructed from circular rings for the ratchet
+      wheel and pawl, isosceles triangles for the steep flanks of the ratchet teeth, Fibonacci
+      spirals for the shallow flanks of the ratchet teeth, and two Fibonacci spirals for the pawl
+      shaft.</desc>
+   <desc xml:lang="de" id="svgDesc_de">Rücklaufsperre, konstruiert aus kreisförmigen Ringen für das
+      Sperrrad und die Sperrklinke, gleichschenkligen Dreiecken für die steilen Flanken der
+      Sperrzähne, Fibonacci-Spiralen für die flachen Flanken der Sperrzähne und zwei
+      Fibonacci-Spiralen für die Sperrklinke.</desc>
+
+
+   <defs
+      id="defs1">
+      <path
+         id="ratchetTooth"
+         d="m 48.0428,33.705381 -1.29e-4,-3e-4 -0.550833,0.159394 -0.54223,0.177488 -0.533053,0.195184 -0.523316,0.212464 -0.513038,0.22931 -0.502238,0.245707 -0.490932,0.261639 -0.479143,0.277092 -0.466885,0.29205 -0.454182,0.306502 -0.441052,0.320435 -0.427515,0.333835 -0.413593,0.346694 -0.399306,0.359 -0.384675,0.370743 -0.369721,0.381917 -0.354468,0.392512 -0.338934,0.40252 -0.323142,0.411937 -0.307116,0.420756 -0.290876,0.428973 -0.274444,0.436583 -0.257841,0.443584 -0.241092,0.449974 -0.224217,0.455748 -0.207237,0.46091 -0.190176,0.465456 -0.173053,0.469388 -0.155892,0.472708 -0.138713,0.475417 -0.121538,0.47752 -0.104387,0.479016 -0.08728,0.479915 -0.07024,0.480217 -0.05329,0.479931 2.086472,-0.981366 A 8.45,8.45 0 0 1 47.5206,40.594586 l 0.5222,-6.889205"
+         fill="currentColor"
+         stroke="none" />
+   </defs>
+
+   <g
+      id="backstopGroup" tabindex="0" style="pointer-events: all;"
+      transform="translate(-14.884464,-4.998825)">
+      <circle
+         id="ratchetRing"
+         cx="50"
+         cy="50"
+         r="8.4499998"
+         fill="none"
+         stroke="currentColor"
+         stroke-width="3.4" />
+      <circle
+         id="pawlRing"
+         cx="72.300003"
+         cy="60.5"
+         r="3.75"
+         fill="none"
+         stroke="currentColor"
+         stroke-width="2.51" />
+      <g
+         id="ratchetToothGroup"
+         style="display:block">
+         <use
+            href="#ratchetTooth"
+            id="0"
+            transform="rotate(-50,49.355493,45.78324)" />
+         <use
+            href="#ratchetTooth"
+            id="90"
+            transform="rotate(40,46.878784,54.247477)" />
+         <use
+            href="#ratchetTooth"
+            id="180"
+            transform="rotate(130,48.033692,50.300539)" />
+         <use
+            href="#ratchetTooth"
+            id="270"
+            transform="rotate(-140,48.454045,48.86397)" />
+      </g>
+      <path
+         id="pawlShaft"
+         d="m 77.172466,59.377917 -0.02426,-0.09036 -0.14062,-0.479783 -0.15733,-0.474572 -0.1731,-0.469052 -0.188346,-0.463148 -0.202963,-0.456928 -0.216181,-0.450814 -0.22867,-0.444625 -0.24182,-0.43761 L 75.346768,55.179434 75.082114,54.755241 74.807873,54.337176 74.522874,53.926378 74.22842,53.522303 73.925293,53.124688 73.612922,52.734293 73.291978,52.350914 72.963279,51.974166 72.627087,51.604091 72.283653,51.240718 71.933233,50.884069 71.575889,50.534357 71.211963,50.191499 70.841942,49.855228 70.466065,49.525513 70.084587,49.202309 69.697728,48.885543 69.305737,48.575154 68.908392,48.271643 68.506255,47.974531 68.099551,47.683695 67.688512,47.39904 67.273348,47.120437 66.854271,46.847755 66.431478,46.580845 66.004586,46.320536 65.5738,46.066734 65.139818,45.818458 64.702821,45.575521 64.262888,45.337903 63.81897,45.107833 63.372505,44.882769 62.923657,44.662498 62.471888,44.44823 62.017125,44.240439 61.560392,44.037032 61.101423,43.838657 60.639456,43.64741 60.175895,43.460079 59.71028,43.277848 l -0.46816,-0.175541 -0.469416,-0.172142 -0.471688,-0.165867 -0.473424,-0.160784 -0.09069,-0.03012 -0.491081,0.50262 3.526644,4.614399 -0.119334,-0.120751 0.347835,0.359152 0.342051,0.364662 0.336025,0.370228 0.32976,0.375823 0.32324,0.381443 0.31648,0.387071 0.309473,0.392691 0.302216,0.398302 0.294714,0.403891 0.286965,0.409432 0.278961,0.414927 0.270391,0.42057 0.260955,0.426486 0.252055,0.431798 0.242924,0.437004 0.232956,0.442396 0.221914,0.448036 0.211901,0.452857 0.200052,0.458213 0.188615,0.46304 0.176078,0.467943 0.163731,0.472411 0.149471,0.477112 0.135921,0.481136 0.121388,0.48502 0.105627,0.488694 0.08926,0.491944 0.07236,0.49471 0.0545,0.496993 0.03519,0.498726 0.0099,0.237792 a 5,5 0 0 1 9.856428,-1.522242 z"
+         fill="currentColor"
+         stroke="currentColor"
+         stroke-width="0.01" />
+
+      <!-- Tooltip als Nachfahre, keine inline display:none -->
+      <g class="tooltip" aria-hidden="true" transform="translate(10,6)">
+         <rect x="0" y="-6" width="80" height="6" fill="#222" rx="1" />
+         <text id="tooltipText" x="2" y="-1" fill="#fff" font-size="3.5">Tooltip text</text>
+      </g>
+   </g>
+
+
+   <script type="application/ecmascript"><![CDATA[
+      (function () {
+      console.log('--- Tooltip Script Init ---')
+
+      // 1. Referenzen holen
+      var target =
+         document.getElementById('backstopGroup') ||
+         document.getElementById('backstop')
+      var tooltip =
+         document.querySelector('#backstopGroup .tooltip') ||
+         document.querySelector('.tooltip')
+
+      if (!target) console.error('FATAL: Target #backstopGroup nicht gefunden')
+      if (!tooltip) console.error('FATAL: Tooltip Element nicht gefunden')
+      if (!target || !tooltip) return
+
+      var svg = target.ownerSVGElement || document.querySelector('svg')
+      console.log('SVG Element gefunden:', svg)
+
+      // Tooltip in den Root verschieben, falls noch nicht dort
+      if (svg && tooltip.parentNode !== svg) {
+         console.log('Verschiebe Tooltip in SVG Root...')
+         svg.appendChild(tooltip)
+      }
+
+      tooltip.style.pointerEvents = 'none'
+
+      // --- Hilfsfunktion: Berechnungen ---
+      function sizeAndPlace () {
+         var t = tooltip.querySelector('text')
+         var r = tooltip.querySelector('rect')
+         var svgRoot = target.ownerSVGElement || document.querySelector('svg')
+         if (!t || !r || !svgRoot || !target) return
+
+         // 1. SPRACHE AUS <desc> EXTRAHIEREN
+         var userLang = navigator.language.slice(0, 2)
+         var descriptions = svgRoot.querySelectorAll('desc')
+         var rawText = ''
+         var fallbackText = ''
+
+         descriptions.forEach(function (d) {
+            var lang = d.getAttribute('xml:lang')
+            if (lang === userLang) rawText = d.textContent
+            if (lang === 'en') fallbackText = d.textContent
+         })
+         var fullText = (rawText || fallbackText || 'No info')
+            .replace(/\s+/g, ' ')
+            .trim()
+
+         // 2. DYNAMISCHE SKALIERUNG & VIEWBOX
+         var vbAttr = svgRoot.getAttribute('viewBox')
+         var vbMinX = 32.75,
+            vbMinY = 32.75,
+            vbWidth = 19.77,
+            vbHeight = 27.74
+         if (vbAttr) {
+            var parts = vbAttr.split(/[ ,]+/).map(parseFloat)
+            vbMinX = parts[0]
+            vbMinY = parts[1]
+            vbWidth = parts[2]
+            vbHeight = parts[3]
+         }
+
+         var baseUnit = Math.max(vbWidth * 0.04, 0.7)
+         var lineHeight = baseUnit * 1.3
+         var padX = baseUnit * 0.8
+         var padY = baseUnit * 0.5
+         var margin = baseUnit * 0.6
+
+         var allowedWidth = vbWidth * 0.7
+         var maxCharsPerLine = Math.floor(allowedWidth / (baseUnit * 0.5))
+         if (maxCharsPerLine < 20) maxCharsPerLine = 20
+
+         // 3. MEHRZEILIGKEIT
+         t.textContent = ''
+         t.setAttribute('font-size', baseUnit)
+
+         var words = fullText.split(' ')
+         var line = ''
+         var lines = []
+
+         for (var n = 0; n < words.length; n++) {
+            var testLine = line + words[n] + ' '
+            if (testLine.length > maxCharsPerLine && n > 0) {
+            lines.push(line.trim())
+            line = words[n] + ' '
+            } else {
+            line = testLine
+            }
+         }
+         lines.push(line.trim())
+
+         lines.forEach(function (lineText, index) {
+            var tspan = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'tspan'
+            )
+            tspan.textContent = lineText
+            tspan.setAttribute('x', padX)
+            tspan.setAttribute('y', index * lineHeight + baseUnit * 0.85 + padY)
+            t.appendChild(tspan)
+         })
+
+         // 4. MESSEN & RECHTECK ANPASSEN
+         var tb = t.getBBox()
+         var rectW = tb.width + padX * 2
+         var rectH = tb.height + padY * 2
+
+         r.setAttribute('x', 0)
+         r.setAttribute('y', 0)
+         r.setAttribute('width', rectW)
+         r.setAttribute('height', rectH)
+         r.setAttribute('rx', baseUnit * 0.4)
+
+         t.setAttribute('x', 0)
+         t.setAttribute('y', 0)
+
+         // 5. POSITIONIERUNG AM ZIEL
+         var globalBBox
+         try {
+            var sRect = target.getBoundingClientRect()
+            var pt = svgRoot.createSVGPoint()
+            var matrix = svgRoot.getScreenCTM().inverse()
+            pt.x = sRect.left
+            pt.y = sRect.top
+            var p1 = pt.matrixTransform(matrix)
+            pt.x = sRect.right
+            pt.y = sRect.bottom
+            var p2 = pt.matrixTransform(matrix)
+            globalBBox = { x: p1.x, y: p1.y, width: p2.x - p1.x, height: p2.y - p1.y }
+         } catch (e) {
+            return
+         }
+
+         var tx = globalBBox.x + (globalBBox.width - rectW) / 2
+         var ty = globalBBox.y - rectH - margin
+
+         // 6. CLAMPING
+         if (ty < vbMinY) ty = globalBBox.y + globalBBox.height + margin
+
+         var minXLimit = vbMinX + 0.2
+         var maxXLimit = vbMinX + vbWidth - rectW - 0.2
+         var minYLimit = vbMinY + 0.2
+         var maxYLimit = vbMinY + vbHeight - rectH - 0.2
+
+         if (tx < minXLimit) tx = minXLimit
+         if (tx > maxXLimit) tx = maxXLimit
+         if (ty < minYLimit) ty = minYLimit
+         if (ty > maxYLimit) ty = maxYLimit
+
+         tooltip.setAttribute('transform', 'translate(' + tx + ',' + ty + ')')
+      }
+
+      // --- Event Handler ---
+      var pressTimer
+      var currentTarget = null
+      var longPressDuration = 500 // Dauer in ms, bis der Tooltip erscheint
+
+      var interactiveElements = document.querySelectorAll('#backstopGroup')
+
+      interactiveElements.forEach(function (el) {
+         // DESKTOP: Mouse Events
+         el.addEventListener('mouseenter', function () {
+            target = el
+            showTooltip()
+         })
+         el.addEventListener('mouseleave', hideTooltip)
+
+         // TOUCH: Longpress Logik
+         el.addEventListener(
+            'touchstart',
+            function (e) {
+            // Verhindert das "Aufsaugen" von Text und System-Menüs
+            if (e.touches.length > 1) return // Multitouch erlauben (Zoomen)
+
+            pressTimer = window.setTimeout(function () {
+               target = el
+               showTooltip()
+            }, longPressDuration)
+            },
+            { passive: true }
+         )
+
+         el.addEventListener('touchend', function () {
+            // Wenn man vor Ablauf der Zeit loslässt, Timer löschen
+            clearTimeout(pressTimer)
+         })
+
+         el.addEventListener('touchmove', function () {
+            // Falls der Nutzer wischt (scrollt), Tooltip nicht öffnen
+            clearTimeout(pressTimer)
+         })
+      })
+
+      // Globaler Klick/Touch zum Schließen
+      document.addEventListener(
+         'touchstart',
+         function (e) {
+            // Schließen, wenn man nicht auf ein interaktives Element drückt
+            if (!e.target.closest('#backstopGroup')) {
+            hideTooltip()
+            }
+         },
+         { passive: true }
+      )
+
+      function showTooltip () {
+         if (!target) return
+         currentTarget = target
+         tooltip.style.display = 'inline'
+         sizeAndPlace()
+      }
+
+      function hideTooltip () {
+         clearTimeout(pressTimer)
+         tooltip.style.display = 'none'
+         currentTarget = null
+      }
+
+      console.log('Event Listener registriert.')
+      })();
+
+]]></script>
+
+</svg>
