@@ -1,4 +1,9 @@
 {
+    "autoload": {
+        "psr-4": {
+            "VirtualMeter\\": "src/"
+        }
+    },
     "require": {
         "tecnickcom/tc-lib-barcode": "^1.15",
         "monolog/monolog": "^3.10"
