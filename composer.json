@@ -2,7 +2,10 @@
     "autoload": {
         "psr-4": {
             "VirtualMeter\\": "src/"
-        }
+        },
+        "files": [
+            "src/Tasmota/Utils.php"
+        ]
     },
     "require": {
         "tecnickcom/tc-lib-barcode": "^1.15",
