@@ -25,3 +25,9 @@ composer.phar
 # chats
 /chats
 local-attic/
+
+# Ignore active configuration
+config/config.php
+
+# Ignore logs
+logs/*.log
