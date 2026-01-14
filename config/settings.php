@@ -1,4 +1,5 @@
 <?php
+
 /**
  * config/settings.php - Meter Settings GUI & Setup Logic
  * * This file is part of the protected /config folder. It is designed to handle
@@ -10,9 +11,83 @@
 use VirtualMeter\Tasmota\Utils;
 use Com\Tecnick\Barcode\Barcode;
 
-$log = Utils::getLogger(); 
-$validationErrors = []; 
+$log = Utils::getLogger();
+$validationErrors = [];
 $discoveryError = null;
+
+
+
+function renderMetricRow($i, $m = [], $availableKeys = [])
+{
+    // Check if it's a new row (template) or existing data
+    $prefix    = $m['prefix'] ?? '';
+    $label     = htmlspecialchars($m['label'] ?? '');
+    $unit      = htmlspecialchars($m['unit'] ?? '');
+    $precision = $m['precision'] ?? 0;
+    $isLarge   = ($m['large'] ?? false) ? 'checked' : '';
+
+    ob_start(); // Start output buffering to capture the HTML
+?>
+    <div class="metric-item">
+        <div class="metric-field">
+            <label>&nbsp;</label>
+            <div class="control-wrapper center">
+                <div class="drag-handle">☰</div>
+            </div>
+        </div>
+
+        <div class="metric-field">
+            <label>SML Key</label>
+            <div class="control-wrapper">
+                <select name="metrics[<?= $i ?>][prefix]">
+                    <?php foreach ($availableKeys as $key): ?>
+                        <option value="<?= $key ?>" <?= ($prefix == $key ? 'selected' : '') ?>><?= $key ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+
+        <div class="metric-field">
+            <label>Label</label>
+            <div class="control-wrapper">
+                <input type="text" name="metrics[<?= $i ?>][label]" value="<?= $label ?>">
+            </div>
+        </div>
+
+        <div class="metric-field">
+            <label>Unit</label>
+            <div class="control-wrapper">
+                <input type="text" name="metrics[<?= $i ?>][unit]" value="<?= $unit ?>">
+            </div>
+        </div>
+
+        <div class="metric-field">
+            <label>Dec.</label>
+            <div class="stepper">
+                <button type="button" onclick="step(this, -1)">-</button>
+                <input type="number" name="metrics[<?= $i ?>][precision]" min="0" max="4" value="<?= $precision ?>">
+                <button type="button" onclick="step(this, 1)">+</button>
+            </div>
+        </div>
+
+        <div class="metric-field">
+            <label>Large</label>
+            <div class="control-wrapper center">
+                <input type="checkbox" name="metrics[<?= $i ?>][large]" <?= $isLarge ?> class="ios-checkbox-simple">
+            </div>
+        </div>
+
+        <div class="metric-field">
+            <label>&nbsp;</label>
+            <div class="control-wrapper center">
+                <button type="button" class="btn-remove" onclick="this.closest('.metric-item').remove()">✕</button>
+            </div>
+        </div>
+    </div>
+<?php
+    return ob_get_clean();
+}
+
 
 /**
  * Convert an SVG string to a <g> fragment
@@ -108,7 +183,8 @@ if (function_exists('opcache_invalidate')) {
 }
 $config = include($configFile);
 
-if (!isset($config['refresh_rate'])) $config['refresh_rate'] = 2;
+if (!isset($config['refresh_rate'])) $config['refresh_rate'] = 3;
+if (!isset($config['shadow_opacity'])) $config['shadow_opacity'] = 0.1;
 if (!isset($config['datamatrix_raw'])) $config['datamatrix_raw'] = "";
 if (!isset($config['datamatrix_group'])) $config['datamatrix_group'] = "";
 
@@ -163,7 +239,7 @@ if (!empty($config['protocol']) && !empty($config['host'])) {
         if (empty($config['metrics']) || empty($config['metrics'][0]['prefix'])) {
             $config['metrics'] = Utils::guessMetricsFromDiscovery($discovery['data']);
             $log->info("Metrics auto-guessed from Tasmota data");
-        }        
+        }
     } else {
         // FATAL: The CURL error or JSON error you requested
         $discoveryError = $discovery['error'];
@@ -176,7 +252,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $log->debug("Save settings triggered");
 
     // --- A. VALIDATION PHASE ---
-    
+
     // 1. Validate Refresh Rate
     $refreshInput = $_POST['refresh_rate'] ?? '';
     if (!filter_var($refreshInput, FILTER_VALIDATE_INT) || (int)$refreshInput <= 2) {
@@ -190,24 +266,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // --- B. DECISION PHASE ---
-    
+
     if (!empty($validationErrors)) {
         // CASE 1: Validation Failed
         // We Log it and DO NOTHING else. The script falls through to the HTML to show the errors.
         $log->warning("Settings validation failed", ['errors' => $validationErrors]);
-        
+
         // IMPORTANT: We must ensure the form keeps the user's invalid input so they can fix it
         // We temporarily update $config just for this page load (without saving to file)
         if (isset($_POST['host'])) $config['host'] = $_POST['host'];
         $config['refresh_rate'] = $_POST['refresh_rate'];
         $config['shadow_opacity'] = $_POST['shadow_opacity'];
-        
     } else {
         // CASE 2: Validation Passed - Proceed with Logic
-        
+
         // Update Config with POST values
-        if (isset($_POST['host']))     $config['host'] = $_POST['host'];    
-        if (isset($_POST['protocol'])) $config['protocol'] = $_POST['protocol'];    
+        if (isset($_POST['host']))     $config['host'] = $_POST['host'];
+        if (isset($_POST['protocol'])) $config['protocol'] = $_POST['protocol'];
         $config['log_level'] = $_POST['log_level'];
         $config['refresh_rate'] = (int)$_POST['refresh_rate'];
         $config['shadow_opacity'] = (float)$_POST['shadow_opacity'];
@@ -258,17 +333,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // If the user didn't submit any metrics (e.g. freshly cleared form), guess them again
             // logic: if $_POST['metrics'] was not set, $config['metrics'] is [], so we guess.
             if (empty($config['metrics'])) {
-                 $config['metrics'] = Utils::guessMetricsFromDiscovery($discovery['data']);
-            }            
-            
+                $config['metrics'] = Utils::guessMetricsFromDiscovery($discovery['data']);
+            }
+
             // Meter ID Logic
             $finalId = null;
             $forceFallback = isset($_GET['test_fallback']);
             if (!empty($discovery['data']['meter_id_value']) && !$forceFallback) {
-                 $finalId = Utils::decodeMeterNumber($discovery['data']['meter_id_value']);
+                $finalId = Utils::decodeMeterNumber($discovery['data']['meter_id_value']);
             } else {
-                 $dmId = extractIdFromDataMatrix($config['datamatrix_raw']);
-                 if ($dmId) $finalId = formatPlainMeterId($dmId);
+                $dmId = extractIdFromDataMatrix($config['datamatrix_raw']);
+                if ($dmId) $finalId = formatPlainMeterId($dmId);
             }
             $config['meter_id_string'] = $finalId ?: "-";
 
@@ -276,12 +351,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $content = "<?php\nreturn " . var_export($config, true) . ";\n";
             if (file_put_contents($configFile, $content)) {
                 if (function_exists('opcache_invalidate')) opcache_invalidate($configFile, true);
-                
+
                 // Redirect logic
                 $redirectUrl = $_SERVER['PHP_SELF'] . "?saved=1&settings=1";
                 if (isset($_GET['test_fallback'])) $redirectUrl .= "&test_fallback=1";
-                
-                header("Location: " . $redirectUrl);        
+
+                header("Location: " . $redirectUrl);
                 exit; // Stop script here
             }
         }
@@ -290,193 +365,206 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Meter Config</title>
-    <link rel="stylesheet" href="css/settings.css?v=<?php echo filemtime('css/settings.css'); ?>">
+    <link rel="stylesheet" href="assets/css/settings.css?v=<?php echo filemtime('assets/css/settings.css'); ?>">
+    <script src="assets/js/settings.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
 </head>
+
 <body>
 
-<div class="container">
-    <div class="header">
-        <h1>Meter Configuration</h1>
-    </div>
-    <?php if (!empty($validationErrors)): ?>
-        <div class="card" style="border-left: 5px solid #ffa000; background: #fff8e1; margin-bottom: 20px;">
-            <h3 style="color: #ff8f00; margin-top: 0;">⚠️ Input Validation Failed</h3>
-            <ul style="margin: 0; padding-left: 20px; color: #5d4037;">
-                <?php foreach ($validationErrors as $error): ?>
-                    <li><?= htmlspecialchars($error) ?></li>
-                <?php endforeach; ?>
-            </ul>
-            <p style="font-size: 0.85em; color: #795548; margin-top: 10px;">
-                Please correct the values highlighted above and try saving again.
-            </p>
+    <div class="container">
+        <div class="header">
+            <h1 style="margin: 0;">Meter Configuration</h1>
+
+            <a href="<?= $_SERVER['PHP_SELF'] . '?saved=1' ?>" class="btn-back">← Return to Dashboard</a>
         </div>
-    <?php endif; ?>    
-    <?php if (isset($discoveryError)): ?>
-        <div class="card" style="border-left: 5px solid #ff5252; background: #fff5f5; margin-bottom: 20px;">
-            <h3 style="color: #d32f2f; margin-top: 0;">⚠️ Connection Failed</h3>
-            <p>The settings could not be saved because the Tasmota device is unreachable:</p>
-            <code style="display: block; background: #2d2d2d; color: #ff8a80; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 13px; line-height: 1.5; word-break: break-all;">
-                <?= htmlspecialchars($discoveryError) ?>
-            </code>
-            <p style="font-size: 0.85em; color: #666; margin-top: 10px;">
-                Check the IP address, Protocol (http/https), and ensure the device is powered on.
-            </p>
-        </div>
-    <?php endif; ?>
-
-<form method="POST" id="config-form">
-        <div class="card">
-            <h2>System & Barcode</h2>
-            <?php if (isset($_GET['saved'])): ?><div class="status-msg">✓ Settings saved.</div><?php endif; ?>
-
-            <div class="grid-main">
-                <div style="grid-column: span 2;"><label>Tasmota IP Address</label>
-                    <input 
-                        type="text" 
-                        name="host" 
-                        placeholder="192.168.1.100"
-                        required
-                        inputmode="decimal"
-                        pattern="^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-                        title="Please enter a valid IPv4 address (e.g., 192.168.1.50)"
-                        value="<?= htmlspecialchars($config['host'] ?? '') ?>">
-                </div>
-                <div><label>Protocol</label><select name="protocol"><option value="http" <?php echo $config['protocol']=='http'?'selected':''; ?>>HTTP</option><option value="https" <?php echo $config['protocol']=='https'?'selected':''; ?>>HTTPS</option></select></div>
-                <div><label>Refresh (s)</label><input type="number" name="refresh_rate" min="3" step="1" value="<?= htmlspecialchars($config['refresh_rate']) ?>"></div>
-                <div><label>Shadow</label><input type="number" name="shadow_opacity" min="0" max="1" step="0.01" value="<?= htmlspecialchars($config['shadow_opacity']) ?>"></div>
-
-                <div style="grid-column: span 2;">
-                    <label>Meter SVG Template</label>
-                    <?php if (count($templates) === 1): ?>
-                        <input type="text" value="<?php echo htmlspecialchars($templates[0]); ?>" disabled>
-                        <input type="hidden" name="meter_template" value="<?php echo htmlspecialchars($templates[0]); ?>">
-                        <small style="color: #666;">(Only one template found in directory)</small>
-                    <?php elseif (count($templates) > 1): ?>
-                        <select name="meter_template">
-                            <option value="">-- Select Template --</option>
-                            <?php foreach ($templates as $tpl): ?>
-                                <option value="<?php echo htmlspecialchars($tpl); ?>" <?php echo ($config['meter_template'] == $tpl) ? 'selected' : ''; ?>>
-                                    <?php echo htmlspecialchars($tpl); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    <?php else: ?>
-                        <div style="color: #ff5252; font-size: 0.9em;">No .svg files found in /svg-meter-templates/</div>
-                        <input type="hidden" name="meter_template" value="">
-                    <?php endif; ?>
-                </div>                
-                
-                <div>
-                    <label>Log Level</label>
-                    <select name="log_level">
-                        <?php foreach (['Debug', 'Info', 'Notice', 'Warning', 'Error'] as $l): ?>
-                            <option value="<?= $l ?>" <?= ($config['log_level'] ?? 'Info') == $l ? 'selected' : '' ?>><?= $l ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
+        <?php if (!empty($validationErrors)): ?>
+            <div class="card" style="border-left: 5px solid #ffa000; background: #fff8e1; margin-bottom: 20px;">
+                <h3 style="color: #ff8f00; margin-top: 0;">⚠️ Input Validation Failed</h3>
+                <ul style="margin: 0; padding-left: 20px; color: #5d4037;">
+                    <?php foreach ($validationErrors as $error): ?>
+                        <li><?= htmlspecialchars($error) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+                <p style="font-size: 0.85em; color: #795548; margin-top: 10px;">
+                    Please correct the values highlighted above and try saving again.
+                </p>
             </div>
-
-            <div style="margin-top:10px">
-                <label>DataMatrix Content</label>
-                <textarea name="datamatrix_raw"><?php echo htmlspecialchars($config['datamatrix_raw']); ?></textarea>
+        <?php endif; ?>
+        <?php if (isset($discoveryError)): ?>
+            <div class="card" style="border-left: 5px solid #ff5252; background: #fff5f5; margin-bottom: 20px;">
+                <h3 style="color: #d32f2f; margin-top: 0;">⚠️ Connection Failed</h3>
+                <p>The settings could not be saved because the Tasmota device is unreachable:</p>
+                <code style="display: block; background: #2d2d2d; color: #ff8a80; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 13px; line-height: 1.5; word-break: break-all;">
+                    <?= htmlspecialchars($discoveryError) ?>
+                </code>
+                <p style="font-size: 0.85em; color: #666; margin-top: 10px;">
+                    Check the IP address, Protocol (http/https), and ensure the device is powered on.
+                </p>
             </div>
-        </div>
+        <?php endif; ?>
 
-        <?php if (isset($_GET['saved']) && !empty($config['generated_raw_svg'])): ?>
-            <div class="card" style="border: 2px solid var(--accent); background: rgba(46, 125, 50, 0.05);">
-                <h3 style="color: var(--accent); margin-top: 0;">✓ Barcode erfolgreich generiert</h3>
-                
-                <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
-                    <div style="background: white; padding: 10px; border-radius: 8px; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center;">
-                        <?php echo $config['generated_raw_svg']; ?>
+        <form method="POST" id="config-form">
+            <div class="card">
+                <h2>Connection</h2>
+                <?php if (isset($_GET['saved'])): ?>
+                    <div class="status-msg">✓ Settings saved.</div>
+                <?php endif; ?>
+
+                <div class="grid-main">
+                    <div class="full-width row-group">
+                        <div class="flex-grow-3">
+                            <label>Tasmota IP Address</label>
+                            <input type="text" name="host" placeholder="192.168.1.100" required inputmode="decimal" value="<?= htmlspecialchars($config['host'] ?? '') ?>">
+                        </div>
+                        <div class="flex-grow-1">
+                            <label>Protocol</label>
+                            <select name="protocol">
+                                <option value="http" <?= ($config['protocol'] ?? '') == 'http' ? 'selected' : ''; ?>>HTTP</option>
+                                <option value="https" <?= ($config['protocol'] ?? '') == 'https' ? 'selected' : ''; ?>>HTTPS</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <div style="flex: 1; min-width: 280px;">
-                        <label>Gespeicherter Group-Tag (Vorschau):</label>
-                        <div style="background: #121212; padding: 10px; border-radius: 6px; border: 1px solid #444; margin-top: 5px;">
-                            <code style="font-family: monospace; font-size: 11px; color: #aaa; white-space: pre-wrap; word-break: break-all;">
-                                <?php 
+                    <div style="margin-top: 20px;"></div>
+
+                    <div class="full-width row-group">
+                        <div class="flex-grow-3 row-group" style="gap: 15px; margin-bottom: 0;">
+                            <div style="flex: 1;">
+                                <label>Refresh (s)</label>
+                                <div class="stepper">
+                                    <button type="button" onclick="step(this, -1)">-</button>
+                                    <input type="number" name="refresh_rate" min="3" value="<?= htmlspecialchars($config['refresh_rate'] ?? 3) ?>">
+                                    <button type="button" onclick="step(this, 1)">+</button>
+                                </div>
+                            </div>
+                            <div style="flex: 1;">
+                                <label>Shadow Intensity</label>
+                                <div class="stepper">
+                                    <button type="button" onclick="step(this, -1)">-</button>
+                                    <input type="number" name="shadow_opacity" min="0" max="1" step="0.01" value="<?= htmlspecialchars($config['shadow_opacity'] ?? 0.5) ?>">
+                                    <button type="button" onclick="step(this, 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex-grow-1">
+                            <label>Log Level</label>
+                            <select name="log_level">
+                                <?php foreach (['Debug', 'Info', 'Notice', 'Warning', 'Error'] as $l): ?>
+                                    <option value="<?= $l ?>" <?= ($config['log_level'] ?? 'Info') == $l ? 'selected' : '' ?>><?= $l ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="full-width">
+                        <label>Meter SVG Template</label>
+                        <?php if (count($templates) === 1): ?>
+                            <input type="text" value="<?= htmlspecialchars($templates[0]); ?>" disabled>
+                            <input type="hidden" name="meter_template" value="<?= htmlspecialchars($templates[0]); ?>">
+                            <small style="color: #666;">(Only one template found in directory)</small>
+                        <?php elseif (count($templates) > 1): ?>
+                            <select name="meter_template">
+                                <option value="">-- Select Template --</option>
+                                <?php foreach ($templates as $tpl): ?>
+                                    <option value="<?= htmlspecialchars($tpl); ?>" <?= (($config['meter_template'] ?? '') == $tpl) ? 'selected' : ''; ?>>
+                                        <?= htmlspecialchars($tpl); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        <?php else: ?>
+                            <div style="color: #ff5252; font-size: 0.9em;">No .svg files found in /svg-meter-templates/</div>
+                            <input type="hidden" name="meter_template" value="">
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div style="margin-top:20px">
+                    <label>DataMatrix Content</label>
+                    <textarea name="datamatrix_raw" rows="3"><?= htmlspecialchars($config['datamatrix_raw'] ?? ''); ?></textarea>
+                </div>
+            </div>
+
+            <?php if (isset($_GET['saved']) && !empty($config['generated_raw_svg'])): ?>
+                <div class="card" style="border: 2px solid var(--accent); background: rgba(46, 125, 50, 0.05);">
+                    <h3 style="color: var(--accent); margin-top: 0;">✓ Barcode erfolgreich generiert</h3>
+                    <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
+                        <div style="background: white; padding: 10px; border-radius: 8px; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center;">
+                            <?= $config['generated_raw_svg']; ?>
+                        </div>
+                        <div style="flex: 1; min-width: 280px;">
+                            <label>Gespeicherter Group-Tag (Vorschau):</label>
+                            <div style="background: #121212; padding: 10px; border-radius: 6px; border: 1px solid #444; margin-top: 5px;">
+                                <code style="font-family: monospace; font-size: 11px; color: #aaa; white-space: pre-wrap; word-break: break-all;">
+                                    <?php
                                     $text = $config['datamatrix_group'] ?? '';
                                     $max_len = 150;
-                                    echo htmlspecialchars(strlen($text) > $max_len ? substr($text, 0, $max_len) . "..." : $text); 
-                                ?>                                
-                            </code>
+                                    echo htmlspecialchars(strlen($text) > $max_len ? substr($text, 0, $max_len) . "..." : $text);
+                                    ?>
+                                </code>
+                            </div>
                         </div>
-                        <p style="font-size: 11px; color: #666; margin-top: 8px;">
-                            Dieser Tag wird automatisch in die <code><?php echo htmlspecialchars($config['meter_template'] ?? ''); ?></code> eingebettet.
-                        </p>
                     </div>
                 </div>
-            </div>
-        <?php endif; ?>      
+            <?php endif; ?>
 
-        <div class="card">
-            <h3>Display Order & Precision</h3>
-            <div id="metric-container">
-                <?php foreach (($config['metrics'] ?? []) as $i => $m): ?>
-                <div class="metric-item">
-                    <div class="drag-handle">☰</div>
-                    <div>
-                        <label>SML Key</label>
-                        <select name="metrics[<?php echo $i; ?>][prefix]">
-                            <?php foreach ($availableKeys as $key): ?>
-                                <option value="<?php echo $key; ?>" <?php echo $m['prefix']==$key?'selected':''; ?>><?php echo $key; ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Label</label>
-                        <input type="text" name="metrics[<?php echo $i; ?>][label]" value="<?php echo htmlspecialchars($m['label']); ?>">
-                    </div>
-                    <div>
-                        <label>Unit</label>
-                        <input type="text" name="metrics[<?php echo $i; ?>][unit]" value="<?php echo htmlspecialchars($m['unit']); ?>">
-                    </div>
-                    <div>
-                        <label>Dec.</label>
-                        <input type="number" name="metrics[<?php echo $i; ?>][precision]" value="<?php echo $m['precision'] ?? 0; ?>">
-                    </div>
-                    <div>
-                        <label>Large</label>
-                        <input type="checkbox" name="metrics[<?php echo $i; ?>][large]" <?php echo $m['large']?'checked':''; ?> style="width:20px; height:20px; margin-top:5px;">
-                    </div>
-                    <button type="button" class="btn-remove" onclick="this.parentElement.remove()">✕</button>
+            <div class="card">
+                <h3>Display Order & Precision</h3>
+                <div id="metric-container">
+                    <?php
+                    foreach (($config['metrics'] ?? []) as $i => $m) {
+                        echo renderMetricRow($i, $m, $availableKeys);
+                    }
+                    ?>
                 </div>
-                <?php endforeach; ?>
+                <template id="metric-template">
+                    <?= renderMetricRow('{{i}}', [], $availableKeys); ?>
+                </template>
+
+                <div style="margin-top: 20px; display: flex; gap: 15px;">
+                    <button type="button" class="btn btn-add" onclick="addMetric()">+ Add New Line</button>
+                </div>
             </div>
-            <button type="button" class="btn btn-add" onclick="addMetric()">+ Add New Line</button>
-            <button type="submit" class="btn btn-save">Save & Apply Configuration</button>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-save">Save & Apply Configuration</button>
+            </div>
+        </form>
+        <div style="display: flex; justify-content: flex-end; margin-top: 30px;">
+            <a href="<?= $_SERVER['PHP_SELF'] . '?saved=1' ?>" class="btn-back">
+                Return to Dashboard →
+            </a>
         </div>
-    </form>
-    <a href="<?= $_SERVER['PHP_SELF'] . '?saved=1' ?>" class="back-link">← Return to Dashboard</a>
-</div>
+    </div>
 
-<script>
-    const container = document.getElementById('metric-container');
-    Sortable.create(container, { handle: '.drag-handle', animation: 150 });
-
-    let metricCount = container.children.length;
-    const keysHtml = `<?php foreach (($availableKeys?? []) as $k) echo "<option value='$k'>$k</option>"; ?>`;
-
-    function addMetric() {
+    <script>
         const container = document.getElementById('metric-container');
-        const i = container.children.length;
-        const div = document.createElement('div');
-        div.className = 'metric-item';
-        
-        // We use a template literal to keep the HTML readable
-        div.innerHTML = `
+        Sortable.create(container, {
+            handle: '.drag-handle',
+            animation: 150
+        });
+
+        let metricCount = container.children.length;
+        const keysHtml = `<?php foreach (($availableKeys ?? []) as $k) echo "<option value='$k'>$k</option>"; ?>`;
+
+        function addMetric() {
+            const container = document.getElementById('metric-container');
+            const i = container.children.length;
+            const div = document.createElement('div');
+            div.className = 'metric-item';
+
+            // We use a template literal to keep the HTML readable
+            div.innerHTML = `
             <div class="drag-handle">☰</div>
             <div>
                 <label>SML Key</label>
                 <select name="metrics[${i}][prefix]">
-                    <?php foreach(($availableKeys?? []) as $k) echo "<option value='$k'>$k</option>"; ?>
+                    <?php foreach (($availableKeys ?? []) as $k) echo "<option value='$k'>$k</option>"; ?>
                 </select>
             </div>
             <div>
@@ -497,8 +585,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <button type="button" class="btn-remove" onclick="this.parentElement.remove()" title="Remove Line">✕</button>
         `;
-        container.appendChild(div);
-    }
-</script>
+            container.appendChild(div);
+        }
+    </script>
 </body>
+
 </html>
