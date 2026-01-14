@@ -128,12 +128,12 @@ class VirtualMeter
             width: 32px;
             height: 32px;
             z-index: 100;
-            /* Use the relative path we discussed for subdirectories */
-            background: url('assets/icons/icons8-apple-settings.svg') no-repeat center center;
-            background-size: contain;
-            transition: transform 0.2s ease, opacity 0.2s ease;
-            cursor: pointer;
-            opacity: 0.8;
+        }
+
+        #settings-link svg {
+            width: 100%;
+            height: 100%;
+            fill: #ffffff; /* Forces the icon to be white */
         }
 
         #settings-link:hover {
@@ -151,7 +151,9 @@ class VirtualMeter
 </head>
 <body>
 
-    <a href="?settings=1" id="settings-link" title="Double tap for settings"></a>
+    <a href="?settings=1" id="settings-link" title="Settings">
+        <?php echo file_get_contents(__DIR__ . '/../../public/assets/icons/icons8-apple-settings.svg'); ?>
+    </a>
 
     <div class="meter-wrapper">
         <?php 
