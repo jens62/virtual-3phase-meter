@@ -2,7 +2,7 @@
 
 A photorealistic, web-based Progressive Web App (PWA) that visualizes real-time data from a physical smart meter. This project bridges the gap between raw digital data and a familiar hardware aesthetic.
 
-![App Screenshot](images/svg_template_with_animation_font_b64.svg)
+![App Screenshot](docs/images/svg_template_with_animation_font_b64.svg)
 
 ## 🌟 The Major Benefit
 **No coding required for UI customization.** The interface is driven by a standard SVG file. Users can open the GUI file in any vector graphics editor (like **Inkscape**) to match the look of their specific physical meter. The PHP logic remains untouched while the visuals are completely swappable via SVG element IDs.
