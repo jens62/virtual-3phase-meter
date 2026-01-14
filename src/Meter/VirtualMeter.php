@@ -85,7 +85,7 @@ class VirtualMeter
     <meta name="theme-color" content="#1a1a1a">
     
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
     
     <style>
         @font-face {
