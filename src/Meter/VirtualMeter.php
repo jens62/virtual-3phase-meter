@@ -90,7 +90,7 @@ class VirtualMeter
     <style>
         @font-face {
             font-family: 'Digital7Mono';
-            src: url('assets/fonts/digital-7 (mono).ttf') format('truetype');
+            src: url('/assets/fonts/digital-7 (mono).ttf') format('truetype');
             font-weight: normal; font-style: normal;
         }
 
@@ -144,26 +144,22 @@ class VirtualMeter
     <div class="meter-wrapper">
         <?php 
             // Define the base directory for templates
-            $templateDir = __DIR__ . '/../../assets/meter-templates/';
-            
-            // Get the filename from config, fallback to a default if empty
+            // Use __DIR__ to navigate out of src/Meter/ and into public/assets/
+            $templateDir = __DIR__ . '/../../public/assets/meter-templates/';
+
+            // Get the filename from config, fallback to a default
             $templateFile = !empty($config['meter_template']) ? $config['meter_template'] : 'svg_template.xml';
-            
+
             $fullPath = $templateDir . $templateFile;
 
-            // Check if the file exists in the templates folder
+            // Check if the file exists in the new designated templates folder
             if (file_exists($fullPath)) {
                 echo file_get_contents($fullPath); 
-            } 
-            // Fallback for the original root file if it exists
-            elseif (file_exists($templateFile)) {
-                echo file_get_contents($templateFile);
-            }
-            else {
-                echo "<div style='color: white; background: #a33; padding: 10px;'>
-                        Error: Template configuration invalid.<br>
-                        File not found: " . htmlspecialchars($fullPath) . "
-                    </div>";
+            } else {
+                // Log an error if the template is missing
+                $log = \VirtualMeter\Tasmota\Utils::getLogger();
+                $log->error("SVG Template not found at: " . $fullPath);
+                echo "";
             }
         ?>
     </div>
