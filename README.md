@@ -1,3 +1,4 @@
+
 # ⚡ Virtual Three-Phase Current Meter PWA
 
 A photorealistic, web-based Progressive Web App (PWA) that visualizes real-time data from a physical smart meter. This project bridges the gap between raw digital data and a familiar hardware aesthetic.
@@ -31,36 +32,32 @@ A photorealistic, web-based Progressive Web App (PWA) that visualizes real-time 
 
 1. **Clone the repository:**
 ```bash
-git clone https://github.com/jens62/virtual-3phase-meter.git
+git clone [https://github.com/jens62/virtual-3phase-meter.git](https://github.com/jens62/virtual-3phase-meter.git)
 
 ```
 
-
 2. **Install Dependencies:**
 This project uses Composer to manage libraries, including `tecnickcom/tc-lib-barcode` for barcode generation and `monolog/monolog` for structured logging. Install them using:
+
 ```bash
 cd virtual-3phase-meter
 composer install
 
 ```
 
-
 3. **Set Permissions:**
-The application needs to write to the project directory to save your configuration (`config.php`) and maintain debug logs. On Linux servers, you can grant the web server user (typically `www-data`) the necessary permissions:
+The application needs to write to the `config/` directory to save your configuration and maintain debug logs. On Linux servers, grant the web server user (typically `www-data`) the necessary permissions:
+
 ```bash
-sudo setfacl -R -m u:www-data:rwx /path/to/virtual-3phase-meter
+sudo setfacl -R -m u:www-data:rwx /path/to/virtual-3phase-meter/config
 
 ```
 
-🛠️ How to configure it
+🛠️ **Web Server Configuration (Apache)**
 
-Open the file:
+Inside your `<VirtualHost *:80>` block, add the following to point to the new `public` directory structure:
 
-Bash
-sudo nano /etc/apache2/sites-available/000-default.conf
-Add the Alias and Directory logic: Inside the <VirtualHost *:80> block, add these lines (place them before the closing </VirtualHost> tag):
-
-Apache
+```apache
 # This maps the URL path to the physical 'public' folder
 Alias /virtual-3phase-meter "/var/www/html/virtual-3phase-meter/public"
 
@@ -69,85 +66,73 @@ Alias /virtual-3phase-meter "/var/www/html/virtual-3phase-meter/public"
     AllowOverride All
     Require all granted
 </Directory>
-Restart Apache:
 
-Bash
-sudo systemctl restart apache2
+```
 
+Restart Apache: `sudo systemctl restart apache2`
 
 4. **Configuration:**
-There is no manual configuration file to rename. Simply navigate to `settings.php` in your web browser to initialize the `config.php` file and set up your meter's parameters.
-5. **Deployment:**
-Upload the project folder to your web server.
-**Note:** Ensure the `vendor/` directory (created by Composer) is included in your upload, as it contains all required PHP libraries.
+Navigate to `settings.php` in your web browser to initialize the `config.php` file (stored in the `/config` folder) and set up your meter's parameters.
 
 ---
-### ⚙️ Initial Configuration Workflow
 
-After following the installation steps, use this workflow to get your meter online:
+### ⚙️ Initial Configuration Workflow
 
 1. **Open Settings:** Navigate to `settings.php` in your web browser.
 2. **Basic Connectivity:**
-* Enter your **Host IP** (Tasmota device IP).
-* Enter your **DataMatrix Content**. You can obtain this by scanning the QR-like code on your physical meter (e.g., using "Code Scan" on iPhone). Enter the non-hex part (e.g., `V1\r\nAA...`).
-* Hit **Save & Apply**. This initializes your `config.php`.
 
+* Enter your **Host IP** (Tasmota device IP).
+* Enter your **DataMatrix Content**. Enter the non-hex part (e.g., `V1\r\nAA...`).
+* Click **Save Settings**. This initializes your configuration.
 
 3. **Define Display Metrics:**
-* Scroll to the **Display Order & Precision** section.
-* Click **Add New Line** to select which SML values (e.g., Total Consumption, Current Power) you want to visualize on the LCD.
-* Set the **Label**, **Unit**, and **Precision** (decimals) for each row.
-* Hit **Save** again to update your dashboard layout.
 
+* Scroll to the **Display Order & Precision** section.
+* Click **+ Add Metric** to create a new row using the dynamic template.
+* Set the **Label**, **Unit**, and **Precision** (decimals) for each row.
+* Click **Save Settings** again to update your dashboard layout.
 
 4. **Verify Data Flow:**
-* Click **"Return to Dashboard"** at the bottom of the page to verify that data is flowing as expected.
-* **Troubleshooting:** If data is not appearing, return to settings, set the **Log Level** to **Debug**, and check the `debug.log` file for detailed error messages.
 
-
-5. **Optional UI Customization:**
-* If the data flows correctly, further adjustment of the GUI is **optional** and only necessary if you wish to change the visual aesthetic (see [How to Customize the GUI](#-how-to-customize-the-gui)).
-
-
-### 💡 Understanding the "Shadow" Effect
-
-On the `settings.php` page, you will see an option for **Shadow**. This mimics the behavior of real LCD screens where inactive segments are still faintly visible as a background "8888".
-
-* **How it works:** The dashboard layers two text elements. The "Shadow" is the bottom layer, showing all segments in a faint color to create a photorealistic depth effect.
-* **Recommended Value:** A value of **0.1** (10% opacity) is usually ideal for a subtle, realistic look.
-* **Disable:** Set this to **0** if you prefer a perfectly clean background with no visible inactive segments.
+* Click the **"Return to Dashboard →"** button at either the top or bottom of the page to verify data flow.
+* **Troubleshooting:** If data is missing, set the **Log Level** to **Debug** in settings and check the `config/debug.log` file.
 
 ---
+
 ## 🎨 How to Customize the GUI
-You can change the meter's appearance without touching the PHP code:
-1.  Copy a file from `svg-meter-templates/*.svg` into the same folder `svg-meter-templates/`.
-2.  Open `settings.php` once again, choose your newly created file from the drop down list and hit return
-3.  Adjust your svg-file to your needs e.g. with VS Code or **Inkscape**.
-4.  Modify colors, textures, or layouts to match your specific hardware.
-5.  **Crucial:** Ensure the `id` tags of the text elements (e.g., `id="svg-meter-id"`, `id="barcode-target"`) remain consistent so the PHP script can inject the data.
+
+1. Copy a file from `public/assets/meter-templates/*.svg` into the same folder.
+2. Open seettings, choose your newly created file from the drop-down list, and click **Save Settings**.
+3. Adjust your SVG file using **Inkscape** or VS Code.
+4. **Crucial:** Ensure the `id` tags (e.g., `id="svg-meter-id"`, `id="dynamic-rows"`) remain consistent so the PHP script can inject data.
 
 | id in *svg | container for |
-| -------- | -------- |
+| --- | --- |
 | `svg-meter-id` | meter id, e. g. 1 EBZ01 0000 0619 |
-| `barcode-target` | the linear barcode of mter id |
+| `barcode-target` | the linear barcode of meter id |
 | `matrixcode-target` | matrixcode |
-| `status-text` | status at the to [OFFLINE|LIVE] |
+| `status-text` | status at the top [OFFLINE |
 | `last-update` | time of last update |
 | `dynamic-rows` | the values in the "display" |
-| `rect12` | the rect around the dynamic rows |
 
-4.  Save the file. Your PWA will automatically reflect the new designwhen you reload `virtual_meter.php`.
+---
 
 ### 📂 Project Structure
 
-* `virtual_meter.php`: The core dashboard and logic for the PWA display.
-* `settings.php`: The web-based configuration interface to manage device settings and display metrics.
-* `tasmota_utils.php`: Internal utility library for Tasmota discovery, DIN 43863-5 meter ID decoding, and Monolog integration.
-* `config.php`: Your private system configuration (created automatically by `settings.php`; ignored by Git).
-* `svg-meter-templates/*.svg`: The visual interface file(s) containing the SVG meter design.
-* `manifest.json`: Web app manifest for PWA installation.
-* `assets/fonts/`: Contains the `digital-7 (mono).ttf` font for the display.
+* `public/index.php`: The core dashboard display (formerly `virtual_meter.php`).
+* `public/settings.php`: The web-based configuration interface.
+* `public/assets/css/settings.css`: Stylesheet for the settings GUI.
+* `public/assets/js/`: JavaScript logic for dynamic row templates and UI interactions.
+* `config/tasmota_utils.php`: Internal utility library for data fetching and logging.
+* `config/config.php`: Your private system configuration (created automatically).
+* `public/svg-meter-templates/`: Visual interface templates containing the SVG meter designs.
 
 ---
+
 ## ⚖️ License
-This project is licensed under the **Apache License 2.0**. See the [LICENSE](LICENSE) file for details.
+
+This project is licensed under the **Apache License 2.0**.
+
+```
+
+```
