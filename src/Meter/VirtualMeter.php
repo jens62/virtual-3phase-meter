@@ -139,7 +139,7 @@ class VirtualMeter
 </head>
 <body>
 
-    <a href="settings.php" id="settings-link" title="Double tap for settings"></a>
+    <a href="?settings=1" id="settings-link" title="Double tap for settings"></a>
 
     <div class="meter-wrapper">
         <?php 
@@ -201,7 +201,7 @@ class VirtualMeter
             }
         }        
 
-        function initDisplay() {
+        function initDisplay(flatSNS = null) {
             const rowContainer = document.getElementById('dynamic-rows');
             const lcdBg = document.getElementById('rect12'); 
             if (!rowContainer || !lcdBg) return;
@@ -215,23 +215,76 @@ class VirtualMeter
             logDebug(`Lines: ${totalLines}`);
 
             const slotHeight = box.height / totalLines;
-            // Linkes Padding wieder auf Standardwert, damit Labels am linken Rand bleiben
             let paddingLeft = 10;
             const paddingRight = 35;
 
+            // 1. Finde längstes Label und längsten angezeigten Wert+Unit für beide Gruppen
+            let maxLargeLabelLen = 0, maxLargeValueLen = 0, maxNormalLabelLen = 0, maxNormalValueLen = 0;
+            let maxLargeLabel = '', maxLargeValue = '', maxLargeUnit = '';
+            let maxNormalLabel = '', maxNormalValue = '', maxNormalUnit = '';
+            configMetrics.forEach((m, idx) => {
+                let label = m.label || m.prefix.split('__')[0].replace(/_/g, '.');
+                let value = '';
+                if (flatSNS) {
+                    const actualKey = Object.keys(flatSNS).find(k => k.startsWith(m.prefix));
+                    if (actualKey) {
+                        const rawVal = flatSNS[actualKey];
+                        if (!isNaN(parseFloat(rawVal)) && isFinite(rawVal)) {
+                            const prec = parseInt(m.precision) || 0;
+                            value = Number(rawVal).toLocaleString('de-DE', {
+                                minimumFractionDigits: prec,
+                                maximumFractionDigits: prec
+                            });
+                        } else {
+                            value = String(rawVal);
+                        }
+                    }
+                }
+                if (!value) {
+                    // Fallback wie bisher
+                    if (typeof m.precision === 'number') {
+                        const decimals = Math.max(0, m.precision);
+                        value = '8'.repeat(m.large ? 5 : 4) + (decimals > 0 ? '.' + '8'.repeat(decimals) : '');
+                    } else {
+                        value = m.large ? '88888.88' : '8888.88';
+                    }
+                }
+                let unit = m.unit || '';
+                if (m.large) {
+                    if (label.length > maxLargeLabelLen) { maxLargeLabelLen = label.length; maxLargeLabel = label; }
+                    if ((value + unit).length > maxLargeValueLen) { maxLargeValueLen = (value + unit).length; maxLargeValue = value; maxLargeUnit = unit; }
+                } else {
+                    if (label.length > maxNormalLabelLen) { maxNormalLabelLen = label.length; maxNormalLabel = label; }
+                    if ((value + unit).length > maxNormalValueLen) { maxNormalValueLen = (value + unit).length; maxNormalValue = value; maxNormalUnit = unit; }
+                }
+            });
+
+            const valueBoxWidth = (box.width - paddingLeft - paddingRight - 10) * 1.2;
+            function calcFontSize(labelLen, valueLen, slotH, maxFont, type) {
+                const charWidthFactor = 0.5;
+                let fontByWidth = valueBoxWidth / ((labelLen + valueLen) * charWidthFactor);
+                let fontByHeight = slotH * 0.55;
+                let result = Math.min(fontByWidth, fontByHeight, maxFont);
+                logDebug(`[FontCalc ${type}] valueBoxWidth=${valueBoxWidth}, labelLen=${labelLen}, valueLen=${valueLen}, fontByWidth=${fontByWidth.toFixed(2)}, fontByHeight=${fontByHeight.toFixed(2)}, maxFont=${maxFont}, result=${result.toFixed(2)}`);
+                return result;
+            }
+
+            let largeFontSize = calcFontSize(maxLargeLabelLen, maxLargeValueLen, slotHeight, 64, 'large');
+            let normalFontSize = calcFontSize(maxNormalLabelLen, maxNormalValueLen, slotHeight, 20, 'normal');
+            if (largeFontSize < normalFontSize + 2) largeFontSize = normalFontSize + 2;
+            // Die Fontgröße für 'large' wird nicht mehr zwangsweise auf normalFontSize + 2 gesetzt.
+
+            logDebug(`MaxLargeLabel: '${maxLargeLabel}', MaxLargeValue: '${maxLargeValue}${maxLargeUnit}', largeFontSize: ${largeFontSize.toFixed(1)}`);
+            logDebug(`MaxNormalLabel: '${maxNormalLabel}', MaxNormalValue: '${maxNormalValue}${maxNormalUnit}', normalFontSize: ${normalFontSize.toFixed(1)}`);
+
             configMetrics.forEach((m, index) => {
-                let fontSize = m.large ? (slotHeight * 0.82) : (slotHeight * 0.55);
-                // Begrenze die Schriftgröße für große Zeilen stärker
-                const widthConstraint = box.width * 0.15;
-                fontSize = Math.min(fontSize, widthConstraint);
-                fontSize = Math.min(fontSize, m.large ? 22 : 20); // noch kleinere Maximalwerte
-
-                logDebug(`Line ${index}: slotH=${slotHeight.toFixed(1)}, fontSize=${fontSize.toFixed(1)}, label=${m.label}`);
-
+                let fontSize = m.large ? largeFontSize : normalFontSize;
                 const y = box.y + (slotHeight * index) + (slotHeight * 0.5) + (fontSize * 0.3);
                 const labelSize = fontSize * 0.35;
                 const unitSize = fontSize * 0.45;
                 let label = m.label || m.prefix.split('__')[0].replace(/_/g, '.');
+
+                logDebug(`Row ${index}: large=${!!m.large}, fontSize=${fontSize.toFixed(2)}, label='${label}'`);
 
                 const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
                 group.innerHTML = `
@@ -312,16 +365,15 @@ res.json() ist eine Browser-API, die die vom Server (hier: dein PHP mit handleAj
                 // Use the pre-flattened data from PHP
                 const sns = data.FlatSNS || {};
 
+                // Nach erstem Daten-Update: initDisplay() mit echten Werten aufrufen
+                initDisplay(sns);
+
                 configMetrics.forEach((m, index) => {
                     const actualKey = Object.keys(sns).find(k => k.startsWith(m.prefix));
-                    
                     if (actualKey) {
                         const val = sns[actualKey];
                         let v;
-
-                        // Check if the value is a number (including numeric strings)
                         if (!isNaN(parseFloat(val)) && isFinite(val)) {
-                            // It's a number: apply precision and locale formatting
                             const prec = parseInt(m.precision) || 0; 
                             v = Number(val).toLocaleString('de-DE', {
                                 minimumFractionDigits: prec, 
@@ -329,11 +381,9 @@ res.json() ist eine Browser-API, die die vom Server (hier: dein PHP mit handleAj
                             });
                             logDebug(`Updating Row ${index} (Numeric): ${val} -> ${v}`);
                         } else {
-                            // It's not a number (e.g., "12:34:56"): output as is
                             v = val;
                             logDebug(`Updating Row ${index} (String): ${val}`);
                         }
-                        
                         const valEl = document.getElementById('val-' + index);
                         const shdEl = document.getElementById('shd-' + index);
                         if (valEl) valEl.textContent = v;
