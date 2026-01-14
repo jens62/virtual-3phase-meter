@@ -32,10 +32,10 @@ html, body {
     padding-bottom: 50px; 
 }
 
-/* --- Header Alignment (Title Left, Button Right) --- */
+/* --- Header Alignment --- */
 .header { 
     display: flex;
-    justify-content: space-between; /* Pushes H1 left and Link right */
+    justify-content: space-between; 
     align-items: center;
     margin-bottom: 30px; 
     height: 60px; 
@@ -60,6 +60,7 @@ html, body {
     background: rgba(255, 255, 255, 0.05);
 }
 
+/* 1. Unblock the parent containers */
 .card { 
     background: var(--card); 
     padding: 20px; 
@@ -67,22 +68,23 @@ html, body {
     box-shadow: 0 8px 32px rgba(0,0,0,0.5); 
     margin-bottom: 20px; 
     border: 1px solid var(--border); 
-    overflow: hidden; 
+    /* REQUIRED: Safari kills resizing if this is 'hidden' */
+    overflow: visible !important; 
 }
 
-/* Row Groups for Connection Section */
 .row-group {
     display: flex !important;
     flex-direction: row !important;
     gap: 20px;
     width: 100%;
-    align-items: flex-end; 
+    /* REQUIRED: Allow children to define their own height */
+    align-items: flex-start !important; 
+    overflow: visible !important;
 }
 
 .flex-grow-3 { flex: 3; min-width: 0; }
 .flex-grow-1 { flex: 1; min-width: 120px; }
 
-/* Global Labels */
 label { 
     display: block; 
     font-size: 10px; 
@@ -92,7 +94,18 @@ label {
     font-weight: bold; 
 }
 
-/* Uniform Input Styling for single-line elements */
+/* Hide Safari/Chrome/Edge native number spinners */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Hide Firefox native number spinners */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
 input, select { 
     background: var(--input-bg); 
     color: #fff; 
@@ -102,32 +115,34 @@ input, select {
     width: 100%; 
     box-sizing: border-box; 
     font-size: 16px;
-    height: var(--touch-height); /* Keeps 48px for touch */
+    height: var(--touch-height); 
 }
+
 
 /* Specific Styling for the DataMatrix textarea */
 textarea { 
     background: var(--input-bg); 
     color: #fff; 
     border: 1px solid #444; 
-    padding: 15px; /* Slightly larger padding for easier touch */
+    padding: 15px; 
     border-radius: 8px; 
     width: 100%; 
     box-sizing: border-box; 
     font-size: 16px;
-    
-    /* Safari/iPad Specific Fixes */
-    height: auto !important;      
-    min-height: 150px;           /* Increased for easier grabbing */
-    resize: vertical !important;  
-    overflow: auto;
-    display: block;
     font-family: monospace;
     
-    /* Create a visible 'grip' handle for iPad */
-    background-image: linear-gradient(135deg, transparent 0%, transparent 90%, #555 90%, #555 100%);
-    background-position: bottom right;
-    background-repeat: no-repeat;
+    /* 1. HIDE THE HANDLE */
+    resize: none;            
+    background-image: none;
+    
+    /* 2. REMOVE !important FROM HEIGHT */
+    /* This allows the JavaScript to change the height */
+    height: auto;      
+    min-height: 150px;           
+    
+    /* 3. ENSURE NO CLIPPING */
+    overflow: hidden; /* Recommended for auto-expand to prevent scrollbars flickering */
+    display: block;
 }
 
 /* Stepper UI */
@@ -158,10 +173,9 @@ textarea {
     text-align: center;
     font-size: 18px;
     background: #222;
-    -moz-appearance: textfield;
 }
 
-/* --- Metrics Area --- */
+/* Metrics Area */
 .metric-item { 
     display: grid; 
     grid-template-columns: 30px minmax(100px, 1fr) minmax(100px, 1fr) 70px 185px 50px 60px; 
@@ -172,6 +186,7 @@ textarea {
     border-radius: 8px;
     margin-bottom: 10px;
     border: 1px solid var(--border);
+    overflow: visible;
 }
 
 .metric-field {
@@ -198,7 +213,6 @@ textarea {
     font-size: 24px; 
 }
 
-/* Action Buttons */
 .btn-add {
     background: transparent;
     color: var(--text-dim);
@@ -222,10 +236,8 @@ textarea {
     cursor: pointer;
 }
 
-/* --- LARGE GREEN CHECKBOX --- */
 .ios-checkbox-simple {
     -webkit-appearance: none;
-    -moz-appearance: none;
     appearance: none;
     width: 48px;
     height: 48px;
@@ -234,7 +246,6 @@ textarea {
     background: var(--input-bg);
     border: 1px solid #444; 
     border-radius: 6px;
-    box-sizing: border-box;
     display: block;
     position: relative;
     transition: all 0.2s ease;
@@ -256,7 +267,6 @@ textarea {
     font-weight: bold;
 }
 
-/* --- RED REMOVE BUTTON --- */
 .btn-remove {
     background: #c62828 !important;
     color: white !important;
@@ -270,7 +280,6 @@ textarea {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-sizing: border-box;
 }
 
 .btn-remove:active {

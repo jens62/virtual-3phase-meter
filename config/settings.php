@@ -587,6 +587,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         `;
             container.appendChild(div);
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Select the textarea (using 'textarea' or its ID if it has one)
+            const textarea = document.querySelector('textarea');
+
+            const autoExpand = function(field) {
+                // Reset height to get correct scrollHeight
+                field.style.height = 'inherit';
+
+                // Calculate the new height
+                const newHeight = field.scrollHeight + 5; // +5px buffer
+                field.style.height = newHeight + 'px';
+            };
+
+            // Listen for typing or pasting
+            textarea.addEventListener('input', function() {
+                autoExpand(this);
+            });
+
+            // Run once immediately to handle existing content
+            autoExpand(textarea);
+        });
     </script>
 </body>
 
