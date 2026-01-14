@@ -121,12 +121,24 @@ class VirtualMeter
         }
         .lcd-label { font-family: sans-serif; font-weight: bold; fill: #2a3a2a; }
         
-        /* Hidden link to settings (accessible via double tap or long press if you add JS) */
-        #settings-link { position: fixed; top: 10px; right: 10px; width: 30px; height: 30px; opacity: 0.1; z-index: 100; }
-        #settings-link:hover { 
-            opacity: 0.5; 
-            background: rgba(255,255,255,0.1); 
-            border-radius: 50%;
+        #settings-link {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            width: 32px;
+            height: 32px;
+            z-index: 100;
+            /* Use the relative path we discussed for subdirectories */
+            background: url('assets/icons/icons8-apple-settings.svg') no-repeat center center;
+            background-size: contain;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+            cursor: pointer;
+            opacity: 0.8;
+        }
+
+        #settings-link:hover {
+            opacity: 1;
+            transform: rotate(45deg); /* Optional: cool gear rotation effect */
         }
 
         /* Debug: highlight everything that SHOULD be interactive */
