@@ -52,6 +52,28 @@ sudo setfacl -R -m u:www-data:rwx /path/to/virtual-3phase-meter
 
 ```
 
+🛠️ How to configure it
+
+Open the file:
+
+Bash
+sudo nano /etc/apache2/sites-available/000-default.conf
+Add the Alias and Directory logic: Inside the <VirtualHost *:80> block, add these lines (place them before the closing </VirtualHost> tag):
+
+Apache
+# This maps the URL path to the physical 'public' folder
+Alias /virtual-3phase-meter "/var/www/html/virtual-3phase-meter/public"
+
+<Directory "/var/www/html/virtual-3phase-meter/public">
+    Options FollowSymLinks
+    AllowOverride All
+    Require all granted
+</Directory>
+Restart Apache:
+
+Bash
+sudo systemctl restart apache2
+
 
 4. **Configuration:**
 There is no manual configuration file to rename. Simply navigate to `settings.php` in your web browser to initialize the `config.php` file and set up your meter's parameters.
