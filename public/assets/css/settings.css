@@ -13,7 +13,10 @@
     --touch-height: 48px; 
 }
 
-body { 
+html, body {
+    /* Essential for allowing pinch-to-zoom and drag gestures on iPad */
+    touch-action: manipulation;
+    -webkit-overflow-scrolling: touch;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
     background: var(--bg); 
     color: var(--text); 
@@ -107,19 +110,25 @@ textarea {
     background: var(--input-bg); 
     color: #fff; 
     border: 1px solid #444; 
-    padding: 10px 12px; 
+    padding: 15px; /* Slightly larger padding for easier touch */
     border-radius: 8px; 
     width: 100%; 
     box-sizing: border-box; 
     font-size: 16px;
     
-    /* Changes for Safari/iPad */
-    min-height: 120px;          /* Start with enough room for DataMatrix */
-    height: auto;               /* Overrides the fixed touch-height */
-    resize: vertical !important;/* Forces the handle to appear in Safari */
-    font-family: monospace; 
+    /* Safari/iPad Specific Fixes */
+    height: auto !important;      
+    min-height: 150px;           /* Increased for easier grabbing */
+    resize: vertical !important;  
     overflow: auto;
     display: block;
+    font-family: monospace;
+    
+    /* Create a visible 'grip' handle for iPad */
+    background-image: linear-gradient(135deg, transparent 0%, transparent 90%, #555 90%, #555 100%);
+    background-position: bottom right;
+    background-repeat: no-repeat;
+}
 
 /* Stepper UI */
 .stepper {
