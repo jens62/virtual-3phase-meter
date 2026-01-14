@@ -438,7 +438,6 @@ class VirtualMeter
                         */
 
                         const res = await fetch(window.location.pathname + '?ajax=1');
-                        console.trace("fetch called here");
                         logDebug(`updateDashboard: got res`, res);
                         // const text = await res.text();
                         // console.log("Response-Text:", text);
