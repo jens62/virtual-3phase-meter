@@ -89,8 +89,8 @@ label {
     font-weight: bold; 
 }
 
-/* Uniform Input Styling */
-input, select, textarea { 
+/* Uniform Input Styling for single-line elements */
+input, select { 
     background: var(--input-bg); 
     color: #fff; 
     border: 1px solid #444; 
@@ -99,8 +99,27 @@ input, select, textarea {
     width: 100%; 
     box-sizing: border-box; 
     font-size: 16px;
-    height: var(--touch-height);
+    height: var(--touch-height); /* Keeps 48px for touch */
 }
+
+/* Specific Styling for the DataMatrix textarea */
+textarea { 
+    background: var(--input-bg); 
+    color: #fff; 
+    border: 1px solid #444; 
+    padding: 10px 12px; 
+    border-radius: 8px; 
+    width: 100%; 
+    box-sizing: border-box; 
+    font-size: 16px;
+    
+    /* Changes for Safari/iPad */
+    min-height: 120px;          /* Start with enough room for DataMatrix */
+    height: auto;               /* Overrides the fixed touch-height */
+    resize: vertical !important;/* Forces the handle to appear in Safari */
+    font-family: monospace; 
+    overflow: auto;
+    display: block;
 
 /* Stepper UI */
 .stepper {
