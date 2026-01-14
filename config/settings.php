@@ -101,7 +101,7 @@ function svgToGroup(
 }
 
 $configFile = __DIR__ . '/config.php';
-$templateDir = __DIR__ . '/../assets/meter-templates';
+$templateDir = __DIR__ . '/../public/assets/meter-templates/';
 
 if (function_exists('opcache_invalidate')) {
     opcache_invalidate($configFile, true);
@@ -115,17 +115,25 @@ if (!isset($config['datamatrix_group'])) $config['datamatrix_group'] = "";
 ini_set('serialize_precision', -1);
 
 // --- Template Discovery Logic ---
-$templates = [];
-if (is_dir($templateDir)) {
-    // Filter for .svg files and remove . and ..
-    $templates = array_values(preg_grep('/\.svg$/i', scandir($templateDir)));
-}
 
-// Default selection logic if not already in config
+/** * Path: /config/settings.php 
+ * We go up one level to reach the root, then into public/assets/
+ */
+$templateDir = __DIR__ . '/../public/assets/meter-templates/';
+
+// 1. Fetch only .svg files using glob (returns full paths)
+$foundFiles = glob($templateDir . "*.svg");
+
+// 2. Extract just the filenames (e.g., 'eBZ_DD3.svg') for the array
+$templates = $foundFiles ? array_map('basename', $foundFiles) : [];
+
+// 3. Default selection logic
 if (!isset($config['meter_template'])) {
     if (count($templates) === 1) {
+        // If there's exactly one, pick it automatically
         $config['meter_template'] = $templates[0];
     } else {
+        // Otherwise, leave empty so the user must select one
         $config['meter_template'] = "";
     }
 }
@@ -270,7 +278,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (function_exists('opcache_invalidate')) opcache_invalidate($configFile, true);
                 
                 // Redirect logic
-                $redirectUrl = $_SERVER['PHP_SELF'] . "?saved=1";
+                $redirectUrl = $_SERVER['PHP_SELF'] . "?saved=1&settings=1";
                 if (isset($_GET['test_fallback'])) $redirectUrl .= "&test_fallback=1";
                 
                 header("Location: " . $redirectUrl);        
@@ -446,7 +454,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit" class="btn btn-save">Save & Apply Configuration</button>
         </div>
     </form>
-    <a href="virtual_meter.php" class="back-link">← Return to Dashboard</a>
+    <a href="<?= $_SERVER['PHP_SELF'] . '?saved=1' ?>" class="back-link">← Return to Dashboard</a>
 </div>
 
 <script>
