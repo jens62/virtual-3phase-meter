@@ -90,7 +90,7 @@ class VirtualMeter
     <style>
         @font-face {
             font-family: 'Digital7Mono';
-            src: url('/assets/fonts/digital-7 (mono).ttf') format('truetype');
+            src: url('assets/fonts/digital-7 (mono).ttf') format('truetype');
             font-weight: normal; font-style: normal;
         }
 
