@@ -123,19 +123,39 @@ class VirtualMeter
         
         #settings-link {
             position: fixed;
-            top: 15px;
-            right: 15px;
-            width: 32px;
-            height: 32px;
+            /* Pushes it further down and left to clear the iPad corners */
+            top: calc(env(safe-area-inset-top) + 15px);
+            right: calc(env(safe-area-inset-right) + 15px);
+            
+            /* Bigger touch target */
+            width: 54px;
+            height: 54px;
             z-index: 100;
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            /* Optional: Subtle iPad-style button look */
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 50%;
+            
+            transition: transform 0.2s ease, background 0.2s ease;
+            opacity: 0.8;
         }
 
         #settings-link svg {
-            width: 100%;
-            height: 100%;
-            fill: #ffffff; /* Forces the icon to be white */
+            /* Significantly larger icon */
+            width: 34px;
+            height: 34px;
+            fill: #ffffff;
         }
 
+        #settings-link:active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
         #settings-link:hover {
             opacity: 1;
             transform: rotate(45deg); /* Optional: cool gear rotation effect */
