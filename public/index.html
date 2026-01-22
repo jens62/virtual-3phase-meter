@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8">
+    <title>Meter PWA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="assets/css/settings.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <script src="assets/js/umd.js"></script>
+    <!--script src="https://cdn.jsdelivr.net/npm/bwip-js/dist/bwip-js-min.js"></script-->
+    <script type="text/javascript" src="assets/js/bwip-js-min.js"></script>
+    <script type="text/javascript" src="assets/js/log4javascript.js"></script>
+    <script src="https://unpkg.com/loglevel@1.9.1/dist/loglevel.min.js"></script>
+    <script type="module">
+        import { renderUI } from './assets/js/app.js';
+        // Startet die App, sobald das HTML bereit ist
+        window.addEventListener('DOMContentLoaded', renderUI);
+    </script>
+</head>
+
+<body>
+    <div id="app-viewport">
+        <div id="loading">Initialisiere Meter...</div>
+    </div>
+
+    <div id="logger-container"></div>
+
+    <template id="tpl-settings">
+        <div class="container">
+            <div class="header">
+                <h1 style="margin: 0;">Meter Configuration</h1>
+                <button type="button" class="btn-back" id="btn-close-settings">← Return to Dashboard</button>
+            </div>
+
+            <div id="error-container" class="card"
+                style="display:none; border-left: 5px solid #ff5252; background: #fff5f5; margin-bottom: 20px;">
+                <h3 id="error-title" style="color: #d32f2f; margin-top: 0;">⚠️ Connection Failed</h3>
+                <p id="error-message"></p>
+            </div>
+
+            <form id="config-form">
+                <div class="card">
+                    <h2>Connection</h2>
+
+                    <div class="grid-main">
+                        <div class="full-width">
+                            <label>Connection Method</label>
+                            <select name="type" id="select-type">
+                                <option value="http">HTTP (Direct IR-Head / Tasmota Web)</option>
+                                <option value="mqtt">MQTT Broker</option>
+                            </select>
+                        </div>
+
+                        <div id="fields-http" class="full-width row-group" style="margin-top: 15px;">
+                            <div class="flex-grow-3">
+                                <label>Tasmota IP Address</label>
+                                <input type="text" name="host" id="input-host" placeholder="192.168.1.100"
+                                    inputmode="decimal">
+                            </div>
+                            <div class="flex-grow-1">
+                                <label>Protocol</label>
+                                <select name="protocol" id="select-protocol">
+                                    <option value="http">HTTP</option>
+                                    <option value="https">HTTPS</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="fields-mqtt" class="full-width hidden" style="margin-top: 15px; display:none;">
+                            <div class="row-group">
+                                <div class="flex-grow-3">
+                                    <label>MQTT Broker Host</label>
+                                    <input type="text" name="mqtt_host" id="input-mqtt-host" placeholder="mqtt.local">
+                                </div>
+                                <div class="flex-grow-1">
+                                    <label>Port</label>
+                                    <input type="number" name="port" id="input-port" placeholder="1883" value="1883">
+                                </div>
+                            </div>
+                            <div style="margin-top: 15px;">
+                                <label>Topic (TelePeriod)</label>
+                                <input type="text" name="topic" id="input-topic" placeholder="tele/tasmota/SENSOR">
+                            </div>
+                            <div class="row-group" style="margin-top: 15px;">
+                                <div style="flex: 1;">
+                                    <label>MQTT User</label>
+                                    <input type="text" name="mqtt_user" id="input-mqtt-user">
+                                </div>
+                                <div style="flex: 1;">
+                                    <label>MQTT Password</label>
+                                    <input type="password" name="mqtt_pass" id="input-mqtt-pass">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div id="connection-status" class="status-info"
+                                style="padding: 12px; border-radius: 8px; background: #eceff1; font-size: 0.95em; text-align: center; border: 1px solid #cfd8dc;">
+                                Enter connection details to verify hardware...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Preferences</h2>
+                    <div class="grid-main">
+                        <div class="full-width row-group">
+                            <div style="flex: 1;">
+                                <label>Refresh (s)</label>
+                                <div class="stepper">
+                                    <button type="button" onclick="step(this, -1)">-</button>
+                                    <input type="number" name="refresh_rate" id="input-refresh" min="3" value="3">
+                                    <button type="button" onclick="step(this, 1)">+</button>
+                                </div>
+                            </div>
+                            <div style="flex: 1;">
+                                <label>Shadow Intensity</label>
+                                <div class="stepper">
+                                    <button type="button" onclick="step(this, -1)">-</button>
+                                    <input type="number" id="input-shadow" name="shadow_opacity" min="0" max="1"
+                                        step="0.05" value="0.5">
+                                    <button type="button" onclick="step(this, 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1">
+                                <label>Log Level</label>
+                                <select name="log_level" id="select-log">
+                                    <option value="Debug">Debug</option>
+                                    <option value="Info" selected>Info</option>
+                                    <option value="Warning">Warning</option>
+                                    <option value="Error">Error</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="full-width" style="margin-top: 20px;">
+                            <label>Meter SVG Template</label>
+                            <select name="meter_template" id="select-template"></select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <label>DataMatrix Content (AA Klartext / AB Hex)</label>
+                    <textarea name="datamatrix_raw" id="input-datamatrix" rows="3"></textarea>
+                    <div style="display: flex; align-items: center; gap: 15px; margin-top: 10px;">
+                        <div id="barcode-preview-svg"
+                            style="width: 80px; height: 80px; background: white; padding: 5px; display: flex; align-items: center; border: 1px solid #ddd;">
+                        </div>
+                        <span id="barcode-status-msg" style="font-size: 0.9em;"></span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Display Order & Precision</h3>
+                    <div id="metric-container"></div>
+                    <div style="margin-top: 20px;">
+                        <button type="button" class="btn btn-add" id="btn-add-line">+ Add New Line</button>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-save">Save & Apply Configuration</button>
+                </div>
+            </form>
+            <div style="display: flex; justify-content: flex-end; margin-top: 30px;">
+                <button type="button" class="btn-back">
+                    Return to Dashboard →
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <!--script type="module">
+        // Wir prüfen beim Start, ob eine Konfiguration existiert
+        async function init() {
+            const db = await idb.openDB('MeterDB', 1, {
+                upgrade(db) { db.createObjectStore('settings'); }
+            });
+
+            const config = await db.get('settings', 'config');
+
+            if (!config) {
+                console.log("Keine Konfiguration gefunden. Starte Setup...");
+                // Hier laden wir später Ihre Settings-GUI
+            } else {
+                console.log("Konfiguration geladen:", config);
+                // Hier startet das Dashboard
+            }
+        }
+        init();
+    </script-->
+</body>
+
+</html>

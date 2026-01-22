@@ -1,0 +1,98 @@
+/* Font Definition */
+@font-face {
+    font-family: 'Digital7Mono';
+    /* Achte auf den korrekten Pfad relativ zur CSS Datei */
+    src: url('../fonts/digital-7 (mono).woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block; /* Wichtig für measureText Logik */
+}
+
+:root {
+    --lcd-shadow-opacity: 0.1; /* Standardwert, kann via JS überschrieben werden */
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100dvh;
+    background: #1a1a1a;
+    color: #000000; /* Dies setzt die "currentColor" für alle Kindelemente */
+    justify-content: center;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.meter-wrapper {
+    width: 100vw;
+    height: 96dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+svg {
+    max-width: 98%;
+    max-height: 98%;
+    width: auto;
+    height: auto;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.4));
+}
+
+/* CSS Klassen für die SVG-Elemente */
+.lcd-text {
+    font-family: 'Digital7Mono', monospace;
+    fill: #1a1a1a;
+}
+
+.lcd-shadow {
+    font-family: 'Digital7Mono', monospace;
+    fill: rgba(0, 0, 0, var(--lcd-shadow-opacity));
+}
+
+.lcd-label {
+    font-family: sans-serif;
+    font-weight: bold;
+    fill: #2a3a2a;
+}
+
+.lcd-unit {
+    font-family: sans-serif;
+    fill: #1a1a1a;
+}
+
+/* Settings Button */
+#settings-link {
+    position: fixed;
+    top: calc(env(safe-area-inset-top) + 15px);
+    right: calc(env(safe-area-inset-right) + 15px);
+    width: 54px;
+    height: 54px;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    border-radius: 50%;
+    transition: transform 0.2s ease, background 0.2s ease;
+    opacity: 0.8;
+    -webkit-tap-highlight-color: transparent;
+    pointer-events: auto;
+    text-decoration: none;
+}
+
+#settings-link:active {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(0.9);
+    opacity: 1;
+}
+
+#settings-link svg {
+    width: 34px;
+    height: 34px;
+    fill: #ffffff;
+}
+
