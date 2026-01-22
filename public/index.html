@@ -7,11 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <link rel="stylesheet" href="assets/css/settings.css">
     <link rel="stylesheet" href="assets/css/dashboard.css">
+    <script src="assets/js/bwip-js-min.js"></script>
     <script src="assets/js/umd.js"></script>
-    <!--script src="https://cdn.jsdelivr.net/npm/bwip-js/dist/bwip-js-min.js"></script-->
-    <script type="text/javascript" src="assets/js/bwip-js-min.js"></script>
-    <script type="text/javascript" src="assets/js/log4javascript.js"></script>
-    <script src="https://unpkg.com/loglevel@1.9.1/dist/loglevel.min.js"></script>
+    <script src="assets/js/loglevel.min.js"></script>
     <script type="module">
         import { renderUI } from './assets/js/app.js';
         // Startet die App, sobald das HTML bereit ist
@@ -23,8 +21,6 @@
     <div id="app-viewport">
         <div id="loading">Initialisiere Meter...</div>
     </div>
-
-    <div id="logger-container"></div>
 
     <template id="tpl-settings">
         <div class="container">

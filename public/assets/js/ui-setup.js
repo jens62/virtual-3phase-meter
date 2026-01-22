@@ -3,8 +3,6 @@
 import { saveConfigToDB } from './storage.js'
 import { configState } from './config-state.js'
 import { discoverTasmota, guessMetricsFromDiscovery } from './tasmota-api.js'
-import { log } from './logger-init.js';
-
 
 // Debounce-Timer für den automatischen Verbindungstest
 let connectionTestTimeout;

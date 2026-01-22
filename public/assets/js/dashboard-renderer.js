@@ -1,5 +1,4 @@
 import { decodeMeterNumber } from './tasmota-api.js'
-import { log } from './logger-init.js';
 
 /**
  * Hilfsfunktion: Wandelt einen SVG-String in eine saubere Gruppe (<g>) um.

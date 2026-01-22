@@ -1,6 +1,5 @@
 import { getCurrentValues } from './tasmota-api.js'
 import { renderStaticElements, updateSvgValues, initializeFontMetrics } from './dashboard-renderer.js'
-import { log } from './logger-init.js';
 
 let dashboardInterval = null
 

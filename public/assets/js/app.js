@@ -11,55 +11,12 @@ import {
 } from './ui-setup.js'
 import { startDashboard } from './ui-dashboard.js'
 
-
-// import { log } from './logger-init.js';
-
 import log from './logger.js';
 
 log.info("App wurde initialisiert.");
 
 // // Use it anywhere!
 log.info("PWA initialized successfully.");
-
-// import { createBrowserLogger } from './browser-logger.js';
-
-
-
-/*
-// Log examples
-logger.info('Application started', {
-  version: '1.0.0',
-  platform: navigator.platform
-});
-
-logger.debug('User action', { action: 'click', element: 'login-button' });
-
-logger.error('API request failed', {
-  url: '/api/data',
-  status: 500,
-  error: 'Internal Server Error'
-});
-
-// Get persisted logs
-const storedLogs = logger.transports
-  .find(t => t instanceof LocalStorageTransport)
-  ?.getLogs();
-
-// In service worker (send logs to main thread)
-self.addEventListener('fetch', event => {
-  const clients = await self.clients.matchAll();
-  clients.forEach(client => {
-    client.postMessage({
-      type: 'LOG',
-      data: {
-        level: 'info',
-        message: `Fetch: ${event.request.url}`,
-        timestamp: new Date().toISOString()
-      }
-    });
-  });
-});
-*/
 
 // 2. Globale Helfer (Stepper)
 window.step = function (btn, change) {

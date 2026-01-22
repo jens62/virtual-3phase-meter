@@ -4,7 +4,6 @@
  * der Datenstrukturen und das automatische Hardware-Mapping.
  */
 
-// import { log } from './logger-init.js';
 import log, { runWithContext } from './logger.js';
 
 // Modul-interner Cache für das Hardware-Mapping
