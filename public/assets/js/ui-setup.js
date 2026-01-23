@@ -1,6 +1,8 @@
 // assets/js/ui-setup.js
 
-import { saveConfigToDB } from './storage.js'
+import log, { runWithContext } from './logger.js';
+
+import { saveConfigToDB, deleteConfig } from './storage.js'
 import { configState } from './config-state.js'
 import { discoverTasmota, guessMetricsFromDiscovery } from './tasmota-api.js'
 
@@ -15,7 +17,37 @@ export function initSetupEvents(config = null) {
   // 1. Zeile hinzufügen
   document.getElementById('btn-add-line').onclick = () => createMetricRow();
 
-// 2.a. Save & Apply (The Form Submit)
+  // VIEW CONFIGURATION
+  const viewBtn = document.getElementById('btn-view-config');
+  if (viewBtn) {
+    viewBtn.onclick = () => {
+      configState.syncFromForm();
+      const payload = configState.getPayload();
+      console.log('Current Configuration:', payload);
+      alert("Current JSON (also printed to Console):\n\n" + JSON.stringify(payload, null, 2));
+    };
+  }
+
+  // CLEAR CONFIGURATION
+  const clearBtn = document.getElementById('btn-clear-config');
+  if (clearBtn) {
+    clearBtn.onclick = async () => {
+      const confirmed = confirm("Are you sure? This will delete all saved metrics and connection settings permanently.");
+      if (confirmed) {
+        try {
+          await deleteConfig(); // This calls the function in storage.js
+          alert("Configuration cleared.");
+          window.location.reload(); 
+        } catch (err) {
+          console.error("Failed to clear config:", err);
+          alert("Error clearing configuration.");
+        }
+      }
+    };
+  }
+
+
+  // 2.a. Save & Apply (The Form Submit)
   const setupForm = document.getElementById('config-form');
   if (setupForm) {
     setupForm.onsubmit = async (e) => {
@@ -118,6 +150,7 @@ async function runAutoDiscovery() {
             statusEl.innerHTML = 'ℹ️ Warte auf MQTT Publish (TelePeriod)...';
         }
 
+        log.debug('calling discoverTasmota with:', conn);
         const discovery = await discoverTasmota(conn);
         log.debug('Discovery Resultat:', discovery);
         

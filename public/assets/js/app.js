@@ -3,7 +3,7 @@
 // 1. Importe
 import { configState } from './config-state.js';
 import { getConfig, deleteConfig } from './storage.js'
-import { discoverTasmota, guessMetricsFromDiscovery } from './tasmota-api.js'
+import { discoverTasmota, guessMetricsFromDiscovery, rehydrateMetadata } from './tasmota-api.js';
 import {
   initSetupEvents,
   createMetricRow,
@@ -60,6 +60,12 @@ export async function renderUI () {
       createMetricRow()
   } else {
     // --- DASHBOARD MODE ---
+
+    // WICHTIG: Hier die API rehydrieren, bevor das Dashboard startet!
+    // Wir nutzen die discovery-Daten aus der gespeicherten Config.
+    if (savedConfig.discovery) {
+        rehydrateMetadata(savedConfig.discovery);
+    }
 
     // 1. Die zentrale Instanz mit den geladenen Daten füttern
     configState.load(savedConfig); 

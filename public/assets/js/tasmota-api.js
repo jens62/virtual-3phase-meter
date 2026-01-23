@@ -1,10 +1,10 @@
 /**
  * tasmota-api.js
- * * Behandelt die Kommunikation mit Tasmota-Geräten, die Normalisierung
+ * Behandelt die Kommunikation mit Tasmota-Geräten, die Normalisierung
  * der Datenstrukturen und das automatische Hardware-Mapping.
  */
 
-import log, { runWithContext } from './logger.js';
+import log, { runWithContext } from './logger.js'
 
 // Modul-interner Cache für das Hardware-Mapping
 let cachedMapping = {
@@ -14,23 +14,36 @@ let cachedMapping = {
 }
 
 /**
+ * Stellt das Mapping aus gespeicherten Einstellungen wieder her (z.B. nach Page-Reload).
+ * Diese Funktion muss beim App-Start mit den gespeicherten Config-Daten aufgerufen werden.
+ */
+export function rehydrateMetadata (discoveryConfig) {
+  log.debug('rehydrateMetadata aufgerufen mit:', discoveryConfig);
+  if (discoveryConfig && discoveryConfig.nodeKey) {
+    cachedMapping.nodeKey = discoveryConfig.nodeKey
+    cachedMapping.meterIdKey = discoveryConfig.meterIdKey
+    cachedMapping.isReady = true
+    log.debug('API Metadata erfolgreich rehydriert:', cachedMapping)
+  } else {
+    log.warn('rehydrateMetadata: Ungültige oder fehlende Discovery-Daten.');
+  }
+}
+
+/**
  * Erkennt die Struktur der Tasmota-Antwort und speichert das Mapping.
  */
 function discoverStructure (statusSns) {
   log.debug('discoverStructure aufgerufen mit:', statusSns)
-  if (!statusSns || cachedMapping.isReady) return
 
-  // Finde den Datenknoten (das erste Objekt-Kind unter StatusSNS, das nicht 'Time' ist)
+  if (!statusSns) return null
+
   const dynamicKey = Object.keys(statusSns).find(
-    key => typeof statusSns[key] === 'object' && statusSns[key] !== null
+    key => typeof statusSns[key] === 'object' && statusSns[key] !== null && key !== 'Time'
   )
 
   if (dynamicKey) {
-    cachedMapping.nodeKey = dynamicKey
     const dataNode = statusSns[dynamicKey]
-
-    // Finde den Key für die Meter-ID (20 Zeichen Hex)
-    cachedMapping.meterIdKey = Object.keys(dataNode).find(key => {
+    const meterIdKey = Object.keys(dataNode).find(key => {
       const val = dataNode[key]
       return (
         typeof val === 'string' &&
@@ -39,36 +52,58 @@ function discoverStructure (statusSns) {
       )
     })
 
-    cachedMapping.isReady = true
-    log.debug(
-      `Tasmota Mapping etabliert: Knoten="${dynamicKey}", ID-Key="${cachedMapping.meterIdKey}"`
-    )
+    return {
+      nodeKey: dynamicKey,
+      meterIdKey: meterIdKey,
+      isReady: true
+    }
   }
+  return null
 }
 
 /**
- * Wendet das Mapping an und liefert ein standardisiertes Objekt zurück.
- * Ersetzt das rekursive Flattening durch gezielten Zugriff.
+ * Normalisiert die Datenstruktur basierend auf dem erkannten Hardware-Mapping.
+ * FALLBACK: Wenn kein Mapping im Cache ist, wird der erste verfügbare Objekt-Knoten genommen.
  */
 function applyMapping (statusSns) {
-  if (!statusSns) return { SML: {}, Time: null }
+  log.debug('--- applyMapping Start ---');
+  log.debug('Cache-Zustand:', JSON.stringify(cachedMapping));
 
-  // Falls noch nicht geschehen: Struktur analysieren
-  if (!cachedMapping.isReady) {
-    discoverStructure(statusSns)
+  // 1. Bestimme den Quell-Knoten (z.B. "Power" oder "SML")
+  let node = cachedMapping.nodeKey;
+  
+  if (!node) {
+    log.debug('Mapping: nodeKey im Cache leer. Suche ersten verfügbaren Objekt-Knoten in den Daten...');
+    node = Object.keys(statusSns).find(
+      key => typeof statusSns[key] === 'object' && statusSns[key] !== null && key !== 'Time'
+    );
+    log.debug(`Mapping: Auto-Discovery ergab Knoten-Key: '${node}'`);
   }
 
-  // Gezielter Zugriff über den gecachten Key
-  const dataNode = statusSns[cachedMapping.nodeKey] || {}
+  // 2. Bestimme den Key für die Meter-ID
+  const idKey = cachedMapping.meterIdKey || 'Meter_id';
+  
+  log.debug(`Mapping-Strategie: Suche nach Daten in '${node}', ID unter '${idKey}'`);
 
-  return {
+  const rawNode = statusSns[node];
+  
+  if (!rawNode) {
+    log.warn(`Mapping-Abbruch: Knoten '${node}' wurde in der Tasmota-Antwort nicht gefunden!`, statusSns);
+    return statusSns;
+  }
+
+  // 3. Transformation in das Ziel-Format (Dashboard erwartet immer "SML")
+  const mappedResult = {
     Time: statusSns.Time,
     SML: {
-      ...dataNode,
-      // Mapping der entdeckten ID auf den Standard-Key "Meter_id"
-      Meter_id: dataNode[cachedMapping.meterIdKey] || null
+      ...rawNode, 
+      // Wir mappen die ID auf einen einheitlichen Key "Meter_id"
+      Meter_id: rawNode[idKey] || rawNode['Meter_Number'] || rawNode['Meter_id'] || null
     }
-  }
+  };
+
+  log.debug('Mapping-Erfolg! Transformierte Struktur:', mappedResult);
+  return mappedResult;
 }
 
 /**
@@ -86,6 +121,7 @@ export function getMockData () {
       }
     }
   }
+  // Hier nutzen wir direkt applyMapping, um Konsistenz zu prüfen
   return {
     data: applyMapping(rawMock.StatusSNS),
     source: 'mock'
@@ -93,234 +129,170 @@ export function getMockData () {
 }
 
 /**
- * Kernfunktion: Erwartet das 'connection' Objekt aus der Config.
+ * Holt Daten vom Tasmota-Gerät via Proxy.
  */
-export async function fetchTasmotaData (connection, returnRaw = false) {
-  const host = connection?.host || 'unknown';
+export async function fetchTasmotaData (connection, isDiscovery = false) {
+  const host = connection?.host || 'unknown'
 
-    // Alles innerhalb von runWithContext behält nun den Bezug zum Aufrufer!
-    return await runWithContext(`API:${host}`, async () => {
-
-    log.debug('fetchTasmotaData aufgerufen mit Verbindung:', connection)
-  if (!connection) {
-    console.error('API Fehler: Kein connection-Objekt übergeben.')
-    return getMockData()
-  }
-
-  const { type, host, protocol, auth } = connection
-
-  if (type === 'http' || !type) {
-    let url = `${protocol}://${host}/cm?cmnd=Status%208`
-    log.debug('Aufruf-URL:', url)
-
-    if (auth && auth.user && auth.pass) {
-      url += `&user=${encodeURIComponent(
-        auth.user
-      )}&password=${encodeURIComponent(auth.pass)}`
-    }
-
-    // Encodierung für den URL-Parameter
-    const encodedUrl = encodeURIComponent(url)
-
-    // Zusammensetzen der Proxy-URL
-    const proxyUrl = `proxy.php?url=${encodedUrl}`
-
-    try {
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 5000)
-
-      // PHP Proxy Aufruf zur CORS-Vermeidung
-      const proxyUrl = `proxy.php?url=${encodedUrl}`
-      const response = await fetch(proxyUrl, { signal: controller.signal })
-      log.debug('Fetching url from proxy:', url)
-      log.debug('HTTP Antwort erhalten von:', host)
-      log.debug('Antwort-Status:', response.status)
-      log.debug('Antwort-Header:', [...response.headers.entries()])
-      log.debug('Antwort-URL:', response.url)
-      log.debug('Antwort-Status-Text:', response.statusText)
-      log.debug('Antwort-OK:', response.ok)
-      log.debug('Antwort-Content-Type:', response.headers.get('Content-Type'))
-      log.debug('Antwort-Body (raw):', await response.clone().text())
-
-      clearTimeout(timeoutId)
-
-      if (!response.ok) throw new Error(`HTTP Fehler: ${response.status}`)
-
-      const rawData = await response.json()
-      log.debug('HTTP Antwort JSON:', rawData)
-      const statusSns = rawData.StatusSNS || rawData
-      const toReturn = { data: applyMapping(statusSns), source: 'live' }
-      log.debug('Verarbeitete Daten:', toReturn)
-      return toReturn
-    } catch (err) {
-      console.warn(`Verbindung zu ${host} fehlgeschlagen:`, err.message)
+  return await runWithContext(`API:${host}`, async () => {
+    log.debug('fetchTasmotaData aufgerufen. isDiscovery:', isDiscovery);
+    
+    if (!connection) {
+      log.error('API Fehler: Kein connection-Objekt vorhanden.');
       return getMockData()
     }
-  }
 
-  if (type === 'mqtt') {
-    console.warn('MQTT Modus ist noch nicht implementiert.')
-    return getMockData()
-  }
+    const { type, host, protocol, auth } = connection
 
-  return getMockData()
-});
+    if (type === 'http' || !type) {
+      let url = `${protocol || 'http'}://${host}/cm?cmnd=Status%208`
+
+      if (auth && auth.user && auth.pass) {
+        url += `&user=${encodeURIComponent(auth.user)}&password=${encodeURIComponent(auth.pass)}`
+      }
+
+      try {
+        log.debug('Proxy-Anfrage an:', url);
+        const response = await fetch(`proxy.php?url=${encodeURIComponent(url)}`);
+        
+        if (!response.ok) throw new Error(`HTTP Fehler: ${response.status}`);
+
+        const rawData = await response.json();
+        const statusSns = rawData.StatusSNS || rawData;
+        
+        log.debug('Rohdaten von Tasmota (StatusSNS):', statusSns);
+
+        // Mapping nur anwenden, wenn wir nicht gerade in der Discovery-Phase sind
+        const processedData = isDiscovery ? statusSns : applyMapping(statusSns);
+        
+        const result = { data: processedData, source: 'live' };
+        log.debug('fetchTasmotaData liefert zurück:', result);
+        return result;
+
+      } catch (err) {
+        log.warn(`Verbindung zu ${host} fehlgeschlagen:`, err.message);
+        return getMockData();
+      }
+    }
+
+    if (type === 'mqtt') {
+      log.warn('MQTT Modus ist noch nicht implementiert.');
+      return getMockData();
+    }
+
+    return getMockData();
+  })
 }
 
 /**
  * Dashboard-Schnittstelle: Liefert direkt die SML-Werte.
  */
 export async function getCurrentValues (connection) {
-  const dataAndSource = await fetchTasmotaData(connection)
-  log.debug('getCurrentValues Ergebnis:', dataAndSource)
-  if (!dataAndSource || !dataAndSource.data || !dataAndSource.data.SML) {
-    return null
-  } else {
-    return dataAndSource
-  }
-}
-
-/**
- * Setup-Schnittstelle: Analysiert die Hardware und speichert das Mapping.
- */
-export async function discoverTasmota (connection) {
-  log.debug('discoverTasmota aufgerufen mit Verbindung:', connection)
-  // 1. Hole das Resultat-Objekt (den "Umschlag")
-  const rawResponse = await fetchTasmotaData(connection, true)
-  log.debug('Komplette Response:', rawResponse)
-
-  // 2. Zugriff auf die Source
-  const source = rawResponse.source
-  log.debug('Datenquelle:', source) // Ergibt "mock" oder "live"
-
-  // 3. Zugriff auf StatusSNS (innerhalb von rawResponse.data)
-  // Wir nutzen Optional Chaining (?.), falls data nicht existiert
-  const statusSns = rawResponse.data?.StatusSNS || rawResponse.data
-  log.debug('StatusSNS für Discovery:', statusSns)
-
-  /* 
-  // 4. Sicherheitsprüfung: Falls Mock, Discovery abbrechen
-  if (!statusSns || source === 'mock') {
-    console.warn("Discovery abgebrochen: Entweder keine Daten oder nur Mock-Daten.");
+  const result = await fetchTasmotaData(connection);
+  
+  if (!result || !result.data || !result.data.SML) {
+    log.error('getCurrentValues: Mapping fehlgeschlagen. Der Key "SML" fehlt im Resultat!');
     return null;
   }
-*/
-
-  if (!statusSns) return null
-
-  // Einmalige Discovery triggern
-  discoverStructure(statusSns)
-
-  if (cachedMapping.isReady) {
-    const dataNode = statusSns[cachedMapping.nodeKey]
-    return {
-      available_keys: Object.keys(dataNode),
-      meter_id_key: cachedMapping.meterIdKey,
-      raw_data: dataNode,
-      source: source
-    }
-  }
-  return null
+  return result;
 }
 
 /**
- * Analysiert die Rohdaten und schlägt sinnvolle Metrik-Einstellungen vor.
+ * Setup-Schnittstelle: Analysiert die Hardware.
+ */
+export async function discoverTasmota (connection) {
+  log.debug('discoverTasmota gestartet');
+  
+  // Cache für frische Discovery zurücksetzen
+  cachedMapping = { nodeKey: null, meterIdKey: null, isReady: false };
+
+  const rawResponse = await fetchTasmotaData(connection, true);
+  if (!rawResponse || !rawResponse.data) {
+    log.warn('Discovery: Keine Daten erhalten.');
+    return null;
+  }
+
+  const discoveryResult = discoverStructure(rawResponse.data);
+
+  if (discoveryResult) {
+    cachedMapping.nodeKey = discoveryResult.nodeKey;
+    cachedMapping.meterIdKey = discoveryResult.meterIdKey;
+    cachedMapping.isReady = true;
+
+    // Jetzt mit gesetztem Cache einmal mappen
+    const mappedData = applyMapping(rawResponse.data);
+
+    return {
+      ...mappedData,
+      source: rawResponse.source,
+      nodeKey: discoveryResult.nodeKey,
+      meterIdKey: discoveryResult.meterIdKey
+    };
+  }
+
+  return null;
+}
+
+/**
+ * Schlägt Metriken basierend auf den gemappten SML-Daten vor.
  */
 export function guessMetricsFromDiscovery (discoveryResult) {
-  log.debug('guessMetricsFromDiscovery aufgerufen mit:', discoveryResult)
-  const metrics = []
-  const rawData = discoveryResult.raw_data || {}
-  let firstLargeSet = false
+  log.debug('guessMetricsFromDiscovery:', discoveryResult);
+  const metrics = [];
+  const rawData = discoveryResult.SML || {};
+
+  let firstLargeSet = false;
 
   for (const [key, value] of Object.entries(rawData)) {
-    // Überspringe Meter_id und Time für die Metrik-Liste
-    if (key === 'Meter_id' || key === 'Time' || parseFloat(value) === 0)
-      continue
+    if (['Meter_id', 'Time', 'Meter_Number'].includes(key) || parseFloat(value) === 0) continue;
 
-    let precision = 0
-    const sVal = String(value)
-    const dotPos = sVal.lastIndexOf('.')
-    if (dotPos !== -1) {
-      precision = sVal.length - dotPos - 1
-    }
-
-    const fVal = parseFloat(value)
-    const unit = fVal > 5000 ? 'kWh' : 'W'
-    let isLarge = false
-
-    if (unit === 'kWh' && !firstLargeSet) {
-      isLarge = true
-      firstLargeSet = true
-    }
+    const fVal = parseFloat(value);
+    const unit = fVal > 5000 ? 'kWh' : 'W';
+    let isLarge = (unit === 'kWh' && !firstLargeSet);
+    if (isLarge) firstLargeSet = true;
 
     metrics.push({
-      prefix: key,
+      prefix: key, 
       label: key,
       unit: unit,
-      precision: precision,
+      precision: String(value).includes('.') ? String(value).split('.')[1].length : 0,
       large: isLarge
-    })
+    });
   }
-  return metrics
+
+  log.debug('Vorgeschlagene Metriken:', metrics);
+  return metrics;
 }
 
 /**
- * Dekodiert den Tasmota-Hex-String in das DIN 43863-5 Format.
+ * Dekodiert Tasmota-Hex in DIN 43863-5.
  */
 export function decodeMeterNumber (hex) {
-  if (!hex || hex.length < 20) return null
-
-  const sparte = parseInt(hex.substring(2, 4), 16)
-  let hersteller = ''
-  for (let i = 4; i < 10; i += 2) {
-    hersteller += String.fromCharCode(parseInt(hex.substring(i, i + 2), 16))
-  }
-
-  const block = parseInt(hex.substring(10, 12), 16).toString().padStart(2, '0')
-  const fabNumPadded = parseInt(hex.substring(12), 16)
-    .toString()
-    .padStart(8, '0')
-
-  return `${sparte}${hersteller}${block}${fabNumPadded.substring(
-    0,
-    4
-  )}${fabNumPadded.substring(4, 8)}`
+  if (!hex || hex.length < 20) return null;
+  const sparte = parseInt(hex.substring(2, 4), 16);
+  let hersteller = '';
+  for (let i = 4; i < 10; i += 2) hersteller += String.fromCharCode(parseInt(hex.substring(i, i + 2), 16));
+  const block = parseInt(hex.substring(10, 12), 16).toString().padStart(2, '0');
+  const fabNum = parseInt(hex.substring(12), 16).toString().padStart(8, '0');
+  return `${sparte}${hersteller}${block}${fabNum.substring(0, 4)}${fabNum.substring(4, 8)}`;
 }
 
 /**
- * Extrahiert IDs basierend auf Zeilenpräfixen AA (Plain) und AB (Hex).
+ * Extrahiert ID via AA/AB Präfix.
  */
 export function extractIdFromDataMatrix (rawContent) {
-  if (!rawContent) return null
-  const lines = rawContent.split(/\r?\n/)
-
-  let plainId = null
-
-  lines.forEach(line => {
-    const trimmedLine = line.trim()
-    if (trimmedLine.startsWith('AA')) {
-      plainId = trimmedLine.substring(2).trim()
-    }
-  })
-
-  return plainId || null
+  if (!rawContent) return null;
+  const lines = rawContent.split(/\r?\n/);
+  const found = lines.find(l => l.trim().startsWith('AA'));
+  return found ? found.trim().substring(2).trim() : null;
 }
 
 /**
- * Formatiert eine reine Ziffernfolge in das DIN 43863-5 Format.
+ * Formatiert ID in DIN-Blöcke.
  */
 export function formatPlainMeterId (id) {
-  if (!id || id.length < 14) return id || '-'
-
-  const fabNumFull = id.slice(-8)
-  const rest = id.slice(0, -8)
-
-  const sparte = rest.substring(0, 1)
-  const hersteller = rest.substring(1, 4)
-  const block = rest.substring(4, 6)
-
-  const fabNumPart1 = fabNumFull.substring(0, 4)
-  const fabNumPart2 = fabNumFull.substring(4, 8)
-
-  return `${sparte} ${hersteller} ${block} ${fabNumPart1} ${fabNumPart2}`
+  if (!id || id.length < 14) return id || '-';
+  const fabNumFull = id.slice(-8);
+  const rest = id.slice(0, -8);
+  return `${rest.substring(0, 1)} ${rest.substring(1, 4)} ${rest.substring(4, 6)} ${fabNumFull.substring(0, 4)} ${fabNumFull.substring(4, 8)}`;
 }

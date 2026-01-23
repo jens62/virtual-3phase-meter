@@ -272,6 +272,42 @@ textarea {
     transform: scale(0.98);
 }
 
+/* Maintenance Buttons */
+.btn-info {
+    background: #0277bd;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    flex: 1;
+}
+
+.btn-danger {
+    background: #c62828;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    flex: 1;
+}
+
+.btn-info:hover, .btn-danger:hover {
+    filter: brightness(1.1);
+}
+
+/* For the JSON viewer alert/modal */
+pre#config-viewer {
+    background: #000;
+    color: #0f0;
+    padding: 15px;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 12px;
+    text-align: left;
+}
+
 .ios-checkbox-simple {
     -webkit-appearance: none;
     appearance: none;
