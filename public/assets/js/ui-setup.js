@@ -15,13 +15,21 @@ export function initSetupEvents(config = null) {
   // 1. Zeile hinzufügen
   document.getElementById('btn-add-line').onclick = () => createMetricRow();
 
-  // 2. Formular Speichern
+// 2.a. Save & Apply (The Form Submit)
   const setupForm = document.getElementById('config-form');
   if (setupForm) {
     setupForm.onsubmit = async (e) => {
-      await handleSave(e);
-      // Wir lösen ein Event aus oder nutzen einen Callback, um zum Dashboard zu springen
-      window.location.reload(); 
+      // Passes true to trigger location.reload()
+      await handleSave(e, true); 
+    };
+  }
+
+  // 2.b. Save Only (The standalone button)
+  const saveOnlyBtn = document.getElementById('btn-save-only');
+  if (saveOnlyBtn) {
+    saveOnlyBtn.onclick = async (e) => {
+      // Passes false to prevent reload
+      await handleSave(e, false); 
     };
   }
 
@@ -235,24 +243,35 @@ export function fillSetupForm (config) {
 /**
  * Speichert die aktuelle Konfiguration
  */
-export async function handleSave (event) {
-  event.preventDefault()
+/**
+ * Updated handleSave to support optional reloading
+ */
+export async function handleSave (event, shouldReload = true) {
+  event.preventDefault();
 
-  const datamatrixValue = document
-    .getElementById('input-datamatrix')
-    .value.trim()
+  const datamatrixValue = document.getElementById('input-datamatrix').value.trim();
   if (!datamatrixValue) {
-    alert("Fehler: Das Feld 'DataMatrix Content' darf nicht leer sein.")
-    document.getElementById('input-datamatrix').focus()
-    return
+    alert("Fehler: Das Feld 'DataMatrix Content' darf nicht leer sein.");
+    document.getElementById('input-datamatrix').focus();
+    return;
   }
 
-  // 1. Alle Formularfelder in die Klasse synchronisieren
-  configState.syncFromForm()
+  configState.syncFromForm();
 
-  // 2. Das fertige Payload aus der Klasse speichern (enthält bereits die meter_id_string)
-  await saveConfigToDB(configState.getPayload())
-  location.reload()
+  // Save to IndexedDB via storage.js
+  await saveConfigToDB(configState.getPayload());
+
+  if (shouldReload) {
+    location.reload();
+  } else {
+    // Provide visual feedback since the page doesn't refresh
+    const statusEl = document.getElementById('connection-status');
+    if (statusEl) {
+      statusEl.innerHTML = '✅ Konfiguration erfolgreich gespeichert!';
+      statusEl.style.backgroundColor = '#e8f5e9';
+      statusEl.style.color = '#2e7d32';
+    }
+  }
 }
 
 /**

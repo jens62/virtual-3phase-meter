@@ -229,15 +229,47 @@ textarea {
     cursor: pointer;
 }
 
-.btn-save { 
-    background: var(--accent); 
-    color: white; 
-    width: 100%; 
+/* Container for the side-by-side buttons */
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Base styles for both save buttons */
+.btn-save-only, 
+.btn-save-apply {
+    flex: 1;
     font-size: 18px; 
     height: 54px;
     border-radius: 8px;
-    border: none;
     cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+/* Save Only: Outlined/Secondary style */
+.btn-save-only {
+    background: transparent;
+    color: var(--accent);
+    border: 2px solid var(--accent);
+}
+
+.btn-save-only:active {
+    background: rgba(46, 125, 50, 0.1);
+    transform: scale(0.98);
+}
+
+/* Save & Apply: Solid/Primary style */
+.btn-save-apply {
+    background: var(--accent); 
+    color: white; 
+    border: none;
+}
+
+.btn-save-apply:active {
+    filter: brightness(1.2);
+    transform: scale(0.98);
 }
 
 .ios-checkbox-simple {
