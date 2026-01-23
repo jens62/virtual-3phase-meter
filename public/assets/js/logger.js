@@ -12,7 +12,7 @@ let currentAsyncContext = null;
 let lastCapturedStack = null; // Speichert den Stack vor asynchronen Aktionen
 
 const activeFilters = {
-    ERROR: true, WARN: true, INFO: true, DEBUG: true, TRACE: true
+    ERROR: true, WARN: true, INFO: true, DEBUG: true, TRACE1: true
 };
 
 // --- CONTEXT & ASYNC STACK TRACKING ---
@@ -242,9 +242,9 @@ const initUI = () => {
                 <button id="log-search-prev" style="background:none; border:none; color:#888; cursor:pointer;">▲</button>
                 <button id="log-search-next" style="background:none; border:none; color:#888; cursor:pointer;">▼</button>
             </div>
-            <div id="log-filter-bar" style="display:flex; gap:8px;">
+            <div id="log-filter-bar" style="display:flex; gap:8px; padding: 2px 0;">
                 ${['ERROR', 'WARN', 'INFO', 'DEBUG', 'TRACE'].map(lvl => `
-                    <label style="font-size:9px; color:#aaa; cursor:pointer; display:flex; align-items:center; gap:3px;">
+                    <label>
                         <input type="checkbox" data-level="${lvl}" checked> ${lvl}
                     </label>
                 `).join('')}
@@ -266,6 +266,58 @@ const initUI = () => {
         .stack-trigger:hover { opacity: 1; background: #444; }
         .stack-trace-box { display: none; padding: 8px; background: #1c1c1c; border-left: 3px solid #ccaa44; color: #ccaa44; font-size: 9px; margin: 5px 0 5px 12px; white-space: pre; overflow-x: auto; font-family: monospace; line-height: 1.2; }
         .stack-trace-box.open { display: block; }
+
+/* Endgültige Lösung für Desktop & iPad */
+        #log-filter-bar { display: flex; gap: 10px; align-items: center; padding: 2px 0; }
+        #log-filter-bar label { 
+            display: flex; 
+            align-items: center; 
+            gap: 5px; 
+            font-size: 9px; 
+            color: #aaa; 
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        #log-filter-bar input[type="checkbox"] {
+            -webkit-appearance: none;
+            -webkit-transform: scale(1.0); /* Erzwingt Hardware-Rendering auf iOS */
+            -moz-appearance: none;
+            appearance: none;
+            
+            width: 13px !important;
+            height: 13px !important;
+            flex-shrink: 0;
+            
+            background: #222;
+            border: 1px solid #555;
+            border-radius: 2px;
+            margin: 0;
+            padding: 0;
+            cursor: pointer;
+            
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        #log-filter-bar input[type="checkbox"]:checked {
+            background: #0066cc;
+            border-color: #0088ff;
+        }
+
+        /* Der Haken als CSS-Grafik (maximale Kompatibilität) */
+        #log-filter-bar input[type="checkbox"]:checked::after {
+            content: '';
+            display: block;
+            width: 3px;
+            height: 6px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+            margin-bottom: 2px;
+        }
     </style>`;
 
     document.body.insertAdjacentHTML('beforeend', html);
