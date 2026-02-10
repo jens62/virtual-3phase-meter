@@ -223,8 +223,8 @@ const initUI = () => {
 
     const html = `
     <button id="log-open-btn" style="display:none; position:fixed; bottom:20px; right:20px; z-index:10000; padding:12px; border-radius:12px; background:#333; color:white; border:1px solid #555; cursor:pointer;">📟 Logs</button>
-    <div id="log-panel" style="position:fixed; bottom:20px; right:20px; width:650px; height:450px; background:#1a1a1a; border:1px solid #444; display:flex; flex-direction:column; z-index:10001; box-shadow: 0 8px 24px rgba(0,0,0,0.5); resize:both; overflow:hidden;">
-        <div id="log-header" style="padding:8px; background:#2a2a2a; color:#ddd; cursor:move; border-bottom: 1px solid #333; display:flex; flex-direction:column; gap:6px;">
+    <div id="log-panel" style="position:fixed; bottom:20px; right:20px; width:650px; height:450px; background:#1a1a1a; border:1px solid #444; display:flex; flex-direction:column; z-index:10001; box-shadow: 0 8px 24px rgba(0,0,0,0.5); overflow:hidden;">
+        <div id="log-header" style="padding:8px; background:#2a2a2a; color:#ddd; cursor:move; touch-action:none; border-bottom: 1px solid #333; display:flex; flex-direction:column; gap:6px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <span style="font-size:11px; font-weight:bold;">DEBUG CONSOLE</span>
                 <div style="display:flex; gap:6px;">
@@ -251,6 +251,7 @@ const initUI = () => {
             </div>
         </div>
         <div id="log-container" style="flex:1; overflow:auto; padding:8px; font-family:monospace; font-size:11px; background:#000;"></div>
+        <div id="log-resize-handle" style="position:absolute; bottom:0; right:0; width:20px; height:20px; cursor:nwse-resize; touch-action:none; z-index:2;"></div>
     </div>
     <style>
         .log-details summary { cursor: pointer; list-style: none; outline: none; display: flex; align-items: center; white-space: nowrap; }
@@ -266,6 +267,13 @@ const initUI = () => {
         .stack-trigger:hover { opacity: 1; background: #444; }
         .stack-trace-box { display: none; padding: 8px; background: #1c1c1c; border-left: 3px solid #ccaa44; color: #ccaa44; font-size: 9px; margin: 5px 0 5px 12px; white-space: pre; overflow-x: auto; font-family: monospace; line-height: 1.2; }
         .stack-trace-box.open { display: block; }
+        #log-resize-handle {
+            background-image: radial-gradient(circle, #666 1.5px, transparent 1.5px);
+            background-size: 4px 4px;
+            background-position: right 3px bottom 3px;
+            background-repeat: repeat;
+            clip-path: polygon(100% 0, 100% 100%, 0 100%);
+        }
 
 /* Endgültige Lösung für Desktop & iPad */
         #log-filter-bar { display: flex; gap: 10px; align-items: center; padding: 2px 0; }
@@ -354,6 +362,7 @@ const initUI = () => {
     };
 
     setupDrag(document.getElementById('log-panel'), document.getElementById('log-header'));
+    setupResize(document.getElementById('log-panel'), document.getElementById('log-resize-handle'));
 };
 
 const setupDrag = (panel, header) => {
@@ -379,6 +388,29 @@ const setupDrag = (panel, header) => {
     document.addEventListener('touchmove', move);
     document.addEventListener('mouseup', () => isDragging = false);
     document.addEventListener('touchend', () => isDragging = false);
+};
+
+const setupResize = (panel, handle) => {
+    let isResizing = false, startX, startY, startW, startH;
+    const start = (e) => {
+        isResizing = true;
+        const c = e.type.includes('touch') ? e.touches[0] : e;
+        startX = c.clientX; startY = c.clientY;
+        startW = panel.offsetWidth; startH = panel.offsetHeight;
+        e.preventDefault();
+    };
+    const resize = (e) => {
+        if (!isResizing) return;
+        const c = e.type.includes('touch') ? e.touches[0] : e;
+        panel.style.width  = Math.max(250, startW + (c.clientX - startX)) + 'px';
+        panel.style.height = Math.max(150, startH + (c.clientY - startY)) + 'px';
+    };
+    handle.addEventListener('mousedown',  start);
+    handle.addEventListener('touchstart', start, { passive: false });
+    document.addEventListener('mousemove',  resize);
+    document.addEventListener('touchmove',  resize, { passive: false });
+    document.addEventListener('mouseup',  () => isResizing = false);
+    document.addEventListener('touchend', () => isResizing = false);
 };
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initUI);
