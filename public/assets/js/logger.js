@@ -397,6 +397,9 @@ const setupResize = (panel, handle) => {
         const c = e.type.includes('touch') ? e.touches[0] : e;
         startX = c.clientX; startY = c.clientY;
         startW = panel.offsetWidth; startH = panel.offsetHeight;
+        panel.style.left = panel.offsetLeft + 'px';
+        panel.style.top  = panel.offsetTop  + 'px';
+        panel.style.right = 'auto'; panel.style.bottom = 'auto';
         e.preventDefault();
     };
     const resize = (e) => {
