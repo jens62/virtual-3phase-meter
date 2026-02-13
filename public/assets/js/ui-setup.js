@@ -156,8 +156,8 @@ async function runAutoDiscovery() {
         
         if (!discovery) throw new Error("Keine Daten empfangen");
 
-        // UI Feedback je nach Quelle (Live oder Mock)
-        if (discovery.source === 'live') {
+        // UI Feedback je nach Quelle (Live, MQTT oder Mock)
+        if (discovery.source === 'live' || discovery.source === 'mqtt') {
             statusEl.innerHTML = '✅ Verbindung erfolgreich!';
             statusEl.className = 'status-success';
             statusEl.style.backgroundColor = '#e8f5e9';

@@ -13,6 +13,11 @@ let cachedMapping = {
   isReady: false
 }
 
+// Module-level MQTT state
+let mqttClient = null
+let mqttLastPayload = null   // parsed JSON from last MQTT message
+let mqttConnectedTopic = null
+
 /**
  * Stellt das Mapping aus gespeicherten Einstellungen wieder her (z.B. nach Page-Reload).
  * Diese Funktion muss beim App-Start mit den gespeicherten Config-Daten aufgerufen werden.
@@ -26,6 +31,96 @@ export function rehydrateMetadata (discoveryConfig) {
     log.debug('API metadata rehydrated successfully:', cachedMapping)
   } else {
     log.warn('rehydrateMetadata: invalid or missing discovery data.');
+  }
+}
+
+/**
+ * Establishes (or reuses) an MQTT over WSS connection.
+ * Idempotent: does nothing if already connected to the same topic.
+ */
+function connectMqtt (connection) {
+  const { mqtt_host, port, topic, mqtt_user, mqtt_pass } = connection
+
+  if (mqttClient && mqttClient.connected && mqttConnectedTopic === topic) {
+    return
+  }
+
+  if (mqttClient) {
+    log.debug('MQTT: closing existing client before reconnecting.')
+    mqttClient.end(true)
+    mqttClient = null
+    mqttLastPayload = null
+    mqttConnectedTopic = null
+  }
+
+  const url = `wss://${mqtt_host}:${port}/mqtt`
+  const opts = {}
+  if (mqtt_user) opts.username = mqtt_user
+  if (mqtt_pass) opts.password = mqtt_pass
+
+  log.debug('MQTT: connecting to', url)
+  mqttClient = window.mqtt.connect(url, opts)
+  mqttConnectedTopic = topic
+
+  mqttClient.on('connect', () => {
+    log.info('MQTT: connected. Subscribing to topic:', topic)
+    mqttClient.subscribe(topic, (err) => {
+      if (err) log.error('MQTT subscribe error:', err.message)
+      else log.debug('MQTT: subscribed to:', topic)
+    })
+  })
+
+  mqttClient.on('message', (t, payload) => {
+    try {
+      mqttLastPayload = JSON.parse(payload.toString())
+      log.debug('MQTT: message received on topic:', t)
+    } catch (e) {
+      log.warn('MQTT: message parse error:', e.message)
+    }
+  })
+
+  mqttClient.on('error', (err) => {
+    log.error('MQTT error:', err.message)
+  })
+
+  mqttClient.on('close', () => {
+    log.warn('MQTT: connection closed.')
+  })
+
+  mqttClient.on('reconnect', () => {
+    log.debug('MQTT: reconnecting...')
+  })
+}
+
+/**
+ * Polls until an MQTT payload arrives or the timeout expires.
+ */
+function waitForMqttPayload (timeoutMs = 15000) {
+  if (mqttLastPayload !== null) return Promise.resolve(mqttLastPayload)
+  return new Promise((resolve) => {
+    const deadline = Date.now() + timeoutMs
+    const check = setInterval(() => {
+      if (mqttLastPayload !== null) {
+        clearInterval(check)
+        resolve(mqttLastPayload)
+      } else if (Date.now() > deadline) {
+        clearInterval(check)
+        resolve(null)
+      }
+    }, 200)
+  })
+}
+
+/**
+ * Disconnects the MQTT client (call when entering settings to avoid stale state).
+ */
+export function disconnectMqtt () {
+  if (mqttClient) {
+    log.debug('MQTT: disconnecting client.')
+    mqttClient.end(true)
+    mqttClient = null
+    mqttLastPayload = null
+    mqttConnectedTopic = null
   }
 }
 
@@ -176,8 +271,13 @@ export async function fetchTasmotaData (connection, isDiscovery = false) {
     }
 
     if (type === 'mqtt') {
-      log.warn('MQTT mode not yet implemented.');
-      return getMockData();
+      connectMqtt(connection)
+      if (mqttLastPayload === null) {
+        log.debug('MQTT: no message received yet, waiting for data...')
+        return null
+      }
+      const processedData = isDiscovery ? mqttLastPayload : applyMapping(mqttLastPayload)
+      return { data: processedData, source: 'mqtt' }
     }
 
     return getMockData();
@@ -190,47 +290,65 @@ export async function fetchTasmotaData (connection, isDiscovery = false) {
 export async function getCurrentValues (connection) {
   const result = await fetchTasmotaData(connection);
   
-  if (!result || !result.data || !result.data.SML) {
-    log.error('getCurrentValues: mapping failed — "SML" key missing from result.');
-    return null;
+  if (!result) {
+    log.debug('getCurrentValues: no data yet (MQTT pending or fetch failed).')
+    return null
   }
-  return result;
+
+  if (!result.data || !result.data.SML) {
+    log.error('getCurrentValues: mapping failed — "SML" key missing from result.')
+    return null
+  }
+  return result
 }
 
 /**
  * Setup-Schnittstelle: Analysiert die Hardware.
  */
 export async function discoverTasmota (connection) {
-  log.debug('discoverTasmota started');
-  
-  // Cache für frische Discovery zurücksetzen
-  cachedMapping = { nodeKey: null, meterIdKey: null, isReady: false };
+  log.debug('discoverTasmota started')
+  cachedMapping = { nodeKey: null, meterIdKey: null, isReady: false }
 
-  const rawResponse = await fetchTasmotaData(connection, true);
-  if (!rawResponse || !rawResponse.data) {
-    log.warn('Discovery: no data received.');
-    return null;
+  let rawData
+  let source
+
+  if (connection.type === 'mqtt') {
+    connectMqtt(connection)
+    log.debug('MQTT discovery: waiting up to 15s for first message...')
+    rawData = await waitForMqttPayload(15000)
+    if (!rawData) {
+      log.warn('MQTT discovery: timeout — no message received within 15s.')
+      return null
+    }
+    source = 'mqtt'
+  } else {
+    const rawResponse = await fetchTasmotaData(connection, true)
+    if (!rawResponse || !rawResponse.data) {
+      log.warn('Discovery: no data received.')
+      return null
+    }
+    rawData = rawResponse.data
+    source = rawResponse.source
   }
 
-  const discoveryResult = discoverStructure(rawResponse.data);
+  const discoveryResult = discoverStructure(rawData)
 
   if (discoveryResult) {
-    cachedMapping.nodeKey = discoveryResult.nodeKey;
-    cachedMapping.meterIdKey = discoveryResult.meterIdKey;
-    cachedMapping.isReady = true;
+    cachedMapping.nodeKey = discoveryResult.nodeKey
+    cachedMapping.meterIdKey = discoveryResult.meterIdKey
+    cachedMapping.isReady = true
 
-    // Jetzt mit gesetztem Cache einmal mappen
-    const mappedData = applyMapping(rawResponse.data);
+    const mappedData = applyMapping(rawData)
 
     return {
       ...mappedData,
-      source: rawResponse.source,
+      source,
       nodeKey: discoveryResult.nodeKey,
       meterIdKey: discoveryResult.meterIdKey
-    };
+    }
   }
 
-  return null;
+  return null
 }
 
 /**
