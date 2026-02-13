@@ -65,7 +65,17 @@ export function initSetupEvents(config = null) {
     };
   }
 
-  // 3. Verbindungstyp Umschaltung (HTTP/MQTT)
+  // 3a. HTTP protocol change → auto-update port if still at protocol default
+  const defaultHttpPorts = { http: 80, https: 443 }
+  document.getElementById('select-protocol')?.addEventListener('change', (e) => {
+    const portInput = document.getElementById('input-http-port')
+    const oldDefault = defaultHttpPorts[e.target.value === 'http' ? 'https' : 'http']
+    if (!portInput.value || parseInt(portInput.value) === oldDefault) {
+      portInput.value = defaultHttpPorts[e.target.value]
+    }
+  })
+
+  // 3b. Verbindungstyp Umschaltung (HTTP/MQTT)
   const typeSelect = document.getElementById('select-type');
   if (typeSelect) {
     typeSelect.addEventListener('change', (e) => {
@@ -77,7 +87,8 @@ export function initSetupEvents(config = null) {
 
   // 4. Automatische Discovery (Debounce) auf alle relevanten Eingabefelder
   const autoTestFields = [
-    'input-host', 'input-port', 'input-topic', 
+    'input-host', 'input-http-port',
+    'input-port', 'input-topic',
     'input-mqtt-user', 'input-mqtt-pass', 'input-mqtt-host'
   ];
   autoTestFields.forEach(id => {
@@ -260,8 +271,9 @@ export function fillSetupForm (config) {
     document.getElementById('input-mqtt-user').value = conn.mqtt_user || ''
     document.getElementById('input-mqtt-pass').value = conn.mqtt_pass || ''
   } else {
-    document.getElementById('input-host').value = conn.host || ''
     document.getElementById('select-protocol').value = conn.protocol || 'http'
+    document.getElementById('input-host').value = conn.host || ''
+    document.getElementById('input-http-port').value = conn.http_port || 80
   }
 
   document.getElementById('input-refresh').value = config.refresh_rate || 3

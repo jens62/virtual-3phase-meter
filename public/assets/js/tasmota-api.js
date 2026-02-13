@@ -248,10 +248,11 @@ export async function fetchTasmotaData (connection, isDiscovery = false) {
       return getMockData()
     }
 
-    const { type, host, protocol, auth } = connection
+    const { type, host, protocol, http_port, auth } = connection
 
     if (type === 'http' || !type) {
-      let url = `${protocol || 'http'}://${host}/cm?cmnd=Status%208`
+      const port = http_port || (protocol === 'https' ? 443 : 80)
+      let url = `${protocol || 'http'}://${host}:${port}/cm?cmnd=Status%208`
 
       if (auth && auth.user && auth.pass) {
         url += `&user=${encodeURIComponent(auth.user)}&password=${encodeURIComponent(auth.pass)}`

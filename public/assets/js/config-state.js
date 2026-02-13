@@ -6,8 +6,9 @@ class ConfigState {
     this.data = {
       connection: {
         type: 'http',
-        host: '',
         protocol: 'http',
+        host: '',
+        http_port: 80,
         auth: { user: null, pass: null }
       },
       refresh_rate: 15,
@@ -53,8 +54,9 @@ class ConfigState {
     } else {
       this.data.connection = {
         type: 'http',
-        host: document.getElementById('input-host').value,
         protocol: document.getElementById('select-protocol').value,
+        host: document.getElementById('input-host').value,
+        http_port: parseInt(document.getElementById('input-http-port').value) || 80,
         auth: {
           user: document.getElementById('input-user')?.value || null,
           pass: document.getElementById('input-pass')?.value || null
