@@ -1,4 +1,4 @@
-const CACHE_NAME = 'virtual-meter-v2';
+const CACHE_NAME = 'virtual-meter-v3';
 
 const APP_SHELL = [
   './',
@@ -16,6 +16,7 @@ const APP_SHELL = [
   './assets/js/bwip-js-min.js',
   './assets/js/umd.js',
   './assets/js/loglevel.min.js',
+  './assets/js/mqtt.min.js',
 
   // App modules
   './assets/js/app.js',
