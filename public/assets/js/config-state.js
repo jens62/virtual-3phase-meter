@@ -10,7 +10,7 @@ class ConfigState {
         protocol: 'http',
         auth: { user: null, pass: null }
       },
-      refresh_rate: 3,
+      refresh_rate: 15,
       shadow_opacity: 0.5,
       meter_template: '',
       datamatrix_raw: '',   // Hier liegt der Text

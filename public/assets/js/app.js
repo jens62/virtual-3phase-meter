@@ -56,6 +56,7 @@ export async function renderUI () {
     viewport.appendChild(template.content.cloneNode(true))
 
     initSetupEvents()
+    fillSetupForm(configState.getPayload())  // populate form from constructor defaults
     if (document.querySelectorAll('.metric-item').length === 0)
       createMetricRow()
 
