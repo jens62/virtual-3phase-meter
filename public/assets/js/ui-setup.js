@@ -69,7 +69,7 @@ export function initSetupEvents(config = null) {
   const typeSelect = document.getElementById('select-type');
   if (typeSelect) {
     typeSelect.addEventListener('change', (e) => {
-      log.debug('Verbindungstyp geändert zu:', e.target.value);
+      log.debug('Connection type changed to:', e.target.value);
       toggleConnectionFields(e.target.value);
       debounceConnectionTest(); // Sofort testen bei Umschaltung
     });

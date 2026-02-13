@@ -18,14 +18,14 @@ let cachedMapping = {
  * Diese Funktion muss beim App-Start mit den gespeicherten Config-Daten aufgerufen werden.
  */
 export function rehydrateMetadata (discoveryConfig) {
-  log.debug('rehydrateMetadata aufgerufen mit:', discoveryConfig);
+  log.debug('rehydrateMetadata called with:', discoveryConfig);
   if (discoveryConfig && discoveryConfig.nodeKey) {
     cachedMapping.nodeKey = discoveryConfig.nodeKey
     cachedMapping.meterIdKey = discoveryConfig.meterIdKey
     cachedMapping.isReady = true
-    log.debug('API Metadata erfolgreich rehydriert:', cachedMapping)
+    log.debug('API metadata rehydrated successfully:', cachedMapping)
   } else {
-    log.warn('rehydrateMetadata: Ungültige oder fehlende Discovery-Daten.');
+    log.warn('rehydrateMetadata: invalid or missing discovery data.');
   }
 }
 
@@ -33,7 +33,7 @@ export function rehydrateMetadata (discoveryConfig) {
  * Erkennt die Struktur der Tasmota-Antwort und speichert das Mapping.
  */
 function discoverStructure (statusSns) {
-  log.debug('discoverStructure aufgerufen mit:', statusSns)
+  log.debug('discoverStructure called with:', statusSns)
 
   if (!statusSns) return null
 
@@ -66,29 +66,29 @@ function discoverStructure (statusSns) {
  * FALLBACK: Wenn kein Mapping im Cache ist, wird der erste verfügbare Objekt-Knoten genommen.
  */
 function applyMapping (statusSns) {
-  log.debug('--- applyMapping Start ---');
-  log.debug('Cache-Zustand:', JSON.stringify(cachedMapping));
+  log.debug('--- applyMapping start ---');
+  log.debug('Cache state:', JSON.stringify(cachedMapping));
 
-  // 1. Bestimme den Quell-Knoten (z.B. "Power" oder "SML")
+  // 1. Determine source node (e.g. "Power" or "SML")
   let node = cachedMapping.nodeKey;
-  
+
   if (!node) {
-    log.debug('Mapping: nodeKey im Cache leer. Suche ersten verfügbaren Objekt-Knoten in den Daten...');
+    log.debug('Mapping: nodeKey empty in cache, searching for first available object node...');
     node = Object.keys(statusSns).find(
       key => typeof statusSns[key] === 'object' && statusSns[key] !== null && key !== 'Time'
     );
-    log.debug(`Mapping: Auto-Discovery ergab Knoten-Key: '${node}'`);
+    log.debug(`Mapping: auto-discovery found node key: '${node}'`);
   }
 
-  // 2. Bestimme den Key für die Meter-ID
+  // 2. Determine key for meter ID
   const idKey = cachedMapping.meterIdKey || 'Meter_id';
-  
-  log.debug(`Mapping-Strategie: Suche nach Daten in '${node}', ID unter '${idKey}'`);
+
+  log.debug(`Mapping strategy: looking for data in '${node}', ID under '${idKey}'`);
 
   const rawNode = statusSns[node];
-  
+
   if (!rawNode) {
-    log.warn(`Mapping-Abbruch: Knoten '${node}' wurde in der Tasmota-Antwort nicht gefunden!`, statusSns);
+    log.warn(`Mapping aborted: node '${node}' not found in Tasmota response!`, statusSns);
     return statusSns;
   }
 
@@ -102,7 +102,7 @@ function applyMapping (statusSns) {
     }
   };
 
-  log.debug('Mapping-Erfolg! Transformierte Struktur:', mappedResult);
+  log.debug('Mapping success! Transformed structure:', mappedResult);
   return mappedResult;
 }
 
@@ -135,10 +135,10 @@ export async function fetchTasmotaData (connection, isDiscovery = false) {
   const host = connection?.host || 'unknown'
 
   return await runWithContext(`API:${host}`, async () => {
-    log.debug('fetchTasmotaData aufgerufen. isDiscovery:', isDiscovery);
-    
+    log.debug('fetchTasmotaData called. isDiscovery:', isDiscovery);
+
     if (!connection) {
-      log.error('API Fehler: Kein connection-Objekt vorhanden.');
+      log.error('API error: no connection object provided.');
       return getMockData()
     }
 
@@ -152,7 +152,7 @@ export async function fetchTasmotaData (connection, isDiscovery = false) {
       }
 
       try {
-        log.debug('Proxy-Anfrage an:', url);
+        log.debug('Proxy request to:', url);
         const response = await fetch(`proxy.php?url=${encodeURIComponent(url)}`);
         
         if (!response.ok) throw new Error(`HTTP Fehler: ${response.status}`);
@@ -160,23 +160,23 @@ export async function fetchTasmotaData (connection, isDiscovery = false) {
         const rawData = await response.json();
         const statusSns = rawData.StatusSNS || rawData;
         
-        log.debug('Rohdaten von Tasmota (StatusSNS):', statusSns);
+        log.debug('Raw data from Tasmota (StatusSNS):', statusSns);
 
         // Mapping nur anwenden, wenn wir nicht gerade in der Discovery-Phase sind
         const processedData = isDiscovery ? statusSns : applyMapping(statusSns);
         
         const result = { data: processedData, source: 'live' };
-        log.debug('fetchTasmotaData liefert zurück:', result);
+        log.debug('fetchTasmotaData returning:', result);
         return result;
 
       } catch (err) {
-        log.warn(`Verbindung zu ${host} fehlgeschlagen:`, err.message);
+        log.warn(`Connection to ${host} failed:`, err.message);
         return getMockData();
       }
     }
 
     if (type === 'mqtt') {
-      log.warn('MQTT Modus ist noch nicht implementiert.');
+      log.warn('MQTT mode not yet implemented.');
       return getMockData();
     }
 
@@ -191,7 +191,7 @@ export async function getCurrentValues (connection) {
   const result = await fetchTasmotaData(connection);
   
   if (!result || !result.data || !result.data.SML) {
-    log.error('getCurrentValues: Mapping fehlgeschlagen. Der Key "SML" fehlt im Resultat!');
+    log.error('getCurrentValues: mapping failed — "SML" key missing from result.');
     return null;
   }
   return result;
@@ -201,14 +201,14 @@ export async function getCurrentValues (connection) {
  * Setup-Schnittstelle: Analysiert die Hardware.
  */
 export async function discoverTasmota (connection) {
-  log.debug('discoverTasmota gestartet');
+  log.debug('discoverTasmota started');
   
   // Cache für frische Discovery zurücksetzen
   cachedMapping = { nodeKey: null, meterIdKey: null, isReady: false };
 
   const rawResponse = await fetchTasmotaData(connection, true);
   if (!rawResponse || !rawResponse.data) {
-    log.warn('Discovery: Keine Daten erhalten.');
+    log.warn('Discovery: no data received.');
     return null;
   }
 

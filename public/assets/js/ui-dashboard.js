@@ -30,7 +30,7 @@ export async function startDashboard (config) {
     log.debug(
       `ViewBox: ${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`
     )
-    log.debug(`Anzeige-Größe (px): ${rect.width} x ${rect.height}`)
+    log.debug(`Display size (px): ${rect.width} x ${rect.height}`)
     log.debug(`Skalierungsfaktor: ${scaleX.toFixed(4)}`)
 
     // Wir warten sicherheitshalber, bis die Fonts im Browser wirklich bereit sind

@@ -18,7 +18,8 @@
   "project_rules": {
     "openhab_rules": false,
     "server_side_logic": true,
-    "no_personal_info": "Never include real IP addresses, hostnames, usernames, or other personal/environment-specific information in any file that is tracked by git. Use placeholders like <SERVER_IP>, <YOUR_HOST>, <USERNAME> instead."
+    "no_personal_info": "Never include real IP addresses, hostnames, usernames, or other personal/environment-specific information in any file that is tracked by git. Use placeholders like <SERVER_IP>, <YOUR_HOST>, <USERNAME> instead.",
+    "log_language": "All log messages passed to log.debug/info/warn/error/trace must be in English. No German strings in log calls."
   },
 
   "_available_options": {

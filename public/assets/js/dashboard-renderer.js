@@ -245,7 +245,7 @@ function initMetricsLayout (svgElement, config) {
  */
 function updateMetrics (svgElement, config, smlData) {
   log.debug('--- Update Metriken ---')
-  log.debug('SML Daten für Metriken:', smlData)
+  log.debug('SML data for metrics:', smlData)
   if (unitsPerCharacter === 0) return
 
   const lcdBg = svgElement.getElementById('rect12')
@@ -374,7 +374,7 @@ function updateMeterIdText (svgElement, config, smlData) {
  */
 function updateStatusInfo (svgElement, smlDataAndSource) {
   log.debug('--- Update Status Info ---')
-  log.debug('SML Daten für Status:', smlDataAndSource)
+  log.debug('SML data for status:', smlDataAndSource)
   const statusEl = svgElement.getElementById('status-text')
   const lastUpdateEl = svgElement.getElementById('last-update')
 
