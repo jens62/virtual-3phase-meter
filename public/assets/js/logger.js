@@ -329,7 +329,13 @@ const initUI = () => {
     </style>`;
 
     document.body.insertAdjacentHTML('beforeend', html);
-    
+
+    // Restore panel open/closed state from previous session (default: closed)
+    if (localStorage.getItem('log-panel-open') === 'true') {
+        document.getElementById('log-panel').style.display = 'flex';
+        document.getElementById('log-open-btn').style.display = 'none';
+    }
+
     // Bind Events
     document.getElementById('log-search-input').oninput = (e) => {
         document.getElementById('log-search-clear').style.display = e.target.value ? 'block' : 'none';
@@ -347,10 +353,12 @@ const initUI = () => {
     document.getElementById('log-close-btn').onclick = () => {
         document.getElementById('log-panel').style.display = 'none';
         document.getElementById('log-open-btn').style.display = 'block';
+        localStorage.setItem('log-panel-open', 'false');
     };
     document.getElementById('log-open-btn').onclick = () => {
         document.getElementById('log-panel').style.display = 'flex';
         document.getElementById('log-open-btn').style.display = 'none';
+        localStorage.setItem('log-panel-open', 'true');
     };
     
     const pauseBtn = document.getElementById('log-pause-btn');

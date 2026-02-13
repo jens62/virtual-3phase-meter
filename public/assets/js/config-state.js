@@ -23,6 +23,7 @@ class ConfigState {
   load(savedConfig) {
     if (savedConfig) {
       this.data = { ...this.data, ...savedConfig };
+      delete this.data.log_level; // removed field — strip from legacy configs
     }
   }
 
