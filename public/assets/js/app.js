@@ -58,6 +58,11 @@ export async function renderUI () {
     initSetupEvents()
     if (document.querySelectorAll('.metric-item').length === 0)
       createMetricRow()
+
+    // No dashboard exists yet — override back buttons to inform the user
+    document.querySelectorAll('.btn-back').forEach(btn => {
+      btn.onclick = () => alert('No dashboard yet. Please save your configuration first.')
+    })
   } else {
     // --- DASHBOARD MODE ---
 
