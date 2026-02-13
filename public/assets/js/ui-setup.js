@@ -254,7 +254,6 @@ export function fillSetupForm (config) {
 
   document.getElementById('input-refresh').value = config.refresh_rate || 3
   document.getElementById('input-shadow').value = config.shadow_opacity || 0.5
-  document.getElementById('select-log').value = config.log_level || 'Info'
   document.getElementById('select-template').value = config.meter_template || ''
 
   const textarea = document.getElementById('input-datamatrix')

@@ -222,8 +222,8 @@ const initUI = () => {
     if (document.getElementById('log-panel')) return;
 
     const html = `
-    <button id="log-open-btn" style="display:none; position:fixed; bottom:20px; right:20px; z-index:10000; padding:12px; border-radius:12px; background:#333; color:white; border:1px solid #555; cursor:pointer;">📟 Logs</button>
-    <div id="log-panel" style="position:fixed; bottom:20px; right:20px; width:650px; height:450px; background:#1a1a1a; border:1px solid #444; display:flex; flex-direction:column; z-index:10001; box-shadow: 0 8px 24px rgba(0,0,0,0.5); overflow:hidden;">
+    <button id="log-open-btn" style="display:block; position:fixed; bottom:20px; right:20px; z-index:10000; padding:12px; border-radius:12px; background:#333; color:white; border:1px solid #555; cursor:pointer;">📟 Logs</button>
+    <div id="log-panel" style="position:fixed; bottom:20px; right:20px; width:650px; height:450px; background:#1a1a1a; border:1px solid #444; display:none; flex-direction:column; z-index:10001; box-shadow: 0 8px 24px rgba(0,0,0,0.5); overflow:hidden;">
         <div id="log-header" style="padding:8px; background:#2a2a2a; color:#ddd; cursor:move; touch-action:none; border-bottom: 1px solid #333; display:flex; flex-direction:column; gap:6px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <span style="font-size:11px; font-weight:bold;">DEBUG CONSOLE</span>

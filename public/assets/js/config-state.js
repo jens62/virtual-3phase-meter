@@ -12,7 +12,6 @@ class ConfigState {
       },
       refresh_rate: 3,
       shadow_opacity: 0.5,
-      log_level: 'Info', // Debug-Level ergänzt
       meter_template: '',
       datamatrix_raw: '',   // Hier liegt der Text
       datamatrix_group: '', // Hier liegt das SVG-Fragment
@@ -51,7 +50,6 @@ class ConfigState {
 
     this.data.refresh_rate = parseInt(document.getElementById('input-refresh').value);
     this.data.shadow_opacity = parseFloat(document.getElementById('input-shadow').value);
-    this.data.log_level = document.getElementById('select-log').value; // Sync Log-Level
     this.data.meter_template = document.getElementById('select-template').value;
     
     this.data.metrics = Array.from(document.querySelectorAll('.metric-item')).map(row => ({
