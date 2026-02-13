@@ -38,16 +38,28 @@ class ConfigState {
   }
 
   syncFromForm() {
-    // Connection-Daten direkt in das Unterobjekt schreiben
-    this.data.connection = {
-      type: 'http',
-      host: document.getElementById('input-host').value,
-      protocol: document.getElementById('select-protocol').value,
-      auth: {
-        user: document.getElementById('input-user')?.value || null,
-        pass: document.getElementById('input-pass')?.value || null
-      }
-    };
+    const type = document.getElementById('select-type').value;
+
+    if (type === 'mqtt') {
+      this.data.connection = {
+        type: 'mqtt',
+        mqtt_host: document.getElementById('input-mqtt-host').value,
+        port: parseInt(document.getElementById('input-port').value) || 1883,
+        topic: document.getElementById('input-topic').value,
+        mqtt_user: document.getElementById('input-mqtt-user').value || null,
+        mqtt_pass: document.getElementById('input-mqtt-pass').value || null,
+      };
+    } else {
+      this.data.connection = {
+        type: 'http',
+        host: document.getElementById('input-host').value,
+        protocol: document.getElementById('select-protocol').value,
+        auth: {
+          user: document.getElementById('input-user')?.value || null,
+          pass: document.getElementById('input-pass')?.value || null
+        }
+      };
+    }
 
     this.data.refresh_rate = parseInt(document.getElementById('input-refresh').value);
     this.data.shadow_opacity = parseFloat(document.getElementById('input-shadow').value);

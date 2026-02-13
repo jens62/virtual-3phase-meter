@@ -249,8 +249,20 @@ export function fillSetupForm (config) {
 
   // 2. UI-Felder aus dem State befüllen
   const conn = config.connection || {}
-  document.getElementById('input-host').value = conn.host || ''
-  document.getElementById('select-protocol').value = conn.protocol || 'http'
+  const type = conn.type || 'http'
+  document.getElementById('select-type').value = type
+  toggleConnectionFields(type)
+
+  if (type === 'mqtt') {
+    document.getElementById('input-mqtt-host').value = conn.mqtt_host || ''
+    document.getElementById('input-port').value = conn.port || 1883
+    document.getElementById('input-topic').value = conn.topic || ''
+    document.getElementById('input-mqtt-user').value = conn.mqtt_user || ''
+    document.getElementById('input-mqtt-pass').value = conn.mqtt_pass || ''
+  } else {
+    document.getElementById('input-host').value = conn.host || ''
+    document.getElementById('select-protocol').value = conn.protocol || 'http'
+  }
 
   document.getElementById('input-refresh').value = config.refresh_rate || 3
   document.getElementById('input-shadow').value = config.shadow_opacity || 0.5
