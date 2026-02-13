@@ -102,23 +102,22 @@ export function initSetupEvents(config = null) {
  * Schaltet zwischen HTTP und MQTT Formularfeldern um
  */
 function toggleConnectionFields(type) {
-  log.debug('Umschalten der Verbindungsfelder zu Typ:', type);
-    const httpFields = document.getElementById('fields-http');
-    const mqttFields = document.getElementById('fields-mqtt');
-    
-    if (!httpFields || !mqttFields) return;
+  log.debug('Connection type changed to:', type);
+  const httpFields = document.getElementById('fields-http');
+  const mqttFields = document.getElementById('fields-mqtt');
+  const refreshGroup = document.getElementById('refresh-rate-group');
 
-    if (type === 'mqtt') {
-        // HTTP ausblenden
-        httpFields.style.setProperty('display', 'none', 'important');
-        // MQTT einblenden (als Block oder was das Layout benötigt)
-        mqttFields.style.display = 'block';
-    } else {
-        // HTTP einblenden (als flex, da es eine row-group ist)
-        httpFields.style.setProperty('display', 'flex', 'important');
-        // MQTT ausblenden
-        mqttFields.style.display = 'none';
-    }
+  if (!httpFields || !mqttFields) return;
+
+  if (type === 'mqtt') {
+    httpFields.style.setProperty('display', 'none', 'important');
+    mqttFields.style.display = 'block';
+    if (refreshGroup) refreshGroup.style.display = 'none';
+  } else {
+    httpFields.style.setProperty('display', 'flex', 'important');
+    mqttFields.style.display = 'none';
+    if (refreshGroup) refreshGroup.style.display = '';
+  }
 }
 
 /**
