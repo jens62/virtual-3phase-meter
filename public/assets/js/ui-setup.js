@@ -125,7 +125,7 @@ function toggleConnectionFields(type) {
     mqttFields.style.display = 'block';
     if (refreshGroup) refreshGroup.style.display = 'none';
   } else {
-    httpFields.style.setProperty('display', 'flex', 'important');
+    httpFields.style.setProperty('display', 'block', 'important');
     mqttFields.style.display = 'none';
     if (refreshGroup) refreshGroup.style.display = '';
   }
