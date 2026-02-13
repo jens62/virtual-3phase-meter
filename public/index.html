@@ -63,22 +63,29 @@
                             </select>
                         </div>
 
-                        <div id="fields-http" class="full-width row-group" style="margin-top: 15px;">
-                            <div class="flex-grow-1">
-                                <label>Protocol</label>
-                                <select name="protocol" id="select-protocol">
-                                    <option value="http">HTTP</option>
-                                    <option value="https">HTTPS</option>
-                                </select>
+                        <div id="fields-http" style="margin-top: 15px;">
+                            <div class="row-group">
+                                <div class="flex-grow-1">
+                                    <label>Protocol</label>
+                                    <select name="protocol" id="select-protocol">
+                                        <option value="http">HTTP</option>
+                                        <option value="https">HTTPS</option>
+                                    </select>
+                                </div>
+                                <div class="flex-grow-3">
+                                    <label>Host / IP Address</label>
+                                    <input type="text" name="host" id="input-host" placeholder="192.168.1.100"
+                                        inputmode="decimal">
+                                </div>
+                                <div class="flex-grow-1">
+                                    <label>Port</label>
+                                    <input type="number" name="http_port" id="input-http-port" placeholder="80">
+                                </div>
                             </div>
-                            <div class="flex-grow-3">
-                                <label>Tasmota IP Address</label>
-                                <input type="text" name="host" id="input-host" placeholder="192.168.1.100"
-                                    inputmode="decimal">
-                            </div>
-                            <div class="flex-grow-1">
-                                <label>Port</label>
-                                <input type="number" name="http_port" id="input-http-port" placeholder="80">
+                            <div style="margin-top: 10px;">
+                                <label>API Path</label>
+                                <input type="text" name="http_path" id="input-http-path"
+                                    placeholder="/cm?cmnd=Status%208">
                             </div>
                         </div>
 

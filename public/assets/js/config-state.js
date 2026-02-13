@@ -9,6 +9,7 @@ class ConfigState {
         protocol: 'http',
         host: '',
         http_port: 80,
+        http_path: '/cm?cmnd=Status%208',
         auth: { user: null, pass: null }
       },
       refresh_rate: 15,
@@ -57,6 +58,7 @@ class ConfigState {
         protocol: document.getElementById('select-protocol').value,
         host: document.getElementById('input-host').value,
         http_port: parseInt(document.getElementById('input-http-port').value) || 80,
+        http_path: document.getElementById('input-http-path').value || '/cm?cmnd=Status%208',
         auth: {
           user: document.getElementById('input-user')?.value || null,
           pass: document.getElementById('input-pass')?.value || null

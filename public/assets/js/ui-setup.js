@@ -87,7 +87,7 @@ export function initSetupEvents(config = null) {
 
   // 4. Automatische Discovery (Debounce) auf alle relevanten Eingabefelder
   const autoTestFields = [
-    'input-host', 'input-http-port',
+    'input-host', 'input-http-port', 'input-http-path',
     'input-port', 'input-topic',
     'input-mqtt-user', 'input-mqtt-pass', 'input-mqtt-host'
   ];
@@ -274,6 +274,7 @@ export function fillSetupForm (config) {
     document.getElementById('select-protocol').value = conn.protocol || 'http'
     document.getElementById('input-host').value = conn.host || ''
     document.getElementById('input-http-port').value = conn.http_port || 80
+    document.getElementById('input-http-path').value = conn.http_path || '/cm?cmnd=Status%208'
   }
 
   document.getElementById('input-refresh').value = config.refresh_rate || 3
