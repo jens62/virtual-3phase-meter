@@ -80,13 +80,20 @@
 
                         <div id="fields-mqtt" class="full-width hidden" style="margin-top: 15px; display:none;">
                             <div class="row-group">
+                                <div class="flex-grow-1">
+                                    <label>Protocol</label>
+                                    <select name="mqtt_protocol" id="select-mqtt-protocol">
+                                        <option value="ws">WS</option>
+                                        <option value="wss">WSS</option>
+                                    </select>
+                                </div>
                                 <div class="flex-grow-3">
                                     <label>MQTT Broker Host</label>
-                                    <input type="text" name="mqtt_host" id="input-mqtt-host" placeholder="mqtt.local">
+                                    <input type="text" name="mqtt_host" id="input-mqtt-host" placeholder="192.168.1.100">
                                 </div>
                                 <div class="flex-grow-1">
                                     <label>Port</label>
-                                    <input type="number" name="port" id="input-port" placeholder="1883" value="1883">
+                                    <input type="number" name="port" id="input-port" placeholder="9001">
                                 </div>
                             </div>
                             <div style="margin-top: 15px;">

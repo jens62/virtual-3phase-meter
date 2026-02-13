@@ -43,8 +43,9 @@ class ConfigState {
     if (type === 'mqtt') {
       this.data.connection = {
         type: 'mqtt',
+        mqtt_protocol: document.getElementById('select-mqtt-protocol').value,
         mqtt_host: document.getElementById('input-mqtt-host').value,
-        port: parseInt(document.getElementById('input-port').value) || 1883,
+        port: parseInt(document.getElementById('input-port').value) || 9001,
         topic: document.getElementById('input-topic').value,
         mqtt_user: document.getElementById('input-mqtt-user').value || null,
         mqtt_pass: document.getElementById('input-mqtt-pass').value || null,

@@ -39,7 +39,7 @@ export function rehydrateMetadata (discoveryConfig) {
  * Idempotent: does nothing if already connected to the same topic.
  */
 function connectMqtt (connection) {
-  const { mqtt_host, port, topic, mqtt_user, mqtt_pass } = connection
+  const { mqtt_protocol, mqtt_host, port, topic, mqtt_user, mqtt_pass } = connection
 
   if (mqttClient && mqttClient.connected && mqttConnectedTopic === topic) {
     return
@@ -53,16 +53,11 @@ function connectMqtt (connection) {
     mqttConnectedTopic = null
   }
 
-  // Port 443  → WSS through Apache reverse proxy (path /mqtt)
-  // Any other  → plain WS direct to Mosquitto WebSocket listener (e.g. port 9001)
-  // Port 1883  → plain MQTT TCP — NOT WebSocket, will not work in a browser!
-  if (port === 1883) {
-    log.warn('MQTT: port 1883 is plain MQTT/TCP, not WebSocket. Use 9001 for direct WS or 443 for WSS via Apache proxy.')
-  }
-  const isSecure = port === 443
-  const scheme   = isSecure ? 'wss' : 'ws'
-  const path     = isSecure ? '/mqtt' : ''
-  const url      = `${scheme}://${mqtt_host}:${port}${path}`
+  // ws  → direct WebSocket to Mosquitto (e.g. port 9001)
+  // wss → WebSocket Secure via Apache reverse proxy (path /mqtt, e.g. port 443)
+  const scheme = mqtt_protocol === 'wss' ? 'wss' : 'ws'
+  const path   = mqtt_protocol === 'wss' ? '/mqtt' : ''
+  const url    = `${scheme}://${mqtt_host}:${port}${path}`
 
   const opts = {}
   if (mqtt_user) opts.username = mqtt_user

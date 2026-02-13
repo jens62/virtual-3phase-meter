@@ -253,8 +253,9 @@ export function fillSetupForm (config) {
   toggleConnectionFields(type)
 
   if (type === 'mqtt') {
+    document.getElementById('select-mqtt-protocol').value = conn.mqtt_protocol || 'ws'
     document.getElementById('input-mqtt-host').value = conn.mqtt_host || ''
-    document.getElementById('input-port').value = conn.port || 1883
+    document.getElementById('input-port').value = conn.port || 9001
     document.getElementById('input-topic').value = conn.topic || ''
     document.getElementById('input-mqtt-user').value = conn.mqtt_user || ''
     document.getElementById('input-mqtt-pass').value = conn.mqtt_pass || ''
