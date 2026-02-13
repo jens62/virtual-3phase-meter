@@ -1,4 +1,4 @@
-const CACHE_NAME = 'virtual-meter-v4';
+const CACHE_NAME = 'virtual-meter-v5';
 
 const APP_SHELL = [
   './',

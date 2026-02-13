@@ -53,29 +53,41 @@ function connectMqtt (connection) {
     mqttConnectedTopic = null
   }
 
-  const url = `wss://${mqtt_host}:${port}/mqtt`
+  // Port 443  → WSS through Apache reverse proxy (path /mqtt)
+  // Any other  → plain WS direct to Mosquitto WebSocket listener (e.g. port 9001)
+  // Port 1883  → plain MQTT TCP — NOT WebSocket, will not work in a browser!
+  if (port === 1883) {
+    log.warn('MQTT: port 1883 is plain MQTT/TCP, not WebSocket. Use 9001 for direct WS or 443 for WSS via Apache proxy.')
+  }
+  const isSecure = port === 443
+  const scheme   = isSecure ? 'wss' : 'ws'
+  const path     = isSecure ? '/mqtt' : ''
+  const url      = `${scheme}://${mqtt_host}:${port}${path}`
+
   const opts = {}
   if (mqtt_user) opts.username = mqtt_user
   if (mqtt_pass) opts.password = mqtt_pass
 
-  log.debug('MQTT: connecting to', url)
+  log.info('MQTT: connecting to', url, '| topic:', topic, '| auth:', mqtt_user ? 'yes' : 'none')
   mqttClient = window.mqtt.connect(url, opts)
   mqttConnectedTopic = topic
 
   mqttClient.on('connect', () => {
-    log.info('MQTT: connected. Subscribing to topic:', topic)
+    log.info('MQTT: connected successfully.')
     mqttClient.subscribe(topic, (err) => {
-      if (err) log.error('MQTT subscribe error:', err.message)
-      else log.debug('MQTT: subscribed to:', topic)
+      if (err) log.error('MQTT subscribe failed:', err.message)
+      else log.info('MQTT: subscribed to:', topic)
     })
   })
 
   mqttClient.on('message', (t, payload) => {
     try {
-      mqttLastPayload = JSON.parse(payload.toString())
-      log.debug('MQTT: message received on topic:', t)
+      const parsed = JSON.parse(payload.toString())
+      mqttLastPayload = parsed
+      log.info('MQTT: message received — keys:', Object.keys(parsed).join(', '))
+      log.debug('MQTT: full payload:', parsed)
     } catch (e) {
-      log.warn('MQTT: message parse error:', e.message)
+      log.warn('MQTT: message parse error:', e.message, '— raw (first 200 chars):', payload.toString().substring(0, 200))
     }
   })
 
@@ -84,11 +96,15 @@ function connectMqtt (connection) {
   })
 
   mqttClient.on('close', () => {
-    log.warn('MQTT: connection closed.')
+    log.warn('MQTT: connection closed. URL was:', url)
   })
 
   mqttClient.on('reconnect', () => {
-    log.debug('MQTT: reconnecting...')
+    log.info('MQTT: reconnecting to', url, '...')
+  })
+
+  mqttClient.on('offline', () => {
+    log.warn('MQTT: client went offline.')
   })
 }
 
